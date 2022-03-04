@@ -11,7 +11,8 @@ public class Tokenizer {
 	}
 	
 	public void skipWhitespace() {
-		while (Character.isWhitespace(input.charAt(offset))) {
+		while (offset < input.length() && 
+				Character.isWhitespace(input.charAt(offset))) {
 			offset++;
 		}	
 	}
@@ -66,5 +67,3 @@ public class Tokenizer {
 		return tokens;
 	}
 }
-
-//this is adapted from Kyle's example following it up to timestamp 54:12 from Feb 21st video.
