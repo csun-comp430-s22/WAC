@@ -1,6 +1,6 @@
 package WAClexer;
 
-public class greaterThanToken {
+public class greaterThanToken implements Token {
 
     public boolean equals(final Object other) {
         return other instanceof greaterThanToken;

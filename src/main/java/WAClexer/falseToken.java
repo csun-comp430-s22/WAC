@@ -1,6 +1,6 @@
 package WAClexer;
 
-public class falseToken {
+public class falseToken implements Token {
 
     public boolean equals(final Object other) {
         return other instanceof falseToken;
