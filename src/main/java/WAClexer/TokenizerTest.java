@@ -1,3 +1,5 @@
+package WAClexer;
+
 import java.util.List;
 
 public class TokenizerTest {

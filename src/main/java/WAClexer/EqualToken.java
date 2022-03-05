@@ -1,3 +1,5 @@
+package WAClexer;
+
 public class EqualToken implements Token {
 	public boolean eqauls(final Object other) {
 		return other instanceof EqualToken;
