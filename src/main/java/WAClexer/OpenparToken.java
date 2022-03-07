@@ -1,3 +1,5 @@
+package WAClexer;
+
 public class OpenparToken implements Token {
 	public boolean equals(final Object other) {
 		return other instanceof OpenparToken;
