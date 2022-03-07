@@ -50,6 +50,30 @@ public class Tokenizer {
 			} else if (input.startsWith("super", offset)) {
 				offset += 5;
 				return new SuperToken();
+			} else if (input.startsWith("this", offset)) {
+				offset += 4;
+				return new ThisToken();
+			} else if (input.startsWith("println", offset)) {
+				offset += 7;
+				return new PrintlnToken();
+			} else if (input.startsWith("(", offset)) {
+				offset += 1;
+				return new OpenparToken();
+			} else if (input.startsWith(")", offset)) {
+				offset += 1;
+				return new CloseparToken();
+			} else if (input.startsWith(";", offset)) {
+				offset += 1;
+				return new SemicolToken();
+			} else if (input.startsWith("new", offset)) {
+				offset += 3;
+				return new NewToken();
+			} else if (input.startsWith("class", offset)) {
+				offset += 5;
+				return new ClassToken();
+			} else if (input.startsWith("extends", offset)) {
+				offset += 7;
+				return new ExtendsToken();
 			} else if (input.startsWith("==", offset)) {
 				offset += 2;
 				return new equalEqualToken();
