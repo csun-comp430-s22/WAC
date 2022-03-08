@@ -1,4 +1,4 @@
-package WAClexcer;
+package WAClexer;
 
 public class ElseToken implements Token{
 	public boolean eqauls(final Object other) {

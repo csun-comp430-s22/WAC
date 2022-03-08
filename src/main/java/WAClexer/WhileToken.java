@@ -1,4 +1,4 @@
-package WAClexcer;
+package WAClexer;
 
 
 	public class WhileToken implements Token {
