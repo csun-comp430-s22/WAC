@@ -6,20 +6,20 @@ import java.util.ArrayList;
 public class Tokenizer {
 	private final String input;
 	private int offset;
-	
+
 	public Tokenizer(final String input) {
 		this.input = input;
 		offset = 0;
 	}
-	
+
 	public void skipWhitespace() {
-		while (offset < input.length() && 
+		while (offset < input.length() &&
 				Character.isWhitespace(input.charAt(offset))) {
 			offset++;
-		}	
+		}
 	}
-	
-	//returns null if there are no more tokens left
+
+	// returns null if there are no more tokens left
 	public Token tokenizeSingle() throws TokenizerException {
 		skipWhitespace();
 		if (offset < input.length()) {
@@ -50,6 +50,75 @@ public class Tokenizer {
 			} else if (input.startsWith("super", offset)) {
 				offset += 5;
 				return new SuperToken();
+			} else if (input.startsWith("constructor", offset)) {
+				offset += 11;
+				return new ConstructorToken();
+			} else if (input.startsWith("while", offset)) {
+				offset += 5;
+				return new WhileToken();
+			} else if (input.startsWith("break", offset)) {
+				offset += 5;
+				return new BreakToken();
+			} else if (input.startsWith("if", offset)) {
+				offset += 2;
+				return new IfToken();
+			} else if (input.startsWith("else", offset)) {
+				offset += 4;
+				return new ElseToken();
+			} else if (input.startsWith("return", offset)) {
+				offset += 5;
+				return new ReturnToken();
+			} else if (input.startsWith("{", offset)) {
+				offset += 1;
+				return new LeftBracketToken();
+			} else if (input.startsWith("this", offset)) {
+				offset += 4;
+				return new ThisToken();
+			} else if (input.startsWith("println", offset)) {
+				offset += 7;
+				return new PrintlnToken();
+			} else if (input.startsWith("(", offset)) {
+				offset += 1;
+				return new OpenparToken();
+			} else if (input.startsWith(")", offset)) {
+				offset += 1;
+				return new CloseparToken();
+			} else if (input.startsWith(";", offset)) {
+				offset += 1;
+				return new SemicolToken();
+			} else if (input.startsWith("new", offset)) {
+				offset += 3;
+				return new NewToken();
+			} else if (input.startsWith("class", offset)) {
+				offset += 5;
+				return new ClassToken();
+			} else if (input.startsWith("extends", offset)) {
+				offset += 7;
+				return new ExtendsToken();
+			} else if (input.startsWith("==", offset)) {
+				offset += 2;
+				return new equalEqualToken();
+			} else if (input.startsWith("false", offset)) {
+				offset += 5;
+				return new falseToken();
+			} else if (input.startsWith(">", offset)) {
+				offset += 1;
+				return new greaterThanToken();
+			} else if (input.startsWith("<", offset)) {
+				offset += 1;
+				return new lessThanToken();
+			} else if (input.startsWith("!=", offset)) {
+				offset += 2;
+				return new notEqualToken();
+			} else if (input.startsWith("!", offset)) {
+				offset += 1;
+				return new notToken();
+			} else if (input.startsWith("}", offset)) {
+				offset += 1;
+				return new rightCurlyToken();
+			} else if (input.startsWith("true", offset)) {
+				offset += 4;
+				return new trueToken();
 			} else {
 				throw new TokenizerException();
 			}
@@ -57,12 +126,12 @@ public class Tokenizer {
 			return null;
 		}
 	}
-	
+
 	public List<Token> tokenize() throws TokenizerException {
 		final List<Token> tokens = new ArrayList<Token>();
 		Token token = tokenizeSingle();
-		
-		while(token != null) {
+
+		while (token != null) {
 			tokens.add(token);
 			token = tokenizeSingle();
 		}
