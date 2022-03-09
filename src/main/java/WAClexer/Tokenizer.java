@@ -20,12 +20,70 @@ public class Tokenizer {
 	}
 	
 	public Token tryTokenizeVariable() {
+		skipWhitespace();
 		String name = "";
 		
 		// idea: read one character at a time
 		// when we are out of characters, check what the name is
 		// if the name is special(e.g., "true"), emit the special token for it (e.g., TrueToken)
 		// if the name isn't special (e.g., "foo"), emit a variable token for it (e.g., VariableToken("foo")
+		//
+		// First character of the variable: letter
+		// Every subsequent character: letter or a digit
+		
+		if (offset < input.length() &&
+			Character.isLetter(input.charAt(offset))) {
+			name += input.charAt(offset);
+			offset++;
+			
+			while (offset < input.length() &&
+				   Character.isLetterOrDigit(input.charAt(offset))) {
+				name += input.charAt(offset);
+				offset++;
+			}
+			
+			// by this point, 'name' holds a potential variable
+			// 'name' could be 'true'
+			// soooo we need to cover all cases from tokenizeSingle that could potentially 
+			// be 'name' rn
+			if (name.equals("Int")) {
+				return new IntToken();
+			} else if (name.equals("Boolean")) {
+				return new BooleanToken();
+			} else if (name.equals("String")) {
+				return new BooleanToken();
+			} else if (name.equals("super")) {
+				return new SuperToken();
+			} else if (name.equals("while")) {
+				return new WhileToken();
+			} else if (name.equals("break")) {
+				return new BreakToken();
+			} else if (name.equals("if")) {
+				return new IfToken();
+			} else if (name.equals("else") {
+				return new ElseToken();
+			} else if (name.equals("return") {
+				return new ReturnToken();
+			} else if (name.equals("this") {
+				return new ThisToken();
+			} else if (name.equals("println") {
+				return new PrintlnToken();
+			} else if (name.equals("new") {
+				return new NewToken();
+			} else if (name.equals("class") {
+				return new ClassToken();
+			} else if (name.equals("extends") {
+				return new ExtendsToken();
+			} else if (name.equals("false") {
+				return new falseToken();
+			} else if (name.equals("true") {
+				return new trueToken();
+			} else {
+				return new VariableToken(name);
+			}
+		} else {
+			return null;
+		}
 	}
 
 	// returns null if there are no more tokens left
