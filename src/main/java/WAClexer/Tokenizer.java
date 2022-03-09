@@ -18,6 +18,15 @@ public class Tokenizer {
 			offset++;
 		}
 	}
+	
+	public Token tryTokenizeVariable() {
+		String name = "";
+		
+		// idea: read one character at a time
+		// when we are out of characters, check what the name is
+		// if the name is special(e.g., "true"), emit the special token for it (e.g., TrueToken)
+		// if the name isn't special (e.g., "foo"), emit a variable token for it (e.g., VariableToken("foo")
+	}
 
 	// returns null if there are no more tokens left
 	public Token tokenizeSingle() throws TokenizerException {
