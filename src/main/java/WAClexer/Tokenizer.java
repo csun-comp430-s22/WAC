@@ -50,9 +50,6 @@ public class Tokenizer {
 			} else if (input.startsWith("super", offset)) {
 				offset += 5;
 				return new SuperToken();
-			} else if (input.startsWith("constructor", offset)) {
-				offset += 11;
-				return new ConstructorToken();
 			} else if (input.startsWith("while", offset)) {
 				offset += 5;
 				return new WhileToken();
@@ -110,9 +107,6 @@ public class Tokenizer {
 			} else if (input.startsWith("!=", offset)) {
 				offset += 2;
 				return new notEqualToken();
-			} else if (input.startsWith("!", offset)) {
-				offset += 1;
-				return new notToken();
 			} else if (input.startsWith("}", offset)) {
 				offset += 1;
 				return new rightCurlyToken();
