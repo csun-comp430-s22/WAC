@@ -19,7 +19,8 @@ public class Tokenizer {
 		}
 	}
 	
-	public Token tryTokenizeVariable() {
+	//return null if it fails to read in any variable or keyword
+	public Token tryTokenizeVariableOrKeyword() {
 		skipWhitespace();
 		String name = "";
 		
@@ -60,23 +61,23 @@ public class Tokenizer {
 				return new BreakToken();
 			} else if (name.equals("if")) {
 				return new IfToken();
-			} else if (name.equals("else") {
+			} else if (name.equals("else")) {
 				return new ElseToken();
-			} else if (name.equals("return") {
+			} else if (name.equals("return")) {
 				return new ReturnToken();
-			} else if (name.equals("this") {
+			} else if (name.equals("this")) {
 				return new ThisToken();
-			} else if (name.equals("println") {
+			} else if (name.equals("println")) {
 				return new PrintlnToken();
-			} else if (name.equals("new") {
+			} else if (name.equals("new")) {
 				return new NewToken();
-			} else if (name.equals("class") {
+			} else if (name.equals("class")) {
 				return new ClassToken();
-			} else if (name.equals("extends") {
+			} else if (name.equals("extends")) {
 				return new ExtendsToken();
-			} else if (name.equals("false") {
+			} else if (name.equals("false")) {
 				return new falseToken();
-			} else if (name.equals("true") {
+			} else if (name.equals("true")) {
 				return new trueToken();
 			} else {
 				return new VariableToken(name);
@@ -88,104 +89,59 @@ public class Tokenizer {
 
 	// returns null if there are no more tokens left
 	public Token tokenizeSingle() throws TokenizerException {
+		Token retval = null;
 		skipWhitespace();
 		if (offset < input.length()) {
-			if (input.startsWith("Int", offset)) {
-				offset += 3;
-				return new IntToken();
-			} else if (input.startsWith("Boolean", offset)) {
-				offset += 7;
-				return new BooleanToken();
-			} else if (input.startsWith("String", offset)) {
-				offset += 6;
-				return new StringToken();
-			} else if (input.startsWith("+", offset)) {
-				offset += 1;
-				return new PlusToken();
-			} else if (input.startsWith("-", offset)) {
-				offset += 1;
-				return new MinusToken();
-			} else if (input.startsWith("*", offset)) {
-				offset += 1;
-				return new MultiplicationToken();
-			} else if (input.startsWith("/", offset)) {
-				offset += 1;
-				return new DivisionToken();
-			} else if (input.startsWith("=", offset)) {
-				offset += 1;
-				return new EqualToken();
-			} else if (input.startsWith("super", offset)) {
-				offset += 5;
-				return new SuperToken();
-			} else if (input.startsWith("while", offset)) {
-				offset += 5;
-				return new WhileToken();
-			} else if (input.startsWith("break", offset)) {
-				offset += 5;
-				return new BreakToken();
-			} else if (input.startsWith("if", offset)) {
-				offset += 2;
-				return new IfToken();
-			} else if (input.startsWith("else", offset)) {
-				offset += 4;
-				return new ElseToken();
-			} else if (input.startsWith("return", offset)) {
-				offset += 5;
-				return new ReturnToken();
-			} else if (input.startsWith("{", offset)) {
-				offset += 1;
-				return new LeftBracketToken();
-			} else if (input.startsWith("this", offset)) {
-				offset += 4;
-				return new ThisToken();
-			} else if (input.startsWith("println", offset)) {
-				offset += 7;
-				return new PrintlnToken();
-			} else if (input.startsWith("(", offset)) {
-				offset += 1;
-				return new OpenparToken();
-			} else if (input.startsWith(")", offset)) {
-				offset += 1;
-				return new CloseparToken();
-			} else if (input.startsWith(";", offset)) {
-				offset += 1;
-				return new SemicolToken();
-			} else if (input.startsWith("new", offset)) {
-				offset += 3;
-				return new NewToken();
-			} else if (input.startsWith("class", offset)) {
-				offset += 5;
-				return new ClassToken();
-			} else if (input.startsWith("extends", offset)) {
-				offset += 7;
-				return new ExtendsToken();
-			} else if (input.startsWith("==", offset)) {
-				offset += 2;
-				return new equalEqualToken();
-			} else if (input.startsWith("false", offset)) {
-				offset += 5;
-				return new falseToken();
-			} else if (input.startsWith(">", offset)) {
-				offset += 1;
-				return new greaterThanToken();
-			} else if (input.startsWith("<", offset)) {
-				offset += 1;
-				return new lessThanToken();
-			} else if (input.startsWith("!=", offset)) {
-				offset += 2;
-				return new notEqualToken();
-			} else if (input.startsWith("}", offset)) {
-				offset += 1;
-				return new rightCurlyToken();
-			} else if (input.startsWith("true", offset)) {
-				offset += 4;
-				return new trueToken();
-			} else {
-				throw new TokenizerException();
+			retval = tryTokenizeVariableOrKeyword();
+			if (retval == null) {
+				if (input.startsWith("+", offset)) {
+					offset += 1;
+					retval = new PlusToken();
+				} else if (input.startsWith("-", offset)) {
+					offset += 1;
+					retval = new MinusToken();
+				} else if (input.startsWith("*", offset)) {
+					offset += 1;
+					retval = new MultiplicationToken();
+				} else if (input.startsWith("/", offset)) {
+					offset += 1;
+					retval = new DivisionToken();
+				} else if (input.startsWith("=", offset)) {
+					offset += 1;
+					retval = new EqualToken();
+				} else if (input.startsWith("{", offset)) {
+					offset += 1;
+					retval = new LeftBracketToken();
+				} else if (input.startsWith("(", offset)) {
+					offset += 1;
+					retval = new OpenparToken();
+				} else if (input.startsWith(")", offset)) {
+					offset += 1;
+					retval = new CloseparToken();
+				} else if (input.startsWith(";", offset)) {
+					offset += 1;
+					retval = new SemicolToken();
+				} else if (input.startsWith("==", offset)) {
+					offset += 2;
+					retval = new equalEqualToken();
+				} else if (input.startsWith(">", offset)) {
+					offset += 1;
+					retval = new greaterThanToken();
+				} else if (input.startsWith("<", offset)) {
+					offset += 1;
+					retval = new lessThanToken();
+				} else if (input.startsWith("!=", offset)) {
+					offset += 2;
+					retval = new notEqualToken();
+				} else if (input.startsWith("}", offset)) {
+					offset += 1;
+					retval = new rightCurlyToken();
+				} else {
+					throw new TokenizerException();
+				}
 			}
-		} else {
-			return null;
 		}
+		return retval;
 	}
 
 	public List<Token> tokenize() throws TokenizerException {
