@@ -74,7 +74,55 @@ public class TokenizerTest {
 	public void testIntIntIsVariable() throws TokenizerException {
 		assertTokenizes("IntInt", new Token[]{ new VariableToken("IntInt") });
 	}
-	
+
+	// 'this' token test
+	@Test
+	public void testThisByItself() throws TokenizerException {
+		assertTokenizes("this", new Token[] { new ThisToken() });
+	}
+
+	// 'println' token test
+	@Test
+	public void testPrintlnByItself() throws TokenizerException {
+		assertTokenizes("println", new Token[] { new PrintlnToken() });
+	}
+
+	// '(' token test
+	@Test
+	public void testOpenparByItself() throws TokenizerException {
+		assertTokenizes("(", new Token[] { new OpenparToken() });
+	}
+
+	// ')' token test
+	@Test
+	public void testCloseparByItself() throws TokenizerException {
+		assertTokenizes(")", new Token[] { new CloseparToken() });
+	}
+
+	// ';' token test
+	@Test
+	public void testSemicolByItself() throws TokenizerException {
+		assertTokenizes(";", new Token[] { new SemicolToken() });
+	}
+
+	// 'new' token test
+	@Test
+	public void testNewByItself() throws TokenizerException {
+		assertTokenizes("new", new Token[] { new NewToken() });
+	}
+
+	// 'class' token test
+	@Test
+	public void testClassByItself() throws TokenizerException {
+		assertTokenizes("class", new Token[] { new ClassToken() });
+	}
+
+	// 'extends' token test
+	@Test
+	public void testExtendsByItself() throws TokenizerException {
+		assertTokenizes("extends", new Token[] { new ExtendsToken() });
+	}
+
 	/* @Test
 	public void testSingleDigitInteger() {
 		assertTokenizes("1", new Token[]{ new IntegerToken(1) });
