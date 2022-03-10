@@ -132,6 +132,6 @@ public class TokenizerTest {
 	
 	@Test
 	public void testStrByItself() throws TokenizerException {
-		assertTokenizes("\"hi\"", new Token[]{ new strToken("hi") });
+		assertTokenizes("\"hi\"", new Token[]{ new strToken("\"hi\"") });
 	}
 }

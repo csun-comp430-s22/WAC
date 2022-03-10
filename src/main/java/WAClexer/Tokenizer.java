@@ -185,7 +185,8 @@ public class Tokenizer {
 		if (offset < input.length()&&
 			(retval = tryTokenizeVariableOrKeyword()) == null &&
 			(retval = tryTokenizeInteger()) == null &&
-			(retval = tryTokenizeSymbol()) == null) {
+			(retval = tryTokenizeSymbol()) == null &&
+			(retval = tryTokenizeStr()) == null) {
 			throw new TokenizerException();
 		}
 		
