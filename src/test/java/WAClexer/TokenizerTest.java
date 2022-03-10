@@ -67,11 +67,6 @@ public class TokenizerTest {
 		assertTokenizes("String", new Token[] { new StringToken() });
 	}
 	
-/* 	@Test
-	public void testStringByItself() throws TokenizerException {
-		assertTokenizes("String", new Token[] { new StringToken() });
-	} */
-	
 	@Test
 	public void testPlusByItself() throws TokenizerException {
 		assertTokenizes("+", new Token[] { new PlusToken() });
@@ -124,5 +119,12 @@ public class TokenizerTest {
 	@Test
 	public void testMultiDigitInteger() throws TokenizerException {
 		assertTokenizes("123", new Token[]{ new IntegerToken(123) });
+	}
+	
+	//start of testing invalid input
+	
+	@Test(expected = TokenizerException.class)
+	public void testInvalid() throws TokenizerException {
+		assertTokenizes("$", null);
 	}
 }
