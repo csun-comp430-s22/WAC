@@ -75,13 +75,13 @@ public class TokenizerTest {
 		assertTokenizes("IntInt", new Token[]{ new VariableToken("IntInt") });
 	}
 	
-	/* @Test
-	public void testSingleDigitInteger() {
+	@Test
+	public void testSingleDigitInteger() throws TokenizerException {
 		assertTokenizes("1", new Token[]{ new IntegerToken(1) });
 	}
 	
 	@Test
-	public void testMultiDigitInteger() {
+	public void testMultiDigitInteger() throws TokenizerException {
 		assertTokenizes("123", new Token[]{ new IntegerToken(123) });
-	} */
+	}
 }
