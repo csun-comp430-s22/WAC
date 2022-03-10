@@ -19,6 +19,17 @@ public class Tokenizer {
 		}
 	}
 	
+/* 	public IntegerToken tryTokenizeInteger() {
+		skipWhitespace();
+		
+		String number = "";
+		
+		while(offset < input.length() && Character.isDigit(input.charAt(offset))) {
+			number += input.charAt(offset);
+			offset++;
+		}
+	} */
+	
 	//return null if it fails to read in any variable or keyword
 	public Token tryTokenizeVariableOrKeyword() {
 		skipWhitespace();
