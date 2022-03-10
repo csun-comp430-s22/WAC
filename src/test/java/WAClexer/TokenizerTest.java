@@ -127,4 +127,11 @@ public class TokenizerTest {
 	public void testInvalid() throws TokenizerException {
 		assertTokenizes("$", null);
 	}
+	
+	//start of testing strings
+	
+	@Test
+	public void testStrByItself() throws TokenizerException {
+		assertTokenizes("\"hi\"", new Token[]{ new strToken("hi") });
+	}
 }
