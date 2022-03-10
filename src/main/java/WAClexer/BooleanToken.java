@@ -6,7 +6,7 @@ public class BooleanToken implements Token {
 	}
 	
 	public int hashCode() {
-		return 1;
+		return 2;
 	}
 	
 	public String toString() {
