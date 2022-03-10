@@ -70,7 +70,7 @@ public class Tokenizer {
 			} else if (name.equals("Boolean")) {
 				return new BooleanToken();
 			} else if (name.equals("String")) {
-				return new BooleanToken();
+				return new StringToken();
 			} else if (name.equals("super")) {
 				return new SuperToken();
 			} else if (name.equals("while")) {
@@ -178,6 +178,7 @@ public class Tokenizer {
 				}
 			}
 		} */
+		
 		return retval;
 	}
 
