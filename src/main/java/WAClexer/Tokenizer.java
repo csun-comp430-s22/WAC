@@ -11,13 +11,16 @@ public class Tokenizer {
 		this.input = input;
 		offset = 0;
 	}
-
+	
+	
+// Method to get rid of white space in front of token
 	public void skipWhitespace() {
-		while (offset < input.length() &&
-				Character.isWhitespace(input.charAt(offset))) {
+		while (offset < input.length() && Character.isWhitespace(input.charAt(offset))) {
 			offset++;
 		}
 	}
+	
+	
 	
 /* 	public IntegerToken tryTokenizeInteger() {
 		skipWhitespace();
@@ -43,13 +46,11 @@ public class Tokenizer {
 		// First character of the variable: letter
 		// Every subsequent character: letter or a digit
 		
-		if (offset < input.length() &&
-			Character.isLetter(input.charAt(offset))) {
+		if (offset < input.length() && Character.isLetter(input.charAt(offset))) {
 			name += input.charAt(offset);
 			offset++;
 			
-			while (offset < input.length() &&
-				   Character.isLetterOrDigit(input.charAt(offset))) {
+			while (offset < input.length() && Character.isLetterOrDigit(input.charAt(offset))) {
 				name += input.charAt(offset);
 				offset++;
 			}
@@ -97,8 +98,11 @@ public class Tokenizer {
 			return null;
 		}
 	}
+	
+	
 
-	// returns null if there are no more tokens left
+	// returns a Token if input matches exclusively language operators or program structure symbol but Token can't be in both of the categorizes
+	// if failed throws exception 
 	public Token tokenizeSingle() throws TokenizerException {
 		Token retval = null;
 		skipWhitespace();
@@ -122,7 +126,7 @@ public class Tokenizer {
 					retval = new EqualToken();
 				} else if (input.startsWith("{", offset)) {
 					offset += 1;
-					retval = new LeftBracketToken();
+					retval = new leftCurlyToken();
 				} else if (input.startsWith("(", offset)) {
 					offset += 1;
 					retval = new OpenparToken();
@@ -154,7 +158,10 @@ public class Tokenizer {
 		}
 		return retval;
 	}
-
+	
+	
+// Returns a list of tokens and checks if the tokens are exclusively operators , program structure symbols or program key words but token be in more than 1 of the categorizes .
+// The method checks the tokens with operator and program structure symbols first then program key words last 	
 	public List<Token> tokenize() throws TokenizerException {
 		final List<Token> tokens = new ArrayList<Token>();
 		Token token = tokenizeSingle();

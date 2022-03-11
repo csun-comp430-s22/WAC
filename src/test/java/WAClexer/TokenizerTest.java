@@ -10,13 +10,12 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 public class TokenizerTest {
-    public void assertTokenizes(final String input,
-                                final Token[] expected) throws TokenizerException {
+	// This method starts the procces of checking the input for tokens
+    public void assertTokenizes(final String input, final Token[] expected) throws TokenizerException {
         final Tokenizer tokenizer = new Tokenizer(input);
         final List<Token> received = tokenizer.tokenize();
-        assertArrayEquals(expected,
-                          received.toArray(new Token[received.size()]));
-    }
+        assertArrayEquals(expected,received.toArray(new Token[received.size()]));     
+        }
 	
 	//annotation
 	@Test
@@ -40,8 +39,7 @@ public class TokenizerTest {
 	
     @Test
     public void testIntByItself() throws TokenizerException {
-        assertTokenizes("Int",
-                        new Token[] { new IntToken() });
+        assertTokenizes("Int", new Token[] { new IntToken() });
 						
 /* 		Tokenizer tokenizer = new Tokenizer("Int");
 		List<Token> tokens = tokenizer.tokenize();
@@ -74,7 +72,30 @@ public class TokenizerTest {
 	public void testIntIntIsVariable() throws TokenizerException {
 		assertTokenizes("IntInt", new Token[]{ new VariableToken("IntInt") });
 	}
-	
+	@Test
+	public void testWhileByItself() throws TokenizerException {
+		assertTokenizes("while", new Token[]{ new WhileToken });
+	}
+	@Test
+	public void testBreakByItself() throws TokenizerException {
+		assertTokenizes("break", new Token[]{ new BreakToken });
+	}
+	@Test
+	public void testIfByItself() throws TokenizerException {
+		assertTokenizes("if", new Token[]{ new IfToken });
+	}
+	@Test
+	public void testElseByItself() throws TokenizerException {
+		assertTokenizes("else", new Token[]{ new ElseToken });
+	}
+	@Test
+	public void testReturnByItself() throws TokenizerException {
+		assertTokenizes("return", new Token[]{ new ReturnToken });
+	}
+	@Test
+	public void testLeftCurlyByItself() throws TokenizerException {
+		assertTokenizes("{", new Token[]{ new leftCurlyToken });
+	}
 	/* @Test
 	public void testSingleDigitInteger() {
 		assertTokenizes("1", new Token[]{ new IntegerToken(1) });
