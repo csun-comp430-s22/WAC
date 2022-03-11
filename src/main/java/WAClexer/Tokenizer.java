@@ -35,7 +35,7 @@ public class Tokenizer {
 	
 	//return null if it fails to read in any variable or keyword
 	public Token tryTokenizeVariableOrKeyword() {
-		skipWhitespace();
+		
 		String name = "";
 		
 		// idea: read one character at a time
@@ -94,7 +94,8 @@ public class Tokenizer {
 			} else {
 				return new VariableToken(name);
 			}
-		} else {
+		} 
+		else {
 			return null;
 		}
 	}
@@ -164,12 +165,16 @@ public class Tokenizer {
 // The method checks the tokens with operator and program structure symbols first then program key words last 	
 	public List<Token> tokenize() throws TokenizerException {
 		final List<Token> tokens = new ArrayList<Token>();
+		
 		Token token = tokenizeSingle();
-
 		while (token != null) {
 			tokens.add(token);
 			token = tokenizeSingle();
 		}
+		
+		
+
+		
 		return tokens;
 	}
 }

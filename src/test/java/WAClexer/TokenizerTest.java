@@ -1,7 +1,7 @@
 package WAClexer;
 
 import java.util.List;
-
+import java.util.ArrayList;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
@@ -12,10 +12,15 @@ import org.junit.Test;
 public class TokenizerTest {
 	// This method starts the procces of checking the input for tokens
     public void assertTokenizes(final String input, final Token[] expected) throws TokenizerException {
-        final Tokenizer tokenizer = new Tokenizer(input);
-        final List<Token> received = tokenizer.tokenize();
+         Tokenizer tokenizer = new Tokenizer(input);
+         List<Token> received = tokenizer.tokenize();
         assertArrayEquals(expected,received.toArray(new Token[received.size()]));     
         }
+    public void assertSingleTokenizes(final String input, final Token[] expected) throws TokenizerException {
+        Tokenizer tokenizer = new Tokenizer(input);
+        List<Token> received = tokenizer.tokenize();
+        assertEquals(0,input.compareTo(received.get(0).toString()));
+       }
 	
 	//annotation
 	@Test
@@ -74,35 +79,28 @@ public class TokenizerTest {
 	}
 	@Test
 	public void testWhileByItself() throws TokenizerException {
-		assertTokenizes("while", new Token[]{ new WhileToken });
+
+		assertSingleTokenizes("while", new Token[]{ new WhileToken() });
 	}
 	@Test
 	public void testBreakByItself() throws TokenizerException {
-		assertTokenizes("break", new Token[]{ new BreakToken });
+		assertSingleTokenizes("break", new Token[]{ new BreakToken() });
 	}
 	@Test
 	public void testIfByItself() throws TokenizerException {
-		assertTokenizes("if", new Token[]{ new IfToken });
+		assertSingleTokenizes("if", new Token[]{ new IfToken() });
 	}
 	@Test
 	public void testElseByItself() throws TokenizerException {
-		assertTokenizes("else", new Token[]{ new ElseToken });
+		assertSingleTokenizes("else", new Token[]{ new ElseToken() });
 	}
 	@Test
 	public void testReturnByItself() throws TokenizerException {
-		assertTokenizes("return", new Token[]{ new ReturnToken });
+		assertSingleTokenizes("return", new Token[]{ new ReturnToken() });
 	}
 	@Test
 	public void testLeftCurlyByItself() throws TokenizerException {
-		assertTokenizes("{", new Token[]{ new leftCurlyToken });
-	}
-	/* @Test
-	public void testSingleDigitInteger() {
-		assertTokenizes("1", new Token[]{ new IntegerToken(1) });
+		assertSingleTokenizes("{", new Token[]{ new leftCurlyToken() });
 	}
 	
-	@Test
-	public void testMultiDigitInteger() {
-		assertTokenizes("123", new Token[]{ new IntegerToken(123) });
-	} */
 }
