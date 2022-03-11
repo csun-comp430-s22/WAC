@@ -1,12 +1,12 @@
 package WAClexer;
 
 public class EqualToken implements Token {
-	public boolean eqauls(final Object other) {
+	public boolean equals(final Object other) {
 		return other instanceof EqualToken;
 	}
 	
 	public int hashCode() {
-		return 7;
+		return 8;
 	}
 	
 	public String toString() {

@@ -1,15 +1,16 @@
 package WAClexer;
 
-public class PlusToken implements Token {
+public class NewToken implements Token {
 	public boolean equals(final Object other) {
-		return other instanceof PlusToken;
+		return other instanceof NewToken;
 	}
 	
 	public int hashCode() {
-		return 4;
+		return 13;
 	}
 	
 	public String toString() {
-		return "+";
+		return "new";
 	}
 }
+

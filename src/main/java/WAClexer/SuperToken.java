@@ -1,12 +1,12 @@
 package WAClexer;
 
 public class SuperToken implements Token {
-	public boolean eqauls(final Object other) {
+	public boolean equals(final Object other) {
 		return other instanceof SuperToken;
 	}
 	
 	public int hashCode() {
-		return 8;
+		return 9;
 	}
 	
 	public String toString() {

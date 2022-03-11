@@ -1,15 +1,16 @@
 package WAClexer;
 
-public class PlusToken implements Token {
+public class SemicolToken implements Token {
 	public boolean equals(final Object other) {
-		return other instanceof PlusToken;
+		return other instanceof SemicolToken;
 	}
 	
 	public int hashCode() {
-		return 4;
+		return 12;
 	}
 	
 	public String toString() {
-		return "+";
+		return ";";
 	}
 }
+
