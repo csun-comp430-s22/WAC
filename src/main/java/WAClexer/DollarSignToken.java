@@ -1,15 +1,15 @@
 package WAClexer;
 
-public class ReturnToken implements Token {
+public class DollarSignToken implements Token{
 	public boolean equals(final Object other) {
-		return other instanceof ReturnToken;
+		return other instanceof DollarSignToken;
 	}
 	
 	public int hashCode() {
-		return 23;
+		return 18;
 	}
 	
 	public String toString() {
-		return "return";
+		return "$";
 	}
 }

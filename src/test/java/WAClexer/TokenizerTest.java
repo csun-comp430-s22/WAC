@@ -21,6 +21,12 @@ public class TokenizerTest {
         List<Token> received = tokenizer.tokenize();
         assertEquals(0,input.compareTo(received.get(0).toString()));
        }
+    public void assertTokensWithStringsTokenizes(final String input, final Token[] expected) throws TokenizerException {
+        Tokenizer tokenizer = new Tokenizer(input);
+        List<Token> received = tokenizer.tokenize();
+        assertTrue(expected[0] instanceof leftCurlyToken);
+       }
+    
 	
 	//annotation
 	@Test
@@ -80,27 +86,31 @@ public class TokenizerTest {
 	@Test
 	public void testWhileByItself() throws TokenizerException {
 
-		assertSingleTokenizes("while", new Token[]{ new WhileToken() });
+		assertTokenizes("while", new Token[]{ new WhileToken() });
 	}
 	@Test
 	public void testBreakByItself() throws TokenizerException {
-		assertSingleTokenizes("break", new Token[]{ new BreakToken() });
+		assertTokenizes("break", new Token[]{ new BreakToken() });
 	}
 	@Test
 	public void testIfByItself() throws TokenizerException {
-		assertSingleTokenizes("if", new Token[]{ new IfToken() });
+		assertTokenizes("if", new Token[]{ new IfToken() });
 	}
 	@Test
 	public void testElseByItself() throws TokenizerException {
-		assertSingleTokenizes("else", new Token[]{ new ElseToken() });
+		assertTokenizes("else", new Token[]{ new ElseToken() });
 	}
 	@Test
 	public void testReturnByItself() throws TokenizerException {
-		assertSingleTokenizes("return", new Token[]{ new ReturnToken() });
+		assertTokenizes("return", new Token[]{ new ReturnToken() });
 	}
 	@Test
 	public void testLeftCurlyByItself() throws TokenizerException {
-		assertSingleTokenizes("{", new Token[]{ new leftCurlyToken() });
+		assertTokenizes("{", new Token[]{ new leftCurlyToken() });
+	}
+     @Test
+	public void testTokensWithString() throws TokenizerException {
+    	 assertTokenizes("{", new Token[]{ new leftCurlyToken() });
 	}
 	
 }

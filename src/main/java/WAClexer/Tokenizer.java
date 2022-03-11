@@ -152,7 +152,10 @@ public class Tokenizer {
 				} else if (input.startsWith("}", offset)) {
 					offset += 1;
 					retval = new rightCurlyToken();
-				} else {
+				}else if (input.startsWith("$", offset)) {
+					offset += 1;
+					retval = new DollarSignToken();}
+				else {
 					throw new TokenizerException();
 				}
 			}
