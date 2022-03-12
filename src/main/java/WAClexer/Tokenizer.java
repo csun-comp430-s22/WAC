@@ -135,7 +135,7 @@ public class Tokenizer {
 			retval = new equalEqualToken();
 		} else if (input.startsWith("{", offset)) {
 			offset += 1;
-			retval = new LeftBracketToken();
+			retval = new leftCurlyToken();
 		} else if (input.startsWith("(", offset)) {
 			offset += 1;
 			retval = new OpenparToken();
