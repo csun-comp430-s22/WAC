@@ -10,119 +10,165 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 public class TokenizerTest {
-    public void assertTokenizes(final String input,
-                                final Token[] expected) throws TokenizerException {
-        final Tokenizer tokenizer = new Tokenizer(input);
-        final List<Token> received = tokenizer.tokenize();
-        assertArrayEquals(expected,
-                          received.toArray(new Token[received.size()]));
-    }
-	
-	//annotation
+	public void assertTokenizes(final String input,
+			final Token[] expected) throws TokenizerException {
+		final Tokenizer tokenizer = new Tokenizer(input);
+		final List<Token> received = tokenizer.tokenize();
+		assertArrayEquals(expected,
+				received.toArray(new Token[received.size()]));
+	}
+
+	// annotation
 	@Test
 	public void testEmptyString() throws TokenizerException {
-		//check that tokenizing empty string works
+		// check that tokenizing empty string works
 		assertTokenizes("", new Token[0]);
 
- 		//Tokenizer tokenizer = new Tokenizer("");
-		//List<Token> tokens = tokenizer.tokenize();
-		//assertEquals(0, tokens.size());
+		// Tokenizer tokenizer = new Tokenizer("");
+		// List<Token> tokens = tokenizer.tokenize();
+		// assertEquals(0, tokens.size());
 	}
-	
+
 	@Test
-	public void testOnlyWhitespace() throws TokenizerException{
+	public void testOnlyWhitespace() throws TokenizerException {
 		assertTokenizes("    ", new Token[0]);
-		
-		//Tokenizer tokenizer = new Tokenizer("    ");
-		//List<Token> tokens = tokenizer.tokenize();
-		//assertEquals(0, tokens.size());
+
+		// Tokenizer tokenizer = new Tokenizer(" ");
+		// List<Token> tokens = tokenizer.tokenize();
+		// assertEquals(0, tokens.size());
 	}
-	
-	//start of Sarah's reserved words/symbols testing
-	
-    @Test
-    public void testIntByItself() throws TokenizerException {
-        assertTokenizes("Int",
-                        new Token[] { new IntToken() });
-						
-/* 		Tokenizer tokenizer = new Tokenizer("Int");
-		List<Token> tokens = tokenizer.tokenize();
-		assertEquals(1, tokens.size());
-		Token intToken = tokens.get(0);
-		assertTrue(intToken instanceof IntToken); */
-    }
-	
+
+	// start of Sarah's reserved words/symbols testing
+
+	@Test
+	public void testIntByItself() throws TokenizerException {
+		assertTokenizes("Int",
+				new Token[] { new IntToken() });
+
+		/*
+		 * Tokenizer tokenizer = new Tokenizer("Int");
+		 * List<Token> tokens = tokenizer.tokenize();
+		 * assertEquals(1, tokens.size());
+		 * Token intToken = tokens.get(0);
+		 * assertTrue(intToken instanceof IntToken);
+		 */
+	}
+
 	@Test
 	public void testIntSpaceIntAreIntTokens() throws TokenizerException {
-		assertTokenizes("Int Int", new Token[]{ new IntToken(), new IntToken() });
+		assertTokenizes("Int Int", new Token[] { new IntToken(), new IntToken() });
 	}
-	
+
 	@Test
 	public void testBooleanByItself() throws TokenizerException {
 		assertTokenizes("Boolean", new Token[] { new BooleanToken() });
 	}
-	
+
 	@Test
 	public void testStringByItself() throws TokenizerException {
 		assertTokenizes("String", new Token[] { new StringToken() });
 	}
-	
+
 	@Test
 	public void testPlusByItself() throws TokenizerException {
 		assertTokenizes("+", new Token[] { new PlusToken() });
 	}
-	
+
 	@Test
 	public void testMinusByItself() throws TokenizerException {
 		assertTokenizes("-", new Token[] { new MinusToken() });
 	}
-	
+
 	@Test
 	public void testMultiplicationByItself() throws TokenizerException {
 		assertTokenizes("*", new Token[] { new MultiplicationToken() });
 	}
-	
+
 	@Test
 	public void testDivisionByItself() throws TokenizerException {
 		assertTokenizes("/", new Token[] { new DivisionToken() });
 	}
-	
+
 	@Test
 	public void testEqualByItself() throws TokenizerException {
 		assertTokenizes("=", new Token[] { new EqualToken() });
 	}
-	
+
 	@Test
 	public void testSuperByItself() throws TokenizerException {
 		assertTokenizes("super", new Token[] { new SuperToken() });
 	}
-	
-	//start of testing variables
-	
+
+	// Start of Ruben's token tests
+
+	@Test
+	public void testRightCurlyByItself() throws TokenizerException {
+		assertTokenizes("}", new Token[] { new rightCurlyToken() });
+	}
+
+	@Test
+	public void testtrueByItself() throws TokenizerException {
+		assertTokenizes("true", new Token[] { new trueToken() });
+	}
+
+	@Test
+	public void testFalseByItself() throws TokenizerException {
+		assertTokenizes("false", new Token[] { new falseToken() });
+	}
+
+	@Test
+	public void testLessThanByItself() throws TokenizerException {
+		assertTokenizes("<", new Token[] { new lessThanToken() });
+	}
+
+	@Test
+	public void testGreaterThanByItself() throws TokenizerException {
+		assertTokenizes(">", new Token[] { new greaterThanToken() });
+	}
+
+	// @Test
+	// public void testEqualEqualByItself() throws TokenizerException {
+	// assertTokenizes("==", new Token[] { new equalEqualToken() });
+	// }
+
+	@Test
+	public void testNotEqualByItself() throws TokenizerException {
+		assertTokenizes("!=", new Token[] { new notEqualToken() });
+	}
+
+	// @Test I guess not was deleted by looking at the tokens doc
+	// public void testNotByItself() throws TokenizerException {
+	// assertTokenizes("!", new Token[] { new notToken() });
+	// }
+
+	// End of Ruben's test tokens
+
+	// start of testing variables
+
 	@Test
 	public void testVariable() throws TokenizerException {
 		assertTokenizes("foo", new Token[] { new VariableToken("foo") });
 	}
-	
+
 	@Test
 	public void testIntIntIsVariable() throws TokenizerException {
-		assertTokenizes("IntInt", new Token[]{ new VariableToken("IntInt") });
+		assertTokenizes("IntInt", new Token[] { new VariableToken("IntInt") });
 	}
-	
-	//start of testing integers
-	
+
+	// start of testing integers
+
 	@Test
 	public void testSingleDigitInteger() throws TokenizerException {
-		assertTokenizes("1", new Token[]{ new IntegerToken(1) });
+		assertTokenizes("1", new Token[] { new IntegerToken(1) });
 	}
-	
+
 	@Test
 	public void testMultiDigitInteger() throws TokenizerException {
-		assertTokenizes("123", new Token[]{ new IntegerToken(123) });
+		assertTokenizes("123", new Token[] { new IntegerToken(123) });
 	}
-	
-	//start of testing invalid input
-	
+
+	// start of testing invalid input
+
 	@Test(expected = TokenizerException.class)
 	public void testInvalid() throws TokenizerException {
 		assertTokenizes("$", null);

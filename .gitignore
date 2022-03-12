@@ -2,3 +2,4 @@
 target/
 *.iml
 *.xml
+.vscode/settings.json
