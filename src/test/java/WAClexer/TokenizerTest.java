@@ -126,10 +126,10 @@ public class TokenizerTest {
 		assertTokenizes(">", new Token[] { new greaterThanToken() });
 	}
 
-	// @Test
-	// public void testEqualEqualByItself() throws TokenizerException {
-	// assertTokenizes("==", new Token[] { new equalEqualToken() });
-	// }
+	@Test
+	public void testEqualEqualByItself() throws TokenizerException {
+		assertTokenizes("==", new Token[] { new equalEqualToken() });
+	}
 
 	@Test
 	public void testNotEqualByItself() throws TokenizerException {

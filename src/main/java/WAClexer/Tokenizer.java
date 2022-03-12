@@ -123,9 +123,9 @@ public class Tokenizer {
 		} else if (input.startsWith("/", offset)) {
 			offset += 1;
 			retval = new DivisionToken();
-		} else if (input.startsWith("=", offset)) {
-			offset += 1;
-			retval = new EqualToken();
+		} else if (input.startsWith("==", offset)) {
+			offset += 2;
+			retval = new equalEqualToken();
 		} else if (input.startsWith("{", offset)) {
 			offset += 1;
 			retval = new LeftBracketToken();
@@ -138,9 +138,9 @@ public class Tokenizer {
 		} else if (input.startsWith(";", offset)) {
 			offset += 1;
 			retval = new SemicolToken();
-		} else if (input.startsWith("==", offset)) {
-			offset += 2;
-			retval = new equalEqualToken();
+		} else if (input.startsWith("=", offset)) {
+			offset += 1;
+			retval = new EqualToken();
 		} else if (input.startsWith(">", offset)) {
 			offset += 1;
 			retval = new greaterThanToken();
