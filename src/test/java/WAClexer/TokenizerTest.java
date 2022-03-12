@@ -10,13 +10,13 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 public class TokenizerTest {
-	public void assertTokenizes(final String input,
-			final Token[] expected) throws TokenizerException {
-		final Tokenizer tokenizer = new Tokenizer(input);
-		final List<Token> received = tokenizer.tokenize();
-		assertArrayEquals(expected,
-				received.toArray(new Token[received.size()]));
-	}
+	// This method starts the procces of checking the input for tokens
+    public void assertTokenizes(final String input, final Token[] expected) throws TokenizerException {
+         Tokenizer tokenizer = new Tokenizer(input);
+         List<Token> received = tokenizer.tokenize();
+        assertArrayEquals(expected,received.toArray(new Token[received.size()]));     
+        }
+   
 
 	// annotation
 	@Test
@@ -37,22 +37,17 @@ public class TokenizerTest {
 		// List<Token> tokens = tokenizer.tokenize();
 		// assertEquals(0, tokens.size());
 	}
-
-	// start of Sarah's reserved words/symbols testing
-
-	@Test
-	public void testIntByItself() throws TokenizerException {
-		assertTokenizes("Int",
-				new Token[] { new IntToken() });
-
-		/*
-		 * Tokenizer tokenizer = new Tokenizer("Int");
-		 * List<Token> tokens = tokenizer.tokenize();
-		 * assertEquals(1, tokens.size());
-		 * Token intToken = tokens.get(0);
-		 * assertTrue(intToken instanceof IntToken);
-		 */
-	}
+	
+    @Test
+    public void testIntByItself() throws TokenizerException {
+        assertTokenizes("Int", new Token[] { new IntToken() });
+						
+/* 		Tokenizer tokenizer = new Tokenizer("Int");
+		List<Token> tokens = tokenizer.tokenize();
+		assertEquals(1, tokens.size());
+		Token intToken = tokens.get(0);
+		assertTrue(intToken instanceof IntToken); */
+    }
 
 	@Test
 	public void testIntSpaceIntAreIntTokens() throws TokenizerException {
@@ -202,6 +197,32 @@ public class TokenizerTest {
 	@Test
 	public void testExtendsByItself() throws TokenizerException {
 		assertTokenizes("extends", new Token[] { new ExtendsToken() });
+	}
+  
+  @Test
+	public void testWhileByItself() throws TokenizerException {
+    assertTokenizes("while", new Token[]{ new WhileToken() });
+	}
+  
+	@Test
+	public void testBreakByItself() throws TokenizerException {
+		assertTokenizes("break", new Token[]{ new BreakToken() });
+	}
+	@Test
+	public void testIfByItself() throws TokenizerException {
+		assertTokenizes("if", new Token[]{ new IfToken() });
+	}
+	@Test
+	public void testElseByItself() throws TokenizerException {
+		assertTokenizes("else", new Token[]{ new ElseToken() });
+	}
+	@Test
+	public void testReturnByItself() throws TokenizerException {
+		assertTokenizes("return", new Token[]{ new ReturnToken() });
+	}
+	@Test
+	public void testLeftCurlyByItself() throws TokenizerException {
+		assertTokenizes("{", new Token[]{ new leftCurlyToken() });
 	}
 	
 	//start of testing integers
