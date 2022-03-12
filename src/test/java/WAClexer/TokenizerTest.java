@@ -38,6 +38,8 @@ public class TokenizerTest {
 		//assertEquals(0, tokens.size());
 	}
 	
+	//start of Sarah's reserved words/symbols testing
+	
     @Test
     public void testIntByItself() throws TokenizerException {
         assertTokenizes("Int",
@@ -61,9 +63,41 @@ public class TokenizerTest {
 	}
 	
 	@Test
+	public void testStringByItself() throws TokenizerException {
+		assertTokenizes("String", new Token[] { new StringToken() });
+	}
+	
+	@Test
 	public void testPlusByItself() throws TokenizerException {
 		assertTokenizes("+", new Token[] { new PlusToken() });
 	}
+	
+	@Test
+	public void testMinusByItself() throws TokenizerException {
+		assertTokenizes("-", new Token[] { new MinusToken() });
+	}
+	
+	@Test
+	public void testMultiplicationByItself() throws TokenizerException {
+		assertTokenizes("*", new Token[] { new MultiplicationToken() });
+	}
+	
+	@Test
+	public void testDivisionByItself() throws TokenizerException {
+		assertTokenizes("/", new Token[] { new DivisionToken() });
+	}
+	
+	@Test
+	public void testEqualByItself() throws TokenizerException {
+		assertTokenizes("=", new Token[] { new EqualToken() });
+	}
+	
+	@Test
+	public void testSuperByItself() throws TokenizerException {
+		assertTokenizes("super", new Token[] { new SuperToken() });
+	}
+	
+	//start of testing variables
 	
 	@Test
 	public void testVariable() throws TokenizerException {
@@ -122,14 +156,23 @@ public class TokenizerTest {
 	public void testExtendsByItself() throws TokenizerException {
 		assertTokenizes("extends", new Token[] { new ExtendsToken() });
 	}
-
-	/* @Test
-	public void testSingleDigitInteger() {
+	
+	//start of testing integers
+	
+	@Test
+	public void testSingleDigitInteger() throws TokenizerException {
 		assertTokenizes("1", new Token[]{ new IntegerToken(1) });
 	}
 	
 	@Test
-	public void testMultiDigitInteger() {
+	public void testMultiDigitInteger() throws TokenizerException {
 		assertTokenizes("123", new Token[]{ new IntegerToken(123) });
-	} */
+	}
+	
+	//start of testing invalid input
+	
+	@Test(expected = TokenizerException.class)
+	public void testInvalid() throws TokenizerException {
+		assertTokenizes("$", null);
+	}
 }
