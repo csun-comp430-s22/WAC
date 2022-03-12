@@ -1,12 +1,12 @@
 package WAClexer;
 
 public class IntToken implements Token {
-	public boolean eqauls(final Object other) {
+	public boolean equals(final Object other) {
 		return other instanceof IntToken;
 	}
 	
 	public int hashCode() {
-		return 0;
+		return 1;
 	}
 	
 	public String toString() {

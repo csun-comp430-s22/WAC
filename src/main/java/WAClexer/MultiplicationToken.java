@@ -1,12 +1,12 @@
 package WAClexer;
 
 public class MultiplicationToken implements Token {
-	public boolean eqauls(final Object other) {
+	public boolean equals(final Object other) {
 		return other instanceof MultiplicationToken;
 	}
 	
 	public int hashCode() {
-		return 5;
+		return 6;
 	}
 	
 	public String toString() {
