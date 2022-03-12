@@ -16,18 +16,7 @@ public class TokenizerTest {
          List<Token> received = tokenizer.tokenize();
         assertArrayEquals(expected,received.toArray(new Token[received.size()]));     
         }
-    public void assertSingleTokenizes(final String input, final Token[] expected) throws TokenizerException {
-        Tokenizer tokenizer = new Tokenizer(input);
-        List<Token> received = tokenizer.tokenize();
-        assertEquals(0,input.compareTo(received.get(0).toString()));
-       }
-    public void assertTokensWithStringsTokenizes(final String input, final Token[] expected) throws TokenizerException {
-        Tokenizer tokenizer = new Tokenizer(input);
-        List<Token> received = tokenizer.tokenize();
-        assertTrue(expected[0] instanceof leftCurlyToken);
-       }
-    
-	
+   
 	//annotation
 	@Test
 	public void testEmptyString() throws TokenizerException {
@@ -108,9 +97,6 @@ public class TokenizerTest {
 	public void testLeftCurlyByItself() throws TokenizerException {
 		assertTokenizes("{", new Token[]{ new leftCurlyToken() });
 	}
-     @Test
-	public void testTokensWithString() throws TokenizerException {
-    	 assertTokenizes("{", new Token[]{ new leftCurlyToken() });
-	}
 	
+    
 }

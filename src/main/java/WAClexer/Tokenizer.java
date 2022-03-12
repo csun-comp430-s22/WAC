@@ -35,7 +35,7 @@ public class Tokenizer {
 	
 	//return null if it fails to read in any variable or keyword
 	public Token tryTokenizeVariableOrKeyword() {
-		
+		skipWhitespace();
 		String name = "";
 		
 		// idea: read one character at a time
@@ -122,6 +122,9 @@ public class Tokenizer {
 				} else if (input.startsWith("/", offset)) {
 					offset += 1;
 					retval = new DivisionToken();
+				} else if (input.startsWith("==", offset)) {
+					offset += 2;
+					retval = new equalEqualToken();
 				} else if (input.startsWith("=", offset)) {
 					offset += 1;
 					retval = new EqualToken();
@@ -137,9 +140,6 @@ public class Tokenizer {
 				} else if (input.startsWith(";", offset)) {
 					offset += 1;
 					retval = new SemicolToken();
-				} else if (input.startsWith("==", offset)) {
-					offset += 2;
-					retval = new equalEqualToken();
 				} else if (input.startsWith(">", offset)) {
 					offset += 1;
 					retval = new greaterThanToken();
@@ -152,9 +152,7 @@ public class Tokenizer {
 				} else if (input.startsWith("}", offset)) {
 					offset += 1;
 					retval = new rightCurlyToken();
-				}else if (input.startsWith("$", offset)) {
-					offset += 1;
-					retval = new DollarSignToken();}
+				}
 				else {
 					throw new TokenizerException();
 				}
