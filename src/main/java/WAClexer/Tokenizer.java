@@ -154,6 +154,29 @@ public class Tokenizer {
 		}
 		return retval;
 	}
+	
+	public Token tryTokenizeStr() {
+		skipWhitespace();
+		Token retval = null;
+		String value = "";
+		
+		if (offset < input.length() && (input.startsWith("\"", offset))) {
+			value += input.charAt(offset);
+			offset++;
+			while (Character.isDefined(input.charAt(offset))) {
+				if (input.startsWith("\"", offset)) {
+					value += input.charAt(offset);
+					offset ++;
+					retval = new strToken(value);
+					return retval;
+				} else {
+					value += input.charAt(offset);
+					offset++;
+				}
+			}
+		}
+		return retval;
+	}
 
 	// returns null if there are no more tokens left
 	public Token tokenizeSingle() throws TokenizerException {
@@ -162,7 +185,8 @@ public class Tokenizer {
 		if (offset < input.length()&&
 			(retval = tryTokenizeVariableOrKeyword()) == null &&
 			(retval = tryTokenizeInteger()) == null &&
-			(retval = tryTokenizeSymbol()) == null) {
+			(retval = tryTokenizeSymbol()) == null &&
+			(retval = tryTokenizeStr()) == null) {
 			throw new TokenizerException();
 		}
 		
