@@ -12,8 +12,8 @@ import org.junit.Test;
 public class TokenizerTest {
 	// This method starts the procces of checking the input for tokens
     public void assertTokenizes(final String input, final Token[] expected) throws TokenizerException {
-         Tokenizer tokenizer = new Tokenizer(input);
-         List<Token> received = tokenizer.tokenize();
+        Tokenizer tokenizer = new Tokenizer(input);
+        List<Token> received = tokenizer.tokenize();
         assertArrayEquals(expected,received.toArray(new Token[received.size()]));     
         }
    
@@ -242,6 +242,16 @@ public class TokenizerTest {
 	@Test(expected = TokenizerException.class)
 	public void testInvalid() throws TokenizerException {
 		assertTokenizes("$", null);
+	}
+	
+	@Test(expected = TokenizerException.class)
+	public void testInvalidStr() throws TokenizerException {
+		assertTokenizes("\"a", null);
+	}
+	
+	@Test(expected = org.junit.internal.ArrayComparisonFailure.class)
+	public void testInvalidInteger() throws TokenizerException {
+		assertTokenizes("12a", new Token[] { new IntegerToken(12) });
 	}
 	
 	//start of testing strings
