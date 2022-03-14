@@ -172,7 +172,7 @@ public class Tokenizer {
 		  if (offset < input.length() && (input.startsWith("\"", offset))) {
 			  value += input.charAt(offset);
 			  offset++;
-			  while (Character.isDefined(input.charAt(offset))) {
+			  while (offset < input.length() && Character.isDefined(input.charAt(offset))) {
 				  if (input.startsWith("\"", offset)) {
 					  value += input.charAt(offset);
 					  offset ++;

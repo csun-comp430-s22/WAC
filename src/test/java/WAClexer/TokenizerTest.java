@@ -250,4 +250,9 @@ public class TokenizerTest {
 	public void testStrByItself() throws TokenizerException {
 		assertTokenizes("\"hi\"", new Token[]{ new strToken("\"hi\"") });
 	}
+	
+	@Test(expected = TokenizerException.class)
+	public void testInvalidStr() throws TokenizerException {
+		assertTokenizes("\"a", null);
+	}
 }
