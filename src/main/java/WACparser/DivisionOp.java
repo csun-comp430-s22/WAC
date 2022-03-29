@@ -10,6 +10,6 @@ public class DivisionOp implements Op {
 	}
 	
 	public String toString() {
-		return "DivisionOp"
+		return "DivisionOp";
 	}
 }
