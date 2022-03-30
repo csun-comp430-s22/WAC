@@ -1,7 +1,7 @@
 # WAC
 A compiler from a high-level Java like language to C, written in Java.
 
-Parser is currently up to date with end of 3/9 video from Kyle.
+Parser is currently up to date with end of 3/14 video from Kyle.
 
 Tokens:
 (and their respective hash codes)
