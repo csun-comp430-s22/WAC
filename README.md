@@ -34,3 +34,15 @@ Tokens:
 29. '>'
 30. '=='
 31. '!='
+
+AST nodes: (I think that's what they're called)
+(and their respective hash codes)
+
+0. 'PlusOp'
+1. 'MinusOp'
+2. 'LessThanOp'
+3. 'DivisionOp'
+4. 'EqualEqualsOp'
+5. 'GreaterThanOp'
+6. 'MultiplicationOp'
+7. 'NotEqualsOp'
