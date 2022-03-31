@@ -1,15 +1,15 @@
 package WAClexer;
 
-public class ReturnToken implements Token {
+public class PeriodToken implements Token {
 	public boolean equals(final Object other) {
-		return other instanceof ReturnToken;
+		return other instanceof PeriodToken;
 	}
 	
 	public int hashCode() {
-		return 23;
+		return 32;
 	}
 	
 	public String toString() {
-		return "return";
+		return ".";
 	}
 }

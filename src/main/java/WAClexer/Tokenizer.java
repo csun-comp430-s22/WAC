@@ -11,13 +11,15 @@ public class Tokenizer {
 		this.input = input;
 		offset = 0;
 	}
-
+	
+	
+// Method to get rid of white space in front of token
 	public void skipWhitespace() {
-		while (offset < input.length() &&
-				Character.isWhitespace(input.charAt(offset))) {
+		while (offset < input.length() && Character.isWhitespace(input.charAt(offset))) {
 			offset++;
 		}
 	}
+
 
 	// returns null if it wasn't an integer token
 	public IntegerToken tryTokenizeInteger() {
@@ -52,13 +54,14 @@ public class Tokenizer {
 		// First character of the variable: letter
 		// Every subsequent character: letter or a digit
 
+
 		if (offset < input.length() &&
-				Character.isLetter(input.charAt(offset))) {
+			Character.isLetter(input.charAt(offset))) {
 			name += input.charAt(offset);
 			offset++;
 
 			while (offset < input.length() &&
-					Character.isLetterOrDigit(input.charAt(offset))) {
+				Character.isLetterOrDigit(input.charAt(offset))) {
 				name += input.charAt(offset);
 				offset++;
 			}
@@ -102,11 +105,15 @@ public class Tokenizer {
 			} else {
 				return new VariableToken(name);
 			}
-		} else {
+		} 
+		else {
 			return null;
 		}
 	}
-
+  
+  // Returns a list of tokens and checks if the tokens are exclusively operators , program structure symbols or program key words but token be in more than 1 of the categorizes .
+  // The method checks the tokens with operator and program structure symbols first then program key words last 	
+	
 	// returns null if it couldn't read in a symbol
 	public Token tryTokenizeSymbol() {
 		skipWhitespace();
@@ -128,7 +135,7 @@ public class Tokenizer {
 			retval = new equalEqualToken();
 		} else if (input.startsWith("{", offset)) {
 			offset += 1;
-			retval = new LeftBracketToken();
+			retval = new leftCurlyToken();
 		} else if (input.startsWith("(", offset)) {
 			offset += 1;
 			retval = new OpenparToken();
@@ -153,32 +160,36 @@ public class Tokenizer {
 		} else if (input.startsWith("}", offset)) {
 			offset += 1;
 			retval = new rightCurlyToken();
+		} else if (input.startsWith(".", offset)) {
+			offset += 1;
+			retval = new PeriodToken();
 		}
 		return retval;
 	}
 	
-	public Token tryTokenizeStr() {
-		skipWhitespace();
-		Token retval = null;
-		String value = "";
+  	public Token tryTokenizeStr() {
+		  skipWhitespace();
+		  Token retval = null;
+		  String value = "";
 		
-		if (offset < input.length() && (input.startsWith("\"", offset))) {
-			value += input.charAt(offset);
-			offset++;
-			while (Character.isDefined(input.charAt(offset))) {
-				if (input.startsWith("\"", offset)) {
-					value += input.charAt(offset);
-					offset ++;
-					retval = new strToken(value);
-					return retval;
-				} else {
-					value += input.charAt(offset);
-					offset++;
+		  if (offset < input.length() && (input.startsWith("\"", offset))) {
+			  value += input.charAt(offset);
+			  offset++;
+			  while (offset < input.length() && Character.isDefined(input.charAt(offset))) {
+				  if (input.startsWith("\"", offset)) {
+					  value += input.charAt(offset);
+					  offset ++;
+					  retval = new strToken(value);
+					  return retval;
+				  } else {
+					  value += input.charAt(offset);
+					  offset++;
 				}
 			}
 		}
 		return retval;
 	}
+	
 
 	// returns null if there are no more tokens left
 	public Token tokenizeSingle() throws TokenizerException {
@@ -213,8 +224,8 @@ public class Tokenizer {
 
 	public List<Token> tokenize() throws TokenizerException {
 		final List<Token> tokens = new ArrayList<Token>();
+		
 		Token token = tokenizeSingle();
-
 		while (token != null) {
 			tokens.add(token);
 			token = tokenizeSingle();
