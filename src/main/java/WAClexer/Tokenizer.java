@@ -160,6 +160,9 @@ public class Tokenizer {
 		} else if (input.startsWith("}", offset)) {
 			offset += 1;
 			retval = new rightCurlyToken();
+		} else if (input.startsWith(".", offset)) {
+			offset += 1;
+			retval = new PeriodToken();
 		}
 		return retval;
 	}
