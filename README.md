@@ -34,6 +34,7 @@ Tokens:
 29. '>'
 30. '=='
 31. '!='
+32. '.'
 
 Parser Stuff
 (and their respective hash codes)
