@@ -180,6 +180,12 @@ public class TokenizerTest {
 	public void testSemicolByItself() throws TokenizerException {
 		assertTokenizes(";", new Token[] { new SemicolToken() });
 	}
+	
+	// '.' token test
+	@Test
+	public void testPeriodByItself() throws TokenizerException {
+		assertTokenizes(".", new Token[] { new PeriodToken() });
+	}
 
 	// 'new' token test
 	@Test
