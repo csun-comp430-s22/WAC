@@ -35,7 +35,7 @@ Tokens:
 30. '=='
 31. '!='
 
-AST nodes: (I think that's what they're called)
+Parser Stuff
 (and their respective hash codes)
 
 0. 'PlusOp'
