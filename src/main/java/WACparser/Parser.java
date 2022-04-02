@@ -28,6 +28,15 @@ public class Parser {
 		}
 	}
 	
+	public ParseResult<Vardec> parseVardec(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken)) {
+			final ParseResult<Type> type = parseType(position + 1);	//dependent on Type interface and parseType method from Ruben
+			assertTokenHereIs(type.position, VariableToken());
+			final ParseResult<Exp> varName = parsePrimaryExp(position + 1); // dependent on parsePrimaryExp method from Ruben
+		}
+	}
+	
 	/* // primary_exp ::= x | i | ‘(‘ exp ‘)’
 	public ParseResult<Exp> parsePrimaryExp(final int position) throws ParseException {
 		final Token token = getToken(position);
