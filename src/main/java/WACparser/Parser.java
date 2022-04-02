@@ -31,10 +31,26 @@ public class Parser {
 	public ParseResult<Vardec> parseVardec(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken)) {
-			final ParseResult<Type> type = parseType(position + 1);	//dependent on Type interface and parseType method from Ruben
+			final ParseResult<Type> type = parseType(position);	//dependent on Type interface and parseType method from Ruben
 			assertTokenHereIs(type.position, VariableToken());
-			final ParseResult<Exp> varName = parsePrimaryExp(position + 1); // dependent on parsePrimaryExp method from Ruben
+			final ParseResult<Exp> varName = parsePrimaryExp(type.position); // dependent on parsePrimaryExp method from Ruben
+			return new ParseResult<Vardec>(new VariableDeclaration(type.result, varName.result), varName.position);
+		} else {
+			throw new ParseException("Expected a variable declaration but received: " +  token);
 		}
+	}
+	
+	public ParseResult<Classdef> parseClassdef(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if  (token instanceof ClassToken) {
+			final ParseResult<Exp> classname = parsePrimaryExp(position + 1);
+			token = getToken(classname.position);
+			if (token instanceof ExtendsToken) {
+				assertTokenHereIs(classname.position + 1, VariableToken());
+				final ParseResult<Exp> extendsClassname = parsePrimaryExp(classname.position + 1);
+			}
+		}
+		// left off here
 	}
 	
 	/* // primary_exp ::= x | i | ‘(‘ exp ‘)’
