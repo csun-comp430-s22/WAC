@@ -28,13 +28,29 @@ public class Parser {
 		}
 	}
 	
-	public ParseResult<Vardec> parseVardec(final int position) throws ParseException {
+	public ParseResult<Op> parseAdditiveOp(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if (token instanceof PlusToken) {
+			return new ParseResult<Op>(new PlusOp(), position + 1);
+		} else if (token instanceof MinusToken) {
+			return new ParseResult<Op>(new MinusOp(), position + 1);
+		} else {
+			throw new ParseException("expected + or -; received: " + token);
+		}
+	}
+	
+	//start of Sarah's methods
+	
+/* 	public ParseResult<Vardec> parseVardec(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken)) {
 			final ParseResult<Type> type = parseType(position);	//dependent on Type interface and parseType method from Ruben
 			assertTokenHereIs(type.position, VariableToken());
 			final ParseResult<Exp> varName = parsePrimaryExp(type.position); // dependent on parsePrimaryExp method from Ruben
-			return new ParseResult<Vardec>(new VariableDeclaration(type.result, varName.result), varName.position);
+			assertTokenHereIs(varName.position, EqualToken());
+			final ParseResult<Exp> value = parseExp(varName.position + 1);
+			asserTokenHereIs(value.position, SemicolToken());
+			return new ParseResult<Vardec>(new VariableDeclaration(type.result, varName.result, value.result), value.position + 1);
 		} else {
 			throw new ParseException("Expected a variable declaration but received: " +  token);
 		}
@@ -43,15 +59,26 @@ public class Parser {
 	public ParseResult<Classdef> parseClassdef(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if  (token instanceof ClassToken) {
-			final ParseResult<Exp> classname = parsePrimaryExp(position + 1);
+			final ParseResult<Exp> classname = parsePrimaryExp(position + 1);	//parse in classname
 			token = getToken(classname.position);
-			if (token instanceof ExtendsToken) {
+			position = position + 2;	//sets position to thing after classname
+			if (token instanceof ExtendsToken) {	//if the class extends another class
 				assertTokenHereIs(classname.position + 1, VariableToken());
-				final ParseResult<Exp> extendsClassname = parsePrimaryExp(classname.position + 1);
+				final ParseResult<Exp> extendsClassname = parsePrimaryExp(classname.position + 1);	//parse in name of class it's extending
+				token = getToken(extendsClassname.position);	//update the next token to be read
+				position = position + 2;	//position is now set the thing after the extends classname
+			}
+			//here need to parse in the 0 or more vardec = exp;
+			if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken)) {	//if we read in a type
+				assertTokenHereIs(position + 1, VariableToken());	//assert the next thing is a variable
+				assertTokenHereIs(position + 2, EqualToken());	//assert the next thing is assignment operator (ensures that this is a variable instantiation) we know we have at least one variable instantiation
+				final ParseResult<Vardec> vardec = parseVardec(position);	//calls parseVardec method to parse the "type var" section
+				
 			}
 		}
-		// left off here
-	}
+	} */
+	
+	//end of Sarah's methods
 	
 	/* // primary_exp ::= x | i | ‘(‘ exp ‘)’
 	public ParseResult<Exp> parsePrimaryExp(final int position) throws ParseException {
@@ -134,4 +161,17 @@ public class Parser {
 		}
 	}
 	 */
+	 
+	 public ParseResult parseSingle() throws ParseException {
+		 ParseResult retval;
+		 retval = parseAdditiveOp(0);
+		 return retval;
+	 }
+	 
+	 public List<ParseResult> parse() throws ParseException {
+		 final List<ParseResult> results = new ArrayList<ParseResult>();
+		 ParseResult<Op> result1 = parseSingle();
+		 results.add(result1);
+		 return results;
+	 }
 }

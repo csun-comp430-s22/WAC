@@ -1,12 +1,14 @@
-package WACparser;
+/* package WACparser;
 
 public class VariableDeclaration implements Vardec {
 	public final Type type;
 	public final Exp variable;
+	public final Exp value;
 	
-	public VariableDeclaration(final Type type, final Exp variable) {
+	public VariableDeclaration(final Type type, final Exp variable, final Exp value) {
 		this.type = type;
 		this.variable = variable;
+		this.value = value;
 	}
 	
 	public boolean equals(final Object other) {
@@ -24,4 +26,5 @@ public class VariableDeclaration implements Vardec {
 	
 	public String toString() {
 		return ("VariableDeclaration(" + type.toString() + ", " + variable.toString() + ")");
-}
+	}
+} */
