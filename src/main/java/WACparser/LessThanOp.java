@@ -1,15 +1,15 @@
 package WACparser;
 
-public class GreaterThanOp implements Op {
+public class LessThanOp implements Op {
 	public boolean equals(final Object other) {
-		return other instanceof GreaterThanOp;
+		return other instanceof LessThanOp;
 	}
 	
 	public int hashCode() {
-		return 28;
+		return 27;
 	}
 	
 	public String toString() {
-		return "GreaterThanOp";
+		return "LessThanOp";
 	}
 }
