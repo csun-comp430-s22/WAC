@@ -26,12 +26,7 @@ public class Parser {
 			throw new ParseException("expected: " + expected + "; received: " + received);
 		}
 	}
-
-
-
 	
-	// additive_op ::= + | -
-
 	public ParseResult<Op> parseAdditiveOp(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof PlusToken) {
@@ -42,8 +37,6 @@ public class Parser {
 			throw new ParseException("expected + or -; received: " + token);
 		}
 	}
-
-
 	
 	//start of Sarah's methods
 	
@@ -114,38 +107,30 @@ public class Parser {
 					try {
 						final ParseResult<Stmt> stmt = parseStmt(position + 1);	//dependent on parseStmt, yet to be made
 						stmts.add(stmt.result);
+						position = stmt.position;
 					} catch (final ParseException e) {
 						shouldRun2 = false;
 					}
 				}
 				//should be end of stmts and now there are optional methoddefs
 				//again, can't figure out how to make condition for 0 stmts so maybe will rely on exceptions?
-				//final List<Methoddef>
-				//left off here
+				final List<Methoddef> methoddefs = new ArrayList<Methoddef>();	//need to make Methoddef interface still
+				boolean shouldRun3 = true;
+				while (shouldRun3) {
+					try {
+						final ParseResult<Methoddef> methoddef = parseMethodDef(position);	//still need parseMethodDef method
+						methoddefs.add(methoddef.result);
+						position = methoddef.postion;
+					} catch (final ParseException e) {
+						shouldRun3 = false;
+					}
+				}
 			}
 		}
 		else {
 			throw ParseException("");
 		}
 	} */
-	
-	
-	
-/* 	} else if (token instanceof leftCurlyToken) {
-	 * final List<Stmt> stmts = new ArrayList<Stmt>();
-	 * int curPosition = position + 1;
-	 * boolean shouldRun = true;
-	 * while (shouldRun) {
-	 * try {
-	 * final ParseResult<Stmt> stmt = parseStmt(curPosition);
-	 * stmts.add(stmt.result);
-	 * curPosition = stmt.position;
-	 * } catch (final ParseException e) {
-	 * shouldRun = false;
-	 * }
-	 * }
-	 * return new ParseResult<Stmt>(new BlockStmt(stmts), curPosition); */
-	
 	
 	//still need parseMethoddef
 	
@@ -154,7 +139,6 @@ public class Parser {
 	
 	
 	//start of Ruben's methods
-
 
 	public ParseResult<Type> parseType(final int position) throws ParseException {
 		final Token token = getToken(position);
@@ -227,41 +211,6 @@ public class Parser {
 	
 	//helpful comments down here
 
-	// public ParseResult<Op> parseComparisonOp(final int position) throws
-	// ParseException {
-	// final Token token = getToken(position);
-	// if (token instanceof lessThanToken) {
-	// return new ParseResult<Op>(new LessThanOp(), position + 1);
-	// } else if (token instanceof greaterThanToken) {
-	// return new ParseResult<Op>(new GreaterThanOp(), position + 1);
-	// } else if (token instanceof equalEqualToken) {
-	// return new ParseResult<Op>(new EqualEqualsOp(), position + 1);
-	// } else if (token instanceof notEqualToken) {
-	// return new ParseResult<Op>(new NotEqualsOp(), position + 1);
-	// } else {
-	// throw new ParseException("expected * or /; received: " + token);
-	// }
-	// }
-
-	// public ParseResult<Exp> parseComparisonExp(final int position) throws
-	// ParseException {
-	// ParseResult<Exp> current = parseAdditiveExp(position);
-
-	// if ((parseComparisonOp(current.position)) instanceof ParseResult<Op>) {
-	// final ParseResult<Op> comparisonOp = parseComparisonOp(current.position);
-	// final ParseResult<Exp> anotherAdditive =
-	// parseAdditiveExp(comparitiveOp.position);
-	// current = new ParseResult<Exp>(new OpExp(current.result,
-	// comparisonOp.result,
-	// anotherAdditive.result),
-	// anotherAdditive.position);
-	// } else {
-	// return current;
-	// }
-
-	// return current;
-	// }
-
 	/*
 	 * // additive_op ::= + | -
 	 * public ParseResult<Op> parseAdditiveOp(final int position) throws
@@ -333,7 +282,6 @@ public class Parser {
 	 * }
 	 * }
 	 */
-
 	 
 	 //end of helpful comments
 	 
