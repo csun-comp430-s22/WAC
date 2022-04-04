@@ -1,17 +1,18 @@
 package WACparser;
 
 // comparitive Expression under Exp (not the interface)
-public class ComparisonExp implements Exp {
+// exp ::= comparison_exp
+public class ExpToCompExp implements Exp {
 
-	public final Exp comparison_exp;
+	public final Comparison_Exp comparison_exp;
 
-	public ComparisonExp(final Exp comparison_exp) {
+	public ExpToCompExp(final Comparison_Exp comparison_exp) {
 		this.comparison_exp = comparison_exp;
 	}
 
 	public boolean equals(final Object other) {
-		if (other instanceof ComparisonExp) {
-			final ComparisonExp otherExp = (ComparisonExp)other;
+		if (other instanceof ExpToCompExp) {
+			final ExpToCompExp otherExp = (ExpToCompExp)other;
 			return (comparison_exp.equals(otherExp.comparison_exp));
 		} else {
 			return false;
@@ -23,7 +24,7 @@ public class ComparisonExp implements Exp {
 	}
 
 	public String toString() {
-		return ("OpExp(" + comparison_exp + ")");
+		return ("ExpToCompExp(" + comparison_exp + ")");
 	}
 
 	// old code from professor's example

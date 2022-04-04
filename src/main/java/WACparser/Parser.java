@@ -42,7 +42,7 @@ public class Parser {
 			assertTokenHereIs(inParens.position, new CloseparToken());
 			return new ParseResult<Exp>(inParens.result, inParens.position + 1);
 		}
-	}
+	} */
 	
 	// additive_op ::= + | -
 	public ParseResult<Op> parseAdditiveOp(final int position) throws ParseException {
@@ -55,7 +55,8 @@ public class Parser {
 			throw new ParseException("expected + or -; received: " + token);
 		}
 	}
-	
+
+	/*
 	//additive_exp ::= primary_exp (additive_op primary_exp)*
 	public ParseResult<Exp> parseAdditiveExp(final int position) throws ParseException {
 		ParseResult<Exp> current = parsePrimaryExp(position);
