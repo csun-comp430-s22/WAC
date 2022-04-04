@@ -1,4 +1,4 @@
-/* package WACparser;
+package WACparser;
 
 public class VariableDeclaration implements Vardec {
 	public final Type type;
@@ -27,4 +27,4 @@ public class VariableDeclaration implements Vardec {
 	public String toString() {
 		return ("VariableDeclaration(" + type.toString() + ", " + variable.toString() + ")");
 	}
-} */
+}

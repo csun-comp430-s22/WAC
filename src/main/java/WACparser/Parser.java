@@ -50,19 +50,20 @@ public class Parser {
 /* 	public ParseResult<Vardec> parseVardec(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken)) {
-			final ParseResult<Type> type = parseType(position);	//dependent on Type interface and parseType method from Ruben
-			assertTokenHereIs(type.position, VariableToken());
-			final ParseResult<Exp> varName = parsePrimaryExp(type.position); // dependent on parsePrimaryExp method from Ruben
-			assertTokenHereIs(varName.position, EqualToken());
+			final ParseResult<Type> type = parseType(position);
+			assertTokenHereIs(type.position, new VariableToken("hi")); //CHECK THIS LATER WITH TESTING
+			final ParseResult<Exp> varName = parsePrimaryExp(type.position);
+			assertTokenHereIs(varName.position, new EqualToken());
+			// MISSING parseExp!!!
 			final ParseResult<Exp> value = parseExp(varName.position + 1);
-			asserTokenHereIs(value.position, SemicolToken());
+			assertTokenHereIs(value.position, new SemicolToken());
 			return new ParseResult<Vardec>(new VariableDeclaration(type.result, varName.result, value.result), value.position + 1);
 		} else {
 			throw new ParseException("Expected a variable declaration but received: " +  token);
 		}
-	}
+	} */
 	
-	public ParseResult<Classdef> parseClassdef(final int position) throws ParseException {
+/* 	public ParseResult<Classdef> parseClassdef(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if  (token instanceof ClassToken) {
 			final ParseResult<Exp> classname = parsePrimaryExp(position + 1);	//parse in classname
@@ -94,8 +95,33 @@ public class Parser {
 			
 			//here is where a constructor might appear
 			if (token instanceof VariableToken) {
-				assertTokenHereIs(position, OpenparToken());
-				//left of here
+				assertTokenHereIs(position, OpenparToken());	//we know that we've hit a constructor
+				boolean shouldRun1 = true;
+				final List<ParseResult> constructorVariables = new ArrayList<ParseResult>();
+				while (shouldRun1) {	// loop to read in the vardecs inside the constructor
+					try {
+						final ParseResult<Vardec> vardec1 = parseVardec(position + 1);
+						constructorVariables.add(vardec1.result);
+						position = vardec1.position;
+					} catch (final ParseException e) {
+						shouldRun1 = false;
+					}
+				}
+				assertTokenHereIs(position, CloseparToken());	//end of vardecs
+				final List<stmt> stmts = new ArrayList<Stmt>();		//can't figure out how to make condition for 0 stmts so maybe will rely on parseexceptions?
+				boolean shouldRun2 = true;
+				while (shouldRun2) {
+					try {
+						final ParseResult<Stmt> stmt = parseStmt(position + 1);	//dependent on parseStmt, yet to be made
+						stmts.add(stmt.result);
+					} catch (final ParseException e) {
+						shouldRun2 = false;
+					}
+				}
+				//should be end of stmts and now there are optional methoddefs
+				//again, can't figure out how to make condition for 0 stmts so maybe will rely on exceptions?
+				//final List<Methoddef>
+				//left off here
 			}
 		}
 		else {
@@ -103,7 +129,31 @@ public class Parser {
 		}
 	} */
 	
+	
+	
+/* 	} else if (token instanceof leftCurlyToken) {
+	 * final List<Stmt> stmts = new ArrayList<Stmt>();
+	 * int curPosition = position + 1;
+	 * boolean shouldRun = true;
+	 * while (shouldRun) {
+	 * try {
+	 * final ParseResult<Stmt> stmt = parseStmt(curPosition);
+	 * stmts.add(stmt.result);
+	 * curPosition = stmt.position;
+	 * } catch (final ParseException e) {
+	 * shouldRun = false;
+	 * }
+	 * }
+	 * return new ParseResult<Stmt>(new BlockStmt(stmts), curPosition); */
+	
+	
+	//still need parseMethoddef
+	
 	//end of Sarah's methods
+	
+	
+	
+	//start of Ruben's methods
 
 
 	public ParseResult<Type> parseType(final int position) throws ParseException {
@@ -171,6 +221,33 @@ public class Parser {
 
 		return current;
 	}
+
+	// additive expression parsing
+	public ParseResult<Exp> parseAdditiveExp(final int position) throws ParseException {
+		ParseResult<Exp> current = parseMultiplicativeExp(position);
+		boolean shouldRun = true;
+
+		while (shouldRun) {
+			try {
+				final ParseResult<Op> additiveOp = parseAdditiveOp(current.position);
+				final ParseResult<Exp> anotherMultiplicative = parseMultiplicativeExp(additiveOp.position);
+				current = new ParseResult<Exp>(new OpExp(current.result,
+						additiveOp.result,
+						anotherMultiplicative.result),
+						anotherMultiplicative.position);
+			} catch (final ParseException e) {
+				shouldRun = false;
+				throw new ParseException("");
+			}
+		}
+
+		return current;
+	}
+	
+	//end of Ruben's methods
+	
+	
+	//helpful comments down here
 
 	// public ParseResult<Op> parseComparisonOp(final int position) throws
 	// ParseException {
@@ -279,16 +356,19 @@ public class Parser {
 	 * }
 	 */
 
-	public ParseResult parseSingle() throws ParseException {
-		ParseResult retval;
-		retval = parseAdditiveOp(0);
-		return retval;
-	}
-
-	public List<ParseResult> parse() throws ParseException {
-		final List<ParseResult> results = new ArrayList<ParseResult>();
-		ParseResult<Op> result1 = parseSingle();
-		results.add(result1);
-		return results;
-	}
+	 
+	 //end of helpful comments
+	 
+	 public ParseResult parseSingle() throws ParseException {
+		 ParseResult retval;
+		 retval = parseAdditiveOp(0);
+		 return retval;
+	 }
+	 
+	 public List<ParseResult> parse() throws ParseException {
+		 final List<ParseResult> results = new ArrayList<ParseResult>();
+		 ParseResult<Op> result1 = parseSingle();
+		 results.add(result1);
+		 return results;
+	 }
 }
