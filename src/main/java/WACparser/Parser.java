@@ -43,7 +43,7 @@ public class Parser {
 			return new ParseResult<Exp>(inParens.result, inParens.position + 1);
 		}
 	} */
-	
+
 	// additive_op ::= + | -
 	public ParseResult<Op> parseAdditiveOp(final int position) throws ParseException {
 		final Token token = getToken(position);
@@ -56,9 +56,9 @@ public class Parser {
 		}
 	}
 
-	
+
 	//start of Sarah's methods
-	
+
 /* 	public ParseResult<Vardec> parseVardec(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken)) {
@@ -73,7 +73,7 @@ public class Parser {
 			throw new ParseException("Expected a variable declaration but received: " +  token);
 		}
 	}
-	
+
 	public ParseResult<Classdef> parseClassdef(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if  (token instanceof ClassToken) {
@@ -86,7 +86,7 @@ public class Parser {
 				token = getToken(extendsClassname.position);	//update the next token to be read
 				position = position + 2;	//position is now set the thing after the extends classname
 			}
-			
+
 			//here need to parse in the 0 or more vardec = exp;
 			if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken)) {	//if we read in a type
 				assertTokenHereIs(position + 1, VariableToken());	//assert the next thing is a variable
@@ -103,7 +103,7 @@ public class Parser {
 					}
 				}
 			}
-			
+
 			//here is where a constructor might appear
 			if (token instanceof VariableToken) {
 				assertTokenHereIs(position, OpenparToken());
@@ -114,7 +114,7 @@ public class Parser {
 			throw ParseException("");
 		}
 	} */
-	
+
 	//end of Sarah's methods
 
 	public ParseResult<Type> parseType(final int position) throws ParseException {
@@ -201,13 +201,13 @@ public class Parser {
 	 * throw new ParseException("expected + or -; received: " + token);
 	 * }
 	 * }
-	 * 
+	 *
 	 * //additive_exp ::= primary_exp (additive_op primary_exp)*
 	 * public ParseResult<Exp> parseAdditiveExp(final int position) throws
 	 * ParseException {
 	 * ParseResult<Exp> current = parsePrimaryExp(position);
 	 * boolean shouldRun = true;
-	 * 
+	 *
 	 * while (shouldRun) {
 	 * try {
 	 * final ParseResult<Op> additiveOp = parseAdditiveOp(current.position);
@@ -220,7 +220,7 @@ public class Parser {
 	 * }
 	 * return current;
 	 * }
-	 * 
+	 *
 	 * // stmt ::= if (exp) stmt else stmt | { stmt }* | println(exp);
 	 * public ParseResult<Stmt> parseStmt(final int position) throws ParseException
 	 * {
@@ -259,17 +259,54 @@ public class Parser {
 	 * }
 	 * }
 	 */
-	 
-	 public ParseResult parseSingle() throws ParseException {
-		 ParseResult retval;
-		 retval = parseAdditiveOp(0);
-		 return retval;
-	 }
-	 
-	 public List<ParseResult> parse() throws ParseException {
-		 final List<ParseResult> results = new ArrayList<ParseResult>();
-		 ParseResult<Op> result1 = parseSingle();
-		 results.add(result1);
-		 return results;
-	 }
-}
+
+		public ParseResult parseSingle () throws ParseException {
+			ParseResult retval;
+			retval = parseAdditiveOp(0);
+			return retval;
+		}
+
+		public List<ParseResult> parse () throws ParseException {
+			final List<ParseResult> results = new ArrayList<ParseResult>();
+			ParseResult<Op> result1 = parseSingle();
+			results.add(result1);
+			return results;
+		}
+	}
+
+//	public ParseResult<Exp> parseAdditiveExp(final int position) throws ParseException {
+//
+//		public ParseResult parseSingle () throws ParseException {
+//			ParseResult retval;
+//			retval = parseAdditiveOp(0);
+//			return retval;
+//		}
+//
+//		public List<ParseResult> parse () throws ParseException {
+//			final List<ParseResult> results = new ArrayList<ParseResult>();
+//			ParseResult<Op> result1 = parseSingle();
+//			results.add(result1);
+//			return results;
+//		}
+//	}
+
+	public ParseResult<Exp> parseAdditiveExp(final int position) throws ParseException {
+
+		ParseResult<Exp> current = parsePrimaryExp(position);
+		boolean shouldRun = true;
+
+		while (shouldRun) {
+			try {
+				final ParseResult<Op> additiveOp = parseAdditiveOp(current.position);
+				final ParseResult<Exp> anotherPrimary = parsePrimaryExp(additiveOp.position);
+				current = new ParseResult<Exp>(new OpExp(current.result,
+						additiveOp.result,
+						anotherPrimary.result),
+						anotherPrimary.position);
+			} catch (final ParseException e) {
+				shouldRun = false;
+			}
+		}
+
+		return current;
+	}
