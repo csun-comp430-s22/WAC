@@ -26,7 +26,12 @@ public class Parser {
 			throw new ParseException("expected: " + expected + "; received: " + received);
 		}
 	}
+
+
+
 	
+	// additive_op ::= + | -
+
 	public ParseResult<Op> parseAdditiveOp(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof PlusToken) {
@@ -37,6 +42,8 @@ public class Parser {
 			throw new ParseException("expected + or -; received: " + token);
 		}
 	}
+
+
 	
 	//start of Sarah's methods
 	
@@ -148,6 +155,7 @@ public class Parser {
 	
 	//start of Ruben's methods
 
+
 	public ParseResult<Type> parseType(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof IntToken) {
@@ -218,6 +226,41 @@ public class Parser {
 	
 	
 	//helpful comments down here
+
+	// public ParseResult<Op> parseComparisonOp(final int position) throws
+	// ParseException {
+	// final Token token = getToken(position);
+	// if (token instanceof lessThanToken) {
+	// return new ParseResult<Op>(new LessThanOp(), position + 1);
+	// } else if (token instanceof greaterThanToken) {
+	// return new ParseResult<Op>(new GreaterThanOp(), position + 1);
+	// } else if (token instanceof equalEqualToken) {
+	// return new ParseResult<Op>(new EqualEqualsOp(), position + 1);
+	// } else if (token instanceof notEqualToken) {
+	// return new ParseResult<Op>(new NotEqualsOp(), position + 1);
+	// } else {
+	// throw new ParseException("expected * or /; received: " + token);
+	// }
+	// }
+
+	// public ParseResult<Exp> parseComparisonExp(final int position) throws
+	// ParseException {
+	// ParseResult<Exp> current = parseAdditiveExp(position);
+
+	// if ((parseComparisonOp(current.position)) instanceof ParseResult<Op>) {
+	// final ParseResult<Op> comparisonOp = parseComparisonOp(current.position);
+	// final ParseResult<Exp> anotherAdditive =
+	// parseAdditiveExp(comparitiveOp.position);
+	// current = new ParseResult<Exp>(new OpExp(current.result,
+	// comparisonOp.result,
+	// anotherAdditive.result),
+	// anotherAdditive.position);
+	// } else {
+	// return current;
+	// }
+
+	// return current;
+	// }
 
 	/*
 	 * // additive_op ::= + | -
@@ -290,6 +333,7 @@ public class Parser {
 	 * }
 	 * }
 	 */
+
 	 
 	 //end of helpful comments
 	 

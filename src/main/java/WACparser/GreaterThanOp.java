@@ -6,7 +6,7 @@ public class GreaterThanOp implements Op {
 	}
 	
 	public int hashCode() {
-		return 5;
+		return 28;
 	}
 	
 	public String toString() {
