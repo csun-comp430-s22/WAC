@@ -26,7 +26,7 @@ public class Parser {
 			throw new ParseException("expected: " + expected + "; received: " + received);
 		}
 	}
-	
+
 	public ParseResult<Op> parseAdditiveOp(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof PlusToken) {
@@ -140,6 +140,7 @@ public class Parser {
 	
 	//start of Ruben's methods
 
+
 	public ParseResult<Type> parseType(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof IntToken) {
@@ -205,8 +206,63 @@ public class Parser {
 
 		return current;
 	}
-	
-	//end of Ruben's methods
+
+	// additive expression parsing
+	public ParseResult<Exp> parseAdditiveExp(final int position) throws ParseException {
+		ParseResult<Exp> current = parseMultiplicativeExp(position);
+		boolean shouldRun = true;
+
+		while (shouldRun) {
+			try {
+				final ParseResult<Op> additiveOp = parseAdditiveOp(current.position);
+				final ParseResult<Exp> anotherMultiplicative = parseMultiplicativeExp(additiveOp.position);
+				current = new ParseResult<Exp>(new OpExp(current.result,
+						additiveOp.result,
+						anotherMultiplicative.result),
+						anotherMultiplicative.position);
+			} catch (final ParseException e) {
+				shouldRun = false;
+				throw new ParseException("");
+			}
+		}
+
+		return current;
+	}
+
+	public ParseResult<Op> parseComparisonOp(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if (token instanceof lessThanToken) {
+			return new ParseResult<Op>(new LessThanOp(), position + 1);
+		} else if (token instanceof greaterThanToken) {
+			return new ParseResult<Op>(new GreaterThanOp(), position + 1);
+		} else if (token instanceof equalEqualToken) {
+			return new ParseResult<Op>(new EqualEqualsOp(), position + 1);
+		} else if (token instanceof notEqualToken) {
+			return new ParseResult<Op>(new NotEqualsOp(), position + 1);
+		} else {
+			throw new ParseException("expected * or /; received: " + token);
+		}
+	}
+
+	public ParseResult<Exp> parseComparisonExp(final int position) throws ParseException {
+		ParseResult<Exp> current = parseAdditiveExp(position);
+		final Token token = getToken(position);
+
+		if ((token instanceof lessThanToken) || (token instanceof greaterThanToken) || (token instanceof equalEqualToken) || (token instanceof notEqualToken)) {
+			final ParseResult<Op> comparisonOp = parseComparisonOp(current.position);
+			final ParseResult<Exp> anotherAdditive = parseAdditiveExp(comparisonOp.position);
+			current = new ParseResult<Exp>(new OpExp(current.result,
+					comparisonOp.result,
+					anotherAdditive.result),
+					anotherAdditive.position);
+		} else {
+			return current;
+		}
+
+		return current;
+	}
+
+	// end of Ruben's methods
 	
 	
 	//helpful comments down here
@@ -282,19 +338,19 @@ public class Parser {
 	 * }
 	 * }
 	 */
-	 
-	 //end of helpful comments
-	 
-	 public ParseResult parseSingle() throws ParseException {
-		 ParseResult retval;
-		 retval = parseAdditiveOp(0);
-		 return retval;
-	 }
-	 
-	 public List<ParseResult> parse() throws ParseException {
-		 final List<ParseResult> results = new ArrayList<ParseResult>();
-		 ParseResult<Op> result1 = parseSingle();
-		 results.add(result1);
-		 return results;
-	 }
+
+	// end of helpful comments
+
+	public ParseResult parseSingle() throws ParseException {
+		ParseResult retval;
+		retval = parseAdditiveOp(0);
+		return retval;
+	}
+
+	public List<ParseResult> parse() throws ParseException {
+		final List<ParseResult> results = new ArrayList<ParseResult>();
+		ParseResult<Op> result1 = parseSingle();
+		results.add(result1);
+		return results;
+	}
 }
