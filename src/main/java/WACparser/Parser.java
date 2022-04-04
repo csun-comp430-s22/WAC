@@ -56,7 +56,7 @@ public class Parser {
 		}
 	} */
 	
-	public ParseResult<Classdef> parseClassdef(final int position) throws ParseException {
+/* 	public ParseResult<Classdef> parseClassdef(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if  (token instanceof ClassToken) {
 			final ParseResult<Exp> classname = parsePrimaryExp(position + 1);	//parse in classname
@@ -113,14 +113,14 @@ public class Parser {
 				}
 				//should be end of stmts and now there are optional methoddefs
 				//again, can't figure out how to make condition for 0 stmts so maybe will rely on exceptions?
-				final List<Methoddef>
+				//final List<Methoddef>
 				//left off here
 			}
 		}
 		else {
 			throw ParseException("");
 		}
-	}
+	} */
 	
 	
 	
