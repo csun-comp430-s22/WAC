@@ -27,8 +27,6 @@ public class Parser {
 		}
 	}
 
-	// additive_op ::= + | -
-
 	public ParseResult<Op> parseAdditiveOp(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof PlusToken) {
@@ -39,136 +37,109 @@ public class Parser {
 			throw new ParseException("expected + or -; received: " + token);
 		}
 	}
+	
+	//start of Sarah's methods
+	
+/* 	public ParseResult<Vardec> parseVardec(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken)) {
+			final ParseResult<Type> type = parseType(position);
+			assertTokenHereIs(type.position, new VariableToken("hi")); //CHECK THIS LATER WITH TESTING
+			final ParseResult<Exp> varName = parsePrimaryExp(type.position);
+			assertTokenHereIs(varName.position, new EqualToken());
+			// MISSING parseExp!!!
+			final ParseResult<Exp> value = parseExp(varName.position + 1);
+			assertTokenHereIs(value.position, new SemicolToken());
+			return new ParseResult<Vardec>(new VariableDeclaration(type.result, varName.result, value.result), value.position + 1);
+		} else {
+			throw new ParseException("Expected a variable declaration but received: " +  token);
+		}
+	} */
+	
+/* 	public ParseResult<Classdef> parseClassdef(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if  (token instanceof ClassToken) {
+			final ParseResult<Exp> classname = parsePrimaryExp(position + 1);	//parse in classname
+			token = getToken(classname.position);
+			position = position + 2;	//sets position to thing after classname
+			if (token instanceof ExtendsToken) {	//if the class extends another class
+				assertTokenHereIs(classname.position + 1, VariableToken());
+				final ParseResult<Exp> extendsClassname = parsePrimaryExp(classname.position + 1);	//parse in name of class it's extending
+				token = getToken(extendsClassname.position);	//update the next token to be read
+				position = position + 2;	//position is now set the thing after the extends classname
+			}
+			
+			//here need to parse in the 0 or more vardec = exp;
+			if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken)) {	//if we read in a type
+				assertTokenHereIs(position + 1, VariableToken());	//assert the next thing is a variable
+				assertTokenHereIs(position + 2, EqualToken());	//assert the next thing is assignment operator (ensures that this is a variable instantiation) we know we have at least one variable instantiation
+				boolean shouldRun = true;
+				final List<ParseResult> vardecs = new ArrayList<ParseResult>();
+				while (shouldRun) {
+					try {
+						final ParseResult<Vardec> vardec = parseVardec(position);	//calls parseVardec method to parse the "type var" section
+						vardecs.add(vardec.result);
+						position = vardec.position;
+					} catch (final ParseException e) {
+						shouldRun = false;
+					}
+				}
+			}
+			
+			//here is where a constructor might appear
+			if (token instanceof VariableToken) {
+				assertTokenHereIs(position, OpenparToken());	//we know that we've hit a constructor
+				boolean shouldRun1 = true;
+				final List<ParseResult> constructorVariables = new ArrayList<ParseResult>();
+				while (shouldRun1) {	// loop to read in the vardecs inside the constructor
+					try {
+						final ParseResult<Vardec> vardec1 = parseVardec(position + 1);
+						constructorVariables.add(vardec1.result);
+						position = vardec1.position;
+					} catch (final ParseException e) {
+						shouldRun1 = false;
+					}
+				}
+				assertTokenHereIs(position, CloseparToken());	//end of vardecs
+				final List<stmt> stmts = new ArrayList<Stmt>();		//can't figure out how to make condition for 0 stmts so maybe will rely on parseexceptions?
+				boolean shouldRun2 = true;
+				while (shouldRun2) {
+					try {
+						final ParseResult<Stmt> stmt = parseStmt(position + 1);	//dependent on parseStmt, yet to be made
+						stmts.add(stmt.result);
+						position = stmt.position;
+					} catch (final ParseException e) {
+						shouldRun2 = false;
+					}
+				}
+				//should be end of stmts and now there are optional methoddefs
+				//again, can't figure out how to make condition for 0 stmts so maybe will rely on exceptions?
+				final List<Methoddef> methoddefs = new ArrayList<Methoddef>();	//need to make Methoddef interface still
+				boolean shouldRun3 = true;
+				while (shouldRun3) {
+					try {
+						final ParseResult<Methoddef> methoddef = parseMethodDef(position);	//still need parseMethodDef method
+						methoddefs.add(methoddef.result);
+						position = methoddef.postion;
+					} catch (final ParseException e) {
+						shouldRun3 = false;
+					}
+				}
+			}
+		}
+		else {
+			throw ParseException("");
+		}
+	} */
+	
+	//still need parseMethoddef
+	
+	//end of Sarah's methods
+	
+	
+	
+	//start of Ruben's methods
 
-	// start of Sarah's methods
-
-	/*
-	 * public ParseResult<Vardec> parseVardec(final int position) throws
-	 * ParseException {
-	 * final Token token = getToken(position);
-	 * if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token
-	 * instanceof StringToken)) {
-	 * final ParseResult<Type> type = parseType(position);
-	 * assertTokenHereIs(type.position, new VariableToken("hi")); //CHECK THIS LATER
-	 * WITH TESTING
-	 * final ParseResult<Exp> varName = parsePrimaryExp(type.position);
-	 * assertTokenHereIs(varName.position, new EqualToken());
-	 * // MISSING parseExp!!!
-	 * final ParseResult<Exp> value = parseExp(varName.position + 1);
-	 * assertTokenHereIs(value.position, new SemicolToken());
-	 * return new ParseResult<Vardec>(new VariableDeclaration(type.result,
-	 * varName.result, value.result), value.position + 1);
-	 * } else {
-	 * throw new ParseException("Expected a variable declaration but received: " +
-	 * token);
-	 * }
-	 * }
-	 */
-
-	/*
-	 * public ParseResult<Classdef> parseClassdef(final int position) throws
-	 * ParseException {
-	 * final Token token = getToken(position);
-	 * if (token instanceof ClassToken) {
-	 * final ParseResult<Exp> classname = parsePrimaryExp(position + 1); //parse in
-	 * classname
-	 * token = getToken(classname.position);
-	 * position = position + 2; //sets position to thing after classname
-	 * if (token instanceof ExtendsToken) { //if the class extends another class
-	 * assertTokenHereIs(classname.position + 1, VariableToken());
-	 * final ParseResult<Exp> extendsClassname = parsePrimaryExp(classname.position
-	 * + 1); //parse in name of class it's extending
-	 * token = getToken(extendsClassname.position); //update the next token to be
-	 * read
-	 * position = position + 2; //position is now set the thing after the extends
-	 * classname
-	 * }
-	 * 
-	 * //here need to parse in the 0 or more vardec = exp;
-	 * if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token
-	 * instanceof StringToken)) { //if we read in a type
-	 * assertTokenHereIs(position + 1, VariableToken()); //assert the next thing is
-	 * a variable
-	 * assertTokenHereIs(position + 2, EqualToken()); //assert the next thing is
-	 * assignment operator (ensures that this is a variable instantiation) we know
-	 * we have at least one variable instantiation
-	 * boolean shouldRun = true;
-	 * final List<ParseResult> vardecs = new ArrayList<ParseResult>();
-	 * while (shouldRun) {
-	 * try {
-	 * final ParseResult<Vardec> vardec = parseVardec(position); //calls parseVardec
-	 * method to parse the "type var" section
-	 * vardecs.add(vardec.result);
-	 * position = vardec.position;
-	 * } catch (final ParseException e) {
-	 * shouldRun = false;
-	 * }
-	 * }
-	 * }
-	 * 
-	 * //here is where a constructor might appear
-	 * if (token instanceof VariableToken) {
-	 * assertTokenHereIs(position, OpenparToken()); //we know that we've hit a
-	 * constructor
-	 * boolean shouldRun1 = true;
-	 * final List<ParseResult> constructorVariables = new ArrayList<ParseResult>();
-	 * while (shouldRun1) { // loop to read in the vardecs inside the constructor
-	 * try {
-	 * final ParseResult<Vardec> vardec1 = parseVardec(position + 1);
-	 * constructorVariables.add(vardec1.result);
-	 * position = vardec1.position;
-	 * } catch (final ParseException e) {
-	 * shouldRun1 = false;
-	 * }
-	 * }
-	 * assertTokenHereIs(position, CloseparToken()); //end of vardecs
-	 * final List<stmt> stmts = new ArrayList<Stmt>(); //can't figure out how to
-	 * make condition for 0 stmts so maybe will rely on parseexceptions?
-	 * boolean shouldRun2 = true;
-	 * while (shouldRun2) {
-	 * try {
-	 * final ParseResult<Stmt> stmt = parseStmt(position + 1); //dependent on
-	 * parseStmt, yet to be made
-	 * stmts.add(stmt.result);
-	 * } catch (final ParseException e) {
-	 * shouldRun2 = false;
-	 * }
-	 * }
-	 * //should be end of stmts and now there are optional methoddefs
-	 * //again, can't figure out how to make condition for 0 stmts so maybe will
-	 * rely on exceptions?
-	 * //final List<Methoddef>
-	 * //left off here
-	 * }
-	 * }
-	 * else {
-	 * throw ParseException("");
-	 * }
-	 * }
-	 */
-
-	/*
-	 * } else if (token instanceof leftCurlyToken) {
-	 * final List<Stmt> stmts = new ArrayList<Stmt>();
-	 * int curPosition = position + 1;
-	 * boolean shouldRun = true;
-	 * while (shouldRun) {
-	 * try {
-	 * final ParseResult<Stmt> stmt = parseStmt(curPosition);
-	 * stmts.add(stmt.result);
-	 * curPosition = stmt.position;
-	 * } catch (final ParseException e) {
-	 * shouldRun = false;
-	 * }
-	 * }
-	 * return new ParseResult<Stmt>(new BlockStmt(stmts), curPosition);
-	 */
-
-	// still need parseMethoddef
-
-	// end of Sarah's methods
-
-	// start of Ruben's methods
 
 	public ParseResult<Type> parseType(final int position) throws ParseException {
 		final Token token = getToken(position);
@@ -292,8 +263,9 @@ public class Parser {
 	}
 
 	// end of Ruben's methods
-
-	// helpful comments down here
+	
+	
+	//helpful comments down here
 
 	/*
 	 * // additive_op ::= + | -
