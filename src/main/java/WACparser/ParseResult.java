@@ -9,4 +9,13 @@ public class ParseResult<A> {
 		this.result = result;
 		this.position = position;
 	}
+	
+	public boolean equals(final Object other){
+		if (other instanceof ParseResult) {
+			final ParseResult otherPR = (ParseResult)other;
+			return (result.equals(otherPR.result) && position == otherPR.position);
+		} else {
+			return false;
+		}
+	}
 }
