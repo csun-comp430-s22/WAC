@@ -275,8 +275,9 @@ public class Parser {
 
 	public ParseResult<Exp> parseComparisonExp(final int position) throws ParseException {
 		ParseResult<Exp> current = parseAdditiveExp(position);
+		final Token token = getToken(position);
 
-		if ((parseComparisonOp(current.position)) instanceof ParseResult<Op>) {
+		if ((token instanceof lessThanToken) || (token instanceof greaterThanToken) || (token instanceof equalEqualToken) || (token instanceof notEqualToken)) {
 			final ParseResult<Op> comparisonOp = parseComparisonOp(current.position);
 			final ParseResult<Exp> anotherAdditive = parseAdditiveExp(comparisonOp.position);
 			current = new ParseResult<Exp>(new OpExp(current.result,
