@@ -41,7 +41,7 @@ public class Parser {
 	
 	//start of Sarah's methods
 	
-	public ParseResult<Vardec> parseVardec(final int position) throws ParseException {
+/* 	public ParseResult<Vardec> parseVardec(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken)) {
 			final ParseResult<Type> type = parseType(position);	//dependent on Type interface and parseType method from Ruben
@@ -95,7 +95,7 @@ public class Parser {
 		else {
 			throw ParseException("");
 		}
-	}
+	} */
 	
 	//end of Sarah's methods
 	

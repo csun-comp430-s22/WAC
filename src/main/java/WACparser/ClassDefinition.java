@@ -1,4 +1,4 @@
-package WACparser;
+/* package WACparser;
 
 public class ClassDefinition implements Classdef {
 	public final Exp classname;
@@ -18,4 +18,4 @@ public class ClassDefinition implements Classdef {
 		this.constructorVariables = constructorVariables;
 		this.methoddefs = methoddefs;
 	}
-}
+} */
