@@ -27,6 +27,24 @@ public class Parser {
 		}
 	}
 	
+
+	/* // primary_exp ::= x | i | ‘(‘ exp ‘)’
+	public ParseResult<Exp> parsePrimaryExp(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if (token instanceof VariableToken) {
+			final String name = ((VariableToken)token).name;
+			return new ParseResult<Exp>(new VariableExp(name), position + 1);
+		} else if (token instanceof IntegerToken) {
+			final int value = ((IntegerToken)token).value;
+		return new ParseResult<Exp>(new IntegerExp(value), position + 1);
+		} else if (token instanceof OpenparToken) {
+			final ParseResult<Exp> inParens = parseExp(position + 1);
+			assertTokenHereIs(inParens.position, new CloseparToken());
+			return new ParseResult<Exp>(inParens.result, inParens.position + 1);
+		}
+	} */
+	
+	// additive_op ::= + | -
 	public ParseResult<Op> parseAdditiveOp(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof PlusToken) {
@@ -37,6 +55,7 @@ public class Parser {
 			throw new ParseException("expected + or -; received: " + token);
 		}
 	}
+
 	
 	//start of Sarah's methods
 	
@@ -144,6 +163,11 @@ public class Parser {
 	}
 
 	public ParseResult<Exp> parseMultiplicativeExp(final int position) throws ParseException {
+
+
+	/*
+	//additive_exp ::= primary_exp (additive_op primary_exp)*
+	public ParseResult<Exp> parseAdditiveExp(final int position) throws ParseException {
 		ParseResult<Exp> current = parsePrimaryExp(position);
 		boolean shouldRun = true;
 
