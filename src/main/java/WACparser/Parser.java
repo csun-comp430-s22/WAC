@@ -26,25 +26,12 @@ public class Parser {
 			throw new ParseException("expected: " + expected + "; received: " + received);
 		}
 	}
-	
 
-	/* // primary_exp ::= x | i | ‘(‘ exp ‘)’
-	public ParseResult<Exp> parsePrimaryExp(final int position) throws ParseException {
-		final Token token = getToken(position);
-		if (token instanceof VariableToken) {
-			final String name = ((VariableToken)token).name;
-			return new ParseResult<Exp>(new VariableExp(name), position + 1);
-		} else if (token instanceof IntegerToken) {
-			final int value = ((IntegerToken)token).value;
-		return new ParseResult<Exp>(new IntegerExp(value), position + 1);
-		} else if (token instanceof OpenparToken) {
-			final ParseResult<Exp> inParens = parseExp(position + 1);
-			assertTokenHereIs(inParens.position, new CloseparToken());
-			return new ParseResult<Exp>(inParens.result, inParens.position + 1);
-		}
-	} */
+
+
 	
 	// additive_op ::= + | -
+
 	public ParseResult<Op> parseAdditiveOp(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof PlusToken) {
@@ -55,6 +42,7 @@ public class Parser {
 			throw new ParseException("expected + or -; received: " + token);
 		}
 	}
+
 
 	
 	//start of Sarah's methods
@@ -117,6 +105,7 @@ public class Parser {
 	
 	//end of Sarah's methods
 
+
 	public ParseResult<Type> parseType(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof IntToken) {
@@ -163,11 +152,6 @@ public class Parser {
 	}
 
 	public ParseResult<Exp> parseMultiplicativeExp(final int position) throws ParseException {
-
-
-	/*
-	//additive_exp ::= primary_exp (additive_op primary_exp)*
-	public ParseResult<Exp> parseAdditiveExp(final int position) throws ParseException {
 		ParseResult<Exp> current = parsePrimaryExp(position);
 		boolean shouldRun = true;
 
@@ -187,6 +171,41 @@ public class Parser {
 
 		return current;
 	}
+
+	// public ParseResult<Op> parseComparisonOp(final int position) throws
+	// ParseException {
+	// final Token token = getToken(position);
+	// if (token instanceof lessThanToken) {
+	// return new ParseResult<Op>(new LessThanOp(), position + 1);
+	// } else if (token instanceof greaterThanToken) {
+	// return new ParseResult<Op>(new GreaterThanOp(), position + 1);
+	// } else if (token instanceof equalEqualToken) {
+	// return new ParseResult<Op>(new EqualEqualsOp(), position + 1);
+	// } else if (token instanceof notEqualToken) {
+	// return new ParseResult<Op>(new NotEqualsOp(), position + 1);
+	// } else {
+	// throw new ParseException("expected * or /; received: " + token);
+	// }
+	// }
+
+	// public ParseResult<Exp> parseComparisonExp(final int position) throws
+	// ParseException {
+	// ParseResult<Exp> current = parseAdditiveExp(position);
+
+	// if ((parseComparisonOp(current.position)) instanceof ParseResult<Op>) {
+	// final ParseResult<Op> comparisonOp = parseComparisonOp(current.position);
+	// final ParseResult<Exp> anotherAdditive =
+	// parseAdditiveExp(comparitiveOp.position);
+	// current = new ParseResult<Exp>(new OpExp(current.result,
+	// comparisonOp.result,
+	// anotherAdditive.result),
+	// anotherAdditive.position);
+	// } else {
+	// return current;
+	// }
+
+	// return current;
+	// }
 
 	/*
 	 * // additive_op ::= + | -
@@ -259,17 +278,17 @@ public class Parser {
 	 * }
 	 * }
 	 */
-	 
-	 public ParseResult parseSingle() throws ParseException {
-		 ParseResult retval;
-		 retval = parseAdditiveOp(0);
-		 return retval;
-	 }
-	 
-	 public List<ParseResult> parse() throws ParseException {
-		 final List<ParseResult> results = new ArrayList<ParseResult>();
-		 ParseResult<Op> result1 = parseSingle();
-		 results.add(result1);
-		 return results;
-	 }
+
+	public ParseResult parseSingle() throws ParseException {
+		ParseResult retval;
+		retval = parseAdditiveOp(0);
+		return retval;
+	}
+
+	public List<ParseResult> parse() throws ParseException {
+		final List<ParseResult> results = new ArrayList<ParseResult>();
+		ParseResult<Op> result1 = parseSingle();
+		results.add(result1);
+		return results;
+	}
 }
