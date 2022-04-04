@@ -221,6 +221,28 @@ public class Parser {
 
 		return current;
 	}
+
+	// additive expression parsing
+	public ParseResult<Exp> parseAdditiveExp(final int position) throws ParseException {
+		ParseResult<Exp> current = parseMultiplicativeExp(position);
+		boolean shouldRun = true;
+
+		while (shouldRun) {
+			try {
+				final ParseResult<Op> additiveOp = parseAdditiveOp(current.position);
+				final ParseResult<Exp> anotherMultiplicative = parseMultiplicativeExp(additiveOp.position);
+				current = new ParseResult<Exp>(new OpExp(current.result,
+						additiveOp.result,
+						anotherMultiplicative.result),
+						anotherMultiplicative.position);
+			} catch (final ParseException e) {
+				shouldRun = false;
+				throw new ParseException("");
+			}
+		}
+
+		return current;
+	}
 	
 	//end of Ruben's methods
 	
