@@ -39,7 +39,7 @@ public class Parser {
 		} else if (token instanceof StringToken) {
 			return new ParseResult<Type>(new StringType(), position + 1);
 		} else if (token instanceof VariableToken) {
-			return new ParseResult<Type>(new ClassnameType(new VariableExp(token.toString())), position + 1);
+			return new ParseResult<Type>(new Classname(new VariableExp(token.toString())), position + 1);
 		} else {
 			throw new ParseException("");
 		}
@@ -161,7 +161,6 @@ public class Parser {
 	public ParseResult<Exp> parseComparisonExp(final int position) throws ParseException {
 		ParseResult<Exp> current = parseAdditiveExp(position);
 		final Token token = getToken(position);
-
 		if ((token instanceof lessThanToken) || (token instanceof greaterThanToken) || (token instanceof equalEqualToken) || (token instanceof notEqualToken)) {
 			final ParseResult<Op> comparisonOp = parseComparisonOp(current.position);
 			final ParseResult<Exp> anotherAdditive = parseAdditiveExp(comparisonOp.position);
@@ -177,7 +176,30 @@ public class Parser {
 	
 	
 	// exp ::= comparison_exp | var.methodname(exp*) | new classname(exp*)
-	//still needs to be implemented
+	// changing order to: (3) | ? | ?
+/* 	public ParseResult<Exp> parseExp(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if (token instanceof NewToken) {	// creating an object
+			token = getToken(position + 1);
+			assertTokenHereIs(position + 1, new VariableToken(token.toString()));
+			//parse in the classname
+			assertTokenHereIs(classname.position, new OpenparToken());
+			final List<Exp> exps = new ArrayList<Exp>();	//create list to hold expressions
+			boolean shouldRun = true;
+			currentPosition = classname.position + 1;
+			while (shouldRun) {
+				try {
+					final ParseResult<Exp> exp = parseExp(currentPosition);
+					exps.add(exp.result);
+					currentPosition = exp.position;
+				} catch (final ParseException e) {
+					shouldRun = false;
+				}
+			}
+			assertTokenHereIs(currentPosition, new CloseparToken());
+			//return the ParseResult with the CreateObject object in it
+		}
+	} */
 	
 	
 	// vardec ::= type var = exp;
