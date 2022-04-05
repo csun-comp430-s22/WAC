@@ -39,7 +39,7 @@ public class Parser {
 		} else if (token instanceof StringToken) {
 			return new ParseResult<Type>(new StringType(), position + 1);
 		} else if (token instanceof VariableToken) {
-			return new ParseResult<Type>(new Classname(new VariableExp(token.toString())), position + 1);
+			return new ParseResult<Type>(new ClassnameType(new VariableExp(token.toString())), position + 1);
 		} else {
 			throw new ParseException("");
 		}
