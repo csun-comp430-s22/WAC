@@ -6,7 +6,7 @@ public class LessThanOp implements Op {
 	}
 	
 	public int hashCode() {
-		return 2;
+		return 27;
 	}
 	
 	public String toString() {
