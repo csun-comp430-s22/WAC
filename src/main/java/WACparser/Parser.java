@@ -26,6 +26,22 @@ public class Parser {
 			throw new ParseException("expected: " + expected + "; received: " + received);
 		}
 	}
+	
+	// type ::= Int | Boolean | String | classname
+	public ParseResult<Type> parseType(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if (token instanceof IntToken) {
+			return new ParseResult<Type>(new IntType(), position + 1);
+		} else if (token instanceof BooleanToken) {
+			return new ParseResult<Type>(new BooleanType(), position + 1);
+		} else if (token instanceof StringToken) {
+			return new ParseResult<Type>(new StringType(), position + 1);
+		} else if (token instanceof VariableToken) {
+			return new ParseResult<Type>(new ClassnameType(new VariableExp(token.toString())), position + 1);
+		} else {
+			throw new ParseException("");
+		}
+	}
 
 	public ParseResult<Op> parseAdditiveOp(final int position) throws ParseException {
 		final Token token = getToken(position);
@@ -221,24 +237,6 @@ public class Parser {
 			throw new ParseException("expected statement; received: " + token); */
 
 	
-	//start of Ruben's methods
-
-
-	// type ::= Int | Boolean | String | classname
-	public ParseResult<Type> parseType(final int position) throws ParseException {
-		final Token token = getToken(position);
-		if (token instanceof IntToken) {
-			return new ParseResult<Type>(new IntType(), position + 1);
-		} else if (token instanceof BooleanToken) {
-			return new ParseResult<Type>(new BooleanType(), position + 1);
-		} else if (token instanceof StringToken) {
-			return new ParseResult<Type>(new StringType(), position + 1);
-		} else if (token instanceof VariableToken) {
-			return new ParseResult<Type>(new ClassnameType(new VariableExp(token.toString())), position + 1);
-		} else {
-			throw new ParseException("");
-		}
-	}
 
 	// primary_exp ::= var | str | int | true | false
 	public ParseResult<Exp> parsePrimaryExp(final int position) throws ParseException {
@@ -347,7 +345,6 @@ public class Parser {
 		return current;
 	}
 
-	// end of Ruben's methods
 	
 	
 	//helpful comments down here
