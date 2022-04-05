@@ -28,63 +28,49 @@ public class Parser {
 		}
 	}
 	
-	/* // primary_exp ::= x | i | ‘(‘ exp ‘)’
-	public ParseResult<Exp> parsePrimaryExp(final int position) throws ParseException {
-		final Token token = getToken(position);
-		if (token instanceof VariableToken) {
-			final String name = ((VariableToken)token).name;
-			return new ParseResult<Exp>(new VariableExp(name), position + 1);
-		} else if (token instanceof IntegerToken) {
-			final int value = ((IntegerToken)token).value;
-		return new ParseResult<Exp>(new IntegerExp(value), position + 1);
-		} else if (token instanceof OpenparToken) {
-			final ParseResult<Exp> inParens = parseExp(position + 1);
-			assertTokenHereIs(inParens.position, new CloseparToken());
-			return new ParseResult<Exp>(inParens.result, inParens.position + 1);
-		}
-	}
-	
-	// additive_op ::= + | -
-	public ParseResult<Op> parseAdditiveOp(final int position) throws ParseException {
-		final Token token = getToken(position);
-		if (token instanceof PlusToken) {
-			return new ParseResult<Op>(new PlusOp(), position + 1);
-		} else if (token instanceof MinusToken) {
-			return new ParseResult<Op>(new MinusOp(), position + 1);
-		} else {
-			throw new ParseException("expected + or -; received: " + token);
-		}
-	}
-	
-	//additive_exp ::= primary_exp (additive_op primary_exp)*
-	public ParseResult<Exp> parseAdditiveExp(final int position) throws ParseException {
-		ParseResult<Exp> current = parsePrimaryExp(position);
-		boolean shouldRun = true;
-		
-		while (shouldRun) {
-			try {
-				final ParseResult<Op> additiveOp = parseAdditiveOp(current.position);
-				final ParseResult<Exp> anotherPrimary = parsePrimaryExp(additiveOp.position);
-				current = new ParseResult<Exp>(new OpExp(current.result, additiveOp.result, anotherPrimary.result), anotherPrimary.position);
-			} catch (final ParseException e) {
-				shouldRun = false;
-			}
-		}
-		return current;
-	}
-	
-	// stmt ::= if (exp) stmt else stmt | { stmt }* | println(exp);
+	 
+	// stmt ::=  vardec ; |var = exp; | while (exp)  stmt |  break; |  if (exp) stmt else stmt | return exp; |   stmt* |println(exp*); |
+	//           super(var); |this.var = var; | exp;	 
 	public ParseResult<Stmt> parseStmt(final int position) throws ParseException {
 		final Token token = getToken(position);
-		if (token instanceof IfToken) {
+		if( (token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken) ) {
+			final ParseResult<Vardec>> declare = parseVardec(position + 1);
+			assertTokenHereIs(declare.position, new VariableToken(token.toString()));
+			return new ParseResult<Stmt>>(new VariableDeclaration(), declare.position);
+		 }
+		else if((token instanceof VariableToken) && !((getToken(position - 1) instanceof IntToken) || (getToken(position - 1) instanceof BooleanToken) || (getToken(position - 1) instanceof StringToken))){
+			assertTokenHereIs(position + 1 , new EqualToken());
+			final ParseResult<Exp> guard = parseExp(position + 2);
+			assertTokenHereIs(guard.position , new SemicolToken());
+			return new ParseResult<Stmt>(new VariableValueChange(), guard.position + 1);
+		}
+		else if(token instanceof WhileToken) {
+			assertTokenHereIs(position + 1, new OpenparToken());
+			final ParseResult<Exp> guard = parseExp(position + 2);
+			assertTokenHereIs(guard.position, new CloseparToken());
+			final ParseResult<Stmt> loopBranch = parseStmt(guard.position + 1);
+			return new ParseResult<Stmt>(new WhileStmt(), loopBranch.position);
+		}
+		else if (token instanceof BreakToken ) {
+			assertTokenHereIs(position + 1, new SemicolToken());
+			return new ParseResult<Stmt>(new BreakStmt(), position);
+		}
+		
+		else if (token instanceof IfToken) {
 			assertTokenHereIs(position + 1, new OpenparToken());
 			final ParseResult<Exp> guard = parseExp(position + 2);
 			assertTokenHereIs(guard.position, new CloseparToken());
 			final ParseResult<Stmt> trueBranch = parseStmt(guard.position + 1);
 			assertTokenHereIs(trueBranch.position, new ElseToken());
 			final ParseResult<Stmt> falseBranch = parseStmt(trueBranch.position + 1);
-			return new ParseResult<Stmt>(new IfExp(guard.result, trueBranch.result, falseBranch.result), falseBranch.position);
-		} else if (token instanceof leftCurlyToken) {
+			return new ParseResult<Stmt>(new IfStmt(guard.result, trueBranch.result, falseBranch.result), falseBranch.position);
+		}
+		else if (token instanceof ReturnToken) {
+			final ParseResult<Exp> guard = parseExp(position + 1);
+			assertTokenHereIs(guard.position, new SemicolToken());
+			return new ParseResult<Stmt>(new ReturnStmt(), guard.position + 1);
+		}
+		else if (token instanceof leftCurlyToken) {
 			final List<Stmt> stmts = new ArrayList<Stmt>();
 			int curPosition = position + 1;
 			boolean shouldRun = true;
@@ -98,15 +84,33 @@ public class Parser {
 				}
 			}
 			return new ParseResult<Stmt>(new BlockStmt(stmts), curPosition);
-		} else if (token instanceof PrintlnToken) {
+		} 
+		else if (token instanceof PrintlnToken) {
 			assertTokenHereIs(position + 1, new OpenparToken());
 			final ParseResult<Exp> exp = parseExp(position + 2);
 			assertTokenHereIs(exp.position, new CloseparToken());
 			assertTokenHereIs(exp.position + 1, new SemicolToken());
 			return new ParseResult<Stmt>(new PrintlnStmt(exp.result), exp.position + 2);
-		} else {
+		} 
+		else if (token instanceof SuperToken) {
+			assertTokenHereIs(position + 1, new SuperToken());
+			assertTokenHereIs(position + 2, new OpenparToken());
+			assertTokenHereIs(position + 3, new VariableToken(token.toString()) );
+			assertTokenHereIs(position + 4, new SemicolToken());
+			return new ParseResult<Stmt>(new SuperStmt(), position +5);
+		}
+		else if(token instanceof ThisToken) {
+			assertTokenHereIs(position + 1 , new PeriodToken());
+			assertTokenHereIs(position + 2, new VariableToken(token.toString()) );
+			assertTokenHereIs(position + 3 , new EqualToken());
+			assertTokenHereIs(position + 4 , new VariableToken(token.toString()));
+			return new ParseResult<Stmt>(new ThisStmt(), position +5);
+		}
+		
+		
+		else {
 			throw new ParseException("expected statement; received: " + token);
 		}
 	}
-	 */
+	 
 }
