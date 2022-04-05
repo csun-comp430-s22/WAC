@@ -137,7 +137,7 @@ public class Parser {
 	//end of Sarah's methods
 	
 	
-	 
+/* 	 
 	// stmt ::=  vardec ; |var = exp; | while (exp)  stmt |  break; |  if (exp) stmt else stmt | return exp; |   stmt* |println(exp*); |
 	//           super(var); |this.var = var; | exp;	 
 	public ParseResult<Stmt> parseStmt(final int position) throws ParseException {
@@ -218,7 +218,7 @@ public class Parser {
 		
 		
 		else {
-			throw new ParseException("expected statement; received: " + token);
+			throw new ParseException("expected statement; received: " + token); */
 
 	
 	//start of Ruben's methods
@@ -341,6 +341,8 @@ public class Parser {
 		} else {
 			return current;
 		}
+		return current;
+	}
 
 	// end of Ruben's methods
 	
