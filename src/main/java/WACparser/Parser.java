@@ -224,6 +224,7 @@ public class Parser {
 	//start of Ruben's methods
 
 
+	// type ::= Int | Boolean | String | classname
 	public ParseResult<Type> parseType(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof IntToken) {
@@ -232,6 +233,8 @@ public class Parser {
 			return new ParseResult<Type>(new BooleanType(), position + 1);
 		} else if (token instanceof StringToken) {
 			return new ParseResult<Type>(new StringType(), position + 1);
+		} else if (token instanceof VariableToken) {
+			return new ParseResult<Type>(new ClassnameType(new VariableExp(token.toString())), position + 1);
 		} else {
 			throw new ParseException("");
 		}
