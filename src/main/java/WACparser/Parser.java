@@ -175,6 +175,88 @@ public class Parser {
 	}
 	
 	
+	//done by Adrian
+		// Expression Parsing Start
+	// Parse New Token
+	// Will prob remove this later. will make it simple for me to read now.
+	public ParseResult<Exp> parseNewExp(final int position) throws ParseException {
+		final Token token = getToken(position);
+
+		if (token instanceof NewToken) {
+			return new ParseResult<Exp>(new NewExp(), position + 1);
+		} else {
+			throw new ParseException("expected 'new'; received: " + token);
+		}
+	}	// parseNewExp
+
+	// new classname(exp*)
+	public ParseResult<Exp> parseNewClassExp(final int position) throws ParseException {
+		ParseResult<Exp> current = parseNewExp(position);
+		final ParseResult<Exp> className = parsePrimaryExp(current.position);
+		// (exp*)
+		final Token token = getToken(className.position);
+		if (token instanceof OpenparToken) {
+			final ParseResult<Exp> inParens = parseExp(className.position + 1);
+			assertTokenHereIs(inParens.position, new CloseparToken());
+//			return new ParseResult<Exp>(current.result, className.result, inParens.result, inParens.position + 1);
+			current = new ParseResult<Exp>(new NewClassExp(current.result,
+					className.result,
+					inParens.result),
+					inParens.position + 1);
+		} else {
+			throw new ParseException("expected '('; received: " + token);
+		}
+
+		return current;
+	}	// parseNewClassExp
+
+	// var.methodname(exp*)
+	public ParseResult<Exp> parseVarMethodCall(final int position) throws ParseException {
+		ParseResult<Exp> current = parsePrimaryExp(position);
+		final Token token = getToken(current.position);
+
+		if (token instanceof PeriodToken) {
+			final ParseResult<Exp> methodName = parsePrimaryExp(current.position + 1);
+			final Token token2 = getToken(methodName.position);
+			if (token2 instanceof OpenparToken) {
+				final ParseResult<Exp> inParens = parseExp(current.position + 1);
+				assertTokenHereIs(inParens.position, new CloseparToken());
+//				return new ParseResult<Exp>(current.result, methodName.result, inParens.result);
+				current = new ParseResult<Exp>(new VarMethodCall(current.result,
+						methodName.result,
+						inParens.result),
+						inParens.position + 1);
+			} else {
+				throw new ParseException("expected '('; received: " + token);
+			}
+		} else {
+			throw new ParseException("expected '.'; received: " + token);
+		}
+		return current;
+	}	// parseVarMethodCall
+
+	// exp ::= var.methodname(exp*) | new classname(exp*) | comparison_exp
+	public ParseResult<Exp> parseExp(final int position) throws ParseException {
+		final Token token = getToken(position);
+
+		if (token instanceof VariableToken) {
+			// var.methodname(exp*)
+			return parseVarMethodCall(position);
+//			return new ParseResult<Exp>(new parseVarMethodCall(current, position));
+		} else if (token instanceof NewToken) {
+			// new classname(exp*)
+			return parseNewClassExp(position);
+//			return new ParseResult<Exp>(new parseNewClassExp(current, position));
+		} else {
+			// comparison_exp
+			return parseComparisonExp(position);
+//			return new ParseResult<Exp>(new parseComparisonExp(current, position));
+		}
+//		return current;
+	} // parseExp
+	
+	
+	//done by Sarah
 	// exp ::= comparison_exp | var.methodname(exp*) | new classname(exp*)
 	// changing order to: (3) | ? | ?
 /* 	public ParseResult<Exp> parseExp(final int position) throws ParseException {
@@ -442,89 +524,6 @@ public class Parser {
 	
 	
 }
-
-
-
-
-
-	// Expression Parsing Start
-	// Parse New Token
-	// Will prob remove this later. will make it simple for me to read now.
-	public ParseResult<Exp> parseNewExp(final int position) throws ParseException {
-		final Token token = getToken(position);
-
-		if (token instanceof NewToken) {
-			return new ParseResult<Exp>(new NewExp(), position + 1);
-		} else {
-			throw new ParseException("expected 'new'; received: " + token);
-		}
-	}	// parseNewExp
-
-	// new classname(exp*)
-	public ParseResult<Exp> parseNewClassExp(final int position) throws ParseException {
-		ParseResult<Exp> current = parseNewExp(position);
-		final ParseResult<Exp> className = parsePrimaryExp(current.position);
-		// (exp*)
-		final Token token = getToken(className.position);
-		if (token instanceof OpenparToken) {
-			final ParseResult<Exp> inParens = parseExp(className.position + 1);
-			assertTokenHereIs(inParens.position, new CloseparToken());
-//			return new ParseResult<Exp>(current.result, className.result, inParens.result, inParens.position + 1);
-			current = new ParseResult<Exp>(new NewClassExp(current.result,
-					className.result,
-					inParens.result),
-					inParens.position + 1);
-		} else {
-			throw new ParseException("expected '('; received: " + token);
-		}
-
-		return current;
-	}	// parseNewClassExp
-
-	// var.methodname(exp*)
-	public ParseResult<Exp> parseVarMethodCall(final int position) throws ParseException {
-		ParseResult<Exp> current = parsePrimaryExp(position);
-		final Token token = getToken(current.position);
-
-		if (token instanceof PeriodToken) {
-			final ParseResult<Exp> methodName = parsePrimaryExp(current.position + 1);
-			final Token token2 = getToken(methodName.position);
-			if (token2 instanceof OpenparToken) {
-				final ParseResult<Exp> inParens = parseExp(current.position + 1);
-				assertTokenHereIs(inParens.position, new CloseparToken());
-//				return new ParseResult<Exp>(current.result, methodName.result, inParens.result);
-				current = new ParseResult<Exp>(new VarMethodCall(current.result,
-						methodName.result,
-						inParens.result),
-						inParens.position + 1);
-			} else {
-				throw new ParseException("expected '('; received: " + token);
-			}
-		} else {
-			throw new ParseException("expected '.'; received: " + token);
-		}
-		return current;
-	}	// parseVarMethodCall
-
-	// exp ::= var.methodname(exp*) | new classname(exp*) | comparison_exp
-	public ParseResult<Exp> parseExp(final int position) throws ParseException {
-		final Token token = getToken(position);
-
-		if (token instanceof VariableToken) {
-			// var.methodname(exp*)
-			return parseVarMethodCall(position);
-//			return new ParseResult<Exp>(new parseVarMethodCall(current, position));
-		} else if (token instanceof NewToken) {
-			// new classname(exp*)
-			return parseNewClassExp(position);
-//			return new ParseResult<Exp>(new parseNewClassExp(current, position));
-		} else {
-			// comparison_exp
-			return parseComparisonExp(position);
-//			return new ParseResult<Exp>(new parseComparisonExp(current, position));
-		}
-//		return current;
-	} // parseExp
 
 
 	// Expression Parsin End
