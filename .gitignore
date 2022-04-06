@@ -1,7 +1,0 @@
-*.class
-target/
-*.iml
-*.xml
-.vscode/settings.json
-*.classpath
-*.project
