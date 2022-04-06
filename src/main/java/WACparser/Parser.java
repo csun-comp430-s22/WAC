@@ -396,19 +396,51 @@ public class Parser {
 	}
 		*/
 	
-	//still need to change these around to match Kyle's
-	public ParseResult parseSingle() throws ParseException {
-		ParseResult retval;
-		retval = parseAdditiveOp(0);
-		return retval;
-	}
+	
 
-	public List<ParseResult> parse() throws ParseException {
-		final List<ParseResult> results = new ArrayList<ParseResult>();
-		ParseResult<Op> result1 = parseSingle();
-		results.add(result1);
-		return results;
+	
+	
+	//still won't work because we need to finish the other methods it calls
+/* 	//new code
+	public ParseResult<Program> parseProgram(final int position) throws ParseException {
+		//mine will be different than Kyle's because we have two lists instead of one stmt
+		final List<Classdef> classes = new ArrayList<Classdef>();
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		boolean shouldRunClasses = true;
+		boolean shouldRunStmts = true;
+		int currentPos = position;
+		while (shouldRunClasses) {
+			try {
+				final ParseResult<Classdef> theClass = parseClassdef(currentPos);
+				classes.add(theClass);
+				currentPos = theClass.position;
+			} catch (final ParseException e) {
+				shouldRunClasses = false;
+			}
+		}
+		while (shouldRunStmts) {
+			try {
+				final ParseResult<Stmt> stmt = parseStmt(currentPos);
+				stmts.add(stmt);
+				currentPos = stmt.position;
+			} catch (final ParseException e) {
+				shouldRunStmts = false;
+			}
+		}
+		return new ParseResult<Program>(new Program(classes, stmts), currentPos);
 	}
+	
+	
+	public Program parseProgram() throws ParseException {
+		final ParseResult<Program> program = parseProgram(0);
+		if (program.position == tokens.size()) {
+			return program.result;
+		} else {
+			throw new ParseException("Remaining tokens at end");
+		}
+	} */
+	
+	
 }
 
 
