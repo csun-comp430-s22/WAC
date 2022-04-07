@@ -150,16 +150,21 @@ public class Parser {
 	// comparsion_exp ::= additive_exp | additive_exp comparison_op additive_exp
 	public ParseResult<Exp> parseComparisonExp(final int position) throws ParseException {
 		ParseResult<Exp> current = parseAdditiveExp(position);
-		final Token token = getToken(position);
-		if ((token instanceof lessThanToken) || (token instanceof greaterThanToken)
+		try {
+			final Token token = getToken(position + 1);
+			if ((token instanceof lessThanToken) || (token instanceof greaterThanToken)
 				|| (token instanceof equalEqualToken) || (token instanceof notEqualToken)) {
-			final ParseResult<Op> comparisonOp = parseComparisonOp(current.position);
-			final ParseResult<Exp> anotherAdditive = parseAdditiveExp(comparisonOp.position);
-			current = new ParseResult<Exp>(new OpExp(current.result,
-					comparisonOp.result,
-					anotherAdditive.result),
-					anotherAdditive.position);
-		} else {
+				final ParseResult<Op> comparisonOp = parseComparisonOp(current.position);
+				final ParseResult<Exp> anotherAdditive = parseAdditiveExp(comparisonOp.position);
+				current = new ParseResult<Exp>(new OpExp(current.result,
+												comparisonOp.result,
+												anotherAdditive.result),
+												anotherAdditive.position); 
+			} else {
+				return current;
+			}
+		}
+		catch (final ParseException e) {
 			return current;
 		}
 		return current;
