@@ -1,21 +1,21 @@
 package WACparser;
 
 public class VariableExp implements Exp {
-	public final String name;
-	
-	public VariableExp(final String name) {
-		this.name = name;
+	public final Variable variable;
+
+	public VariableExp(final Variable variable) {
+		this.variable = variable;
 	}
-	
+
 	public boolean equals(final Object other) {
-		return (other instanceof VariableExp && name.equals(((VariableExp)other).name));
+		return (other instanceof VariableExp && variable.equals(((VariableExp) other).variable));
 	}
-	
+
 	public int hashCode() {
-		return name.hashCode();
+		return variable.hashCode();
 	}
-	
+
 	public String toString() {
-		return "VariableExp(" + name + ")";
+		return "VariableExp(" + variable.toString() + ")";
 	}
 }
