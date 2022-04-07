@@ -16,13 +16,6 @@ import org.junit.Test;
 
 public class ParserTest {
 	
-	//helper method to be used in our methods
-	public void assertParses(final List<Token> input, final ParseResult[] expected) throws ParseException {
-		Parser parser = new Parser(input);
-		List<ParseResult> received = parser.parse();
-		assertArrayEquals(expected,received.toArray(new ParseResult[received.size()]));
-	}
-	
 	//Kyle's test
 	@Test
 	public void testEqualsOpExp() {
@@ -32,26 +25,20 @@ public class ParserTest {
 		assertEquals(first, second);
 	}
 	
-	//Start of Sarah's tests
 	
+	//new code will come back to this after parsing methods are finished
 	@Test
-	public void testSingleAdditiveOp() throws ParseException {
-		final List<Token> test = new ArrayList();
-		test.add(new PlusToken());
-		final ParseResult<Op> shouldBe = new ParseResult<Op>(new PlusOp(), 1);
-		final ParseResult[] shouldBeList = new ParseResult[] {shouldBe};
-		assertParses(test, shouldBeList);
+	public void testPrimaryVariable() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IntegerToken(123)));
+		assertEquals(new ParseResult<Exp>(new IntegerExp(123), 1), parser.parsePrimaryExp(0));
 	}
 	
-	//Int x = 5;
-	//untested because methods aren't done yet
-/* 	public void testSingleVardec() throws ParseException {
-		final List<Token> test = new ArrayList();
-		Collections.addAll(test, new IntToken(), new VariableToken(), new EqualToken(), new IntegerToken());
-		final VariableDeclaration value = new VariableDeclaration(Type IntType, Exp VariableExp, Exp IntegerExp);
-		final ParseResult<Vardec> shouldBe = new ParseResult<Vardec>(value, 5);
-		final ParseResult [] shouldbeList = new ParseResult[] {shouldBe};
+/* 	// x.get(hi)
+	@Test
+	public void testVarMethodCall () throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken(x), new PeriodToken(), new VariableToken(get), new OpenparToken(),
+											new VariableToken(hi), new CloseparToken()));
+		
 	} */
 	
-	//end of Sarah's tests
 }
