@@ -231,8 +231,7 @@ public class ParserTest {
 	}
 	
 	
-	
-/* 	// new classname(exp*)
+	// new classname(exp*)
 	// new Dog(12)
 	@Test
 	public void testParseNewClassExp() throws ParseException {
@@ -241,7 +240,7 @@ public class ParserTest {
 	inside.add(new IntegerExp(12));
 	final ParseResult<Exp> expected = new ParseResult<Exp>(new NewClassExp(new VariableExp(new Variable("Dog")), inside), 5);
 	assertEquals(expected, parser.parseNewClassExp(0));
-	} */
+	}
 	
 	
 /* 	// x.get(hi)
