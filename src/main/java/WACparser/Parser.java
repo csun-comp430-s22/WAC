@@ -37,7 +37,7 @@ public class Parser {
 		} else if (token instanceof StringToken) {
 			return new ParseResult<Type>(new StringType(), position + 1);
 		} else if (token instanceof VariableToken) {
-			return new ParseResult<Type>(new ClassnameType(new VariableExp(new Variable(token.toString()))),
+			return new ParseResult<Type>(new ClassnameType(new Classname(token.toString())),
 					position + 1);
 		} else {
 			throw new ParseException("");
@@ -265,7 +265,7 @@ public class Parser {
 		final ParseResult<Exp> result;
 		if (token instanceof CloseparToken) {
 			result = new ParseResult<Exp>(
-					new VarMethodCall(varName.result, new MethodNameExp(methodName.result.toString()), inParens),
+					new VarMethodCall(varName.result, new MethodNameExp(new Methodname(methodName.result.toString())), inParens),
 					position + 5);
 		} else {
 			boolean shouldRun = true;
@@ -280,7 +280,7 @@ public class Parser {
 			}
 			assertTokenHereIs(newPosition, new CloseparToken());
 			result = new ParseResult<Exp>(
-					new VarMethodCall(varName.result, new MethodNameExp(methodName.result.toString()), inParens),
+					new VarMethodCall(varName.result, new MethodNameExp(new Methodname(methodName.result.toString())), inParens),
 					newPosition + 1);
 		}
 		return result;

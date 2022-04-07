@@ -40,17 +40,21 @@ public class ParserTest {
 	}
 
 
+	// 1 < 2
+	@Test
+	public void testParseExpForComparison() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IntegerToken(1), new LessThanOp(), new IntegerToken(2)));
+	}
 	
 	// x.get(hi)
 	@Test
 	public void testVarMethodCall () throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 											new VariableToken("hi"), new CloseparToken()));
-		final Exp variable = new VariableExp("x");
-		final MethodNameExp methodName = new MethodNameExp("get");
+		final Exp variable = new VariableExp(new Variable("x"));
+		final Exp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
-		inside.add(new VariableExp("hi"));
-		final Exp expected = new VarMethodCall(variable, methodName, inside);
-		assertEquals(new ParseResult<Exp>(expected, 7), parser.parseVarMethodCall(0));
+		inside.add(new VariableExp(new Variable("hi")));
+		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 7), parser.parseVarMethodCall(0));
 	}
 }

@@ -5,11 +5,11 @@ import java.util.List;
 // made for the 'exp ::= var.methodname(exp*)' situation
 public class VarMethodCall implements Exp {
     public final Exp varName;
-    public final MethodNameExp methodName;
+    public final Exp methodName;
 	public final List<Exp> inParens;
 	
 
-    public VarMethodCall(final Exp varName, final MethodNameExp methodName, final List<Exp> inParens) {
+    public VarMethodCall(final Exp varName, final Exp methodName, final List<Exp> inParens) {
         this.varName = varName;
 		this.methodName = methodName;
         this.inParens = inParens;

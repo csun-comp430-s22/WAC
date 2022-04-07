@@ -1,9 +1,9 @@
 package WACparser;
 
 public class ClassnameType implements Type {
-	public final VariableExp classname;
+	public final Classname classname;
 
-	public ClassnameType(final VariableExp classname) {
+	public ClassnameType(final Classname classname) {
 		this.classname = classname;
 	}
 
