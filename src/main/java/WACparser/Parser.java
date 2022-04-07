@@ -37,7 +37,7 @@ public class Parser {
 		} else if (token instanceof StringToken) {
 			return new ParseResult<Type>(new StringType(), position + 1);
 		} else if (token instanceof VariableToken) {
-			return new ParseResult<Type>(new ClassnameType(new VariableExp(new Variable(token.toString()))),
+			return new ParseResult<Type>(new ClassnameType(new Classname(token.toString())),
 					position + 1);
 		} else {
 			throw new ParseException("");
@@ -150,16 +150,21 @@ public class Parser {
 	// comparsion_exp ::= additive_exp | additive_exp comparison_op additive_exp
 	public ParseResult<Exp> parseComparisonExp(final int position) throws ParseException {
 		ParseResult<Exp> current = parseAdditiveExp(position);
-		final Token token = getToken(position);
-		if ((token instanceof lessThanToken) || (token instanceof greaterThanToken)
+		try {
+			final Token token = getToken(position + 1);
+			if ((token instanceof lessThanToken) || (token instanceof greaterThanToken)
 				|| (token instanceof equalEqualToken) || (token instanceof notEqualToken)) {
-			final ParseResult<Op> comparisonOp = parseComparisonOp(current.position);
-			final ParseResult<Exp> anotherAdditive = parseAdditiveExp(comparisonOp.position);
-			current = new ParseResult<Exp>(new OpExp(current.result,
-					comparisonOp.result,
-					anotherAdditive.result),
-					anotherAdditive.position);
-		} else {
+				final ParseResult<Op> comparisonOp = parseComparisonOp(current.position);
+				final ParseResult<Exp> anotherAdditive = parseAdditiveExp(comparisonOp.position);
+				current = new ParseResult<Exp>(new OpExp(current.result,
+												comparisonOp.result,
+												anotherAdditive.result),
+												anotherAdditive.position); 
+			} else {
+				return current;
+			}
+		}
+		catch (final ParseException e) {
 			return current;
 		}
 		return current;
@@ -263,7 +268,7 @@ public class Parser {
 		final ParseResult<Exp> result;
 		if (token instanceof CloseparToken) {
 			result = new ParseResult<Exp>(
-					new VarMethodCall(varName.result, new MethodNameExp(methodName.result.toString()), inParens),
+					new VarMethodCall(varName.result, new MethodNameExp(new Methodname(methodName.result.toString())), inParens),
 					position + 5);
 		} else {
 			boolean shouldRun = true;
@@ -278,7 +283,7 @@ public class Parser {
 			}
 			assertTokenHereIs(newPosition, new CloseparToken());
 			result = new ParseResult<Exp>(
-					new VarMethodCall(varName.result, new MethodNameExp(methodName.result.toString()), inParens),
+					new VarMethodCall(varName.result, new MethodNameExp(new Methodname(methodName.result.toString())), inParens),
 					newPosition + 1);
 		}
 		return result;

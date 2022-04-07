@@ -1,9 +1,9 @@
 package WACparser;
 
 public class MethodNameExp implements Exp {
-	public final String name;
+	public final Methodname name;
 	
-	public MethodNameExp(final String name) {
+	public MethodNameExp(final Methodname name) {
 		this.name = name;
 	}
 	
