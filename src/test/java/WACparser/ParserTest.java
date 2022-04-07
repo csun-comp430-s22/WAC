@@ -33,4 +33,12 @@ public class ParserTest {
 		assertEquals(new ParseResult<Exp>(new IntegerExp(123), 1), parser.parsePrimaryExp(0));
 	}
 	
+/* 	// x.get(hi)
+	@Test
+	public void testVarMethodCall () throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken(x), new PeriodToken(), new VariableToken(get), new OpenparToken(),
+											new VariableToken(hi), new CloseparToken()));
+		
+	} */
+	
 }
