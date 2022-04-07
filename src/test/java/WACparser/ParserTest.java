@@ -230,6 +230,20 @@ public class ParserTest {
 		assertEquals(new ParseResult<Exp>(new OpExp(new IntegerExp(1), new LessThanOp(), new IntegerExp(2)), 3), parser.parseExp(0));
 	}
 	
+	
+	
+/* 	// new classname(exp*)
+	// new Dog(12)
+	@Test
+	public void testParseNewClassExp() throws ParseException {
+	final Parser parser = new Parser(Arrays.asList(new NewToken(), new VariableToken("Dog"), new OpenparToken(), new IntegerToken(12), new CloseparToken()));
+	List<Exp> inside = new ArrayList();
+	inside.add(new IntegerExp(12));
+	final ParseResult<Exp> expected = new ParseResult<Exp>(new NewClassExp(new VariableExp(new Variable("Dog")), inside), 5);
+	assertEquals(expected, parser.parseNewClassExp(0));
+	} */
+	
+	
 /* 	// x.get(hi)
 	@Test
 	public void testVarMethodCall () throws ParseException {
@@ -240,5 +254,6 @@ public class ParserTest {
 		final List<Exp> inside = new ArrayList();
 		inside.add(new VariableExp(new Variable("hi")));
 		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 7), parser.parseVarMethodCall(0));
-	}
- */}
+	} */
+
+ }
