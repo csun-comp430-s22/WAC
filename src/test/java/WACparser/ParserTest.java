@@ -15,8 +15,8 @@ import static org.junit.Assert.fail;
 import org.junit.Test;
 
 public class ParserTest {
-	
-	//Kyle's test
+
+	// Kyle's test
 	@Test
 	public void testEqualsOpExp() {
 		// 1 + 1 == 1 = 1
@@ -24,21 +24,31 @@ public class ParserTest {
 		final OpExp second = new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(1));
 		assertEquals(first, second);
 	}
-	
-	
-	//new code will come back to this after parsing methods are finished
+
+	// new code will come back to this after parsing methods are finished
 	@Test
-	public void testPrimaryVariable() throws ParseException {
+	public void testPrimaryInteger() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(123)));
 		assertEquals(new ParseResult<Exp>(new IntegerExp(123), 1), parser.parsePrimaryExp(0));
 	}
-	
-/* 	// x.get(hi)
+
 	@Test
-	public void testVarMethodCall () throws ParseException {
-		final Parser parser = new Parser(Arrays.asList(new VariableToken(x), new PeriodToken(), new VariableToken(get), new OpenparToken(),
-											new VariableToken(hi), new CloseparToken()));
-		
-	} */
-	
+	public void testPrimaryVariable() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken("x")));
+		assertEquals(new ParseResult<Exp>(new VariableExp(new Variable("x")), 1),
+				parser.parsePrimaryExp(0));
+	}
+
+	/*
+	 * // x.get(hi)
+	 * 
+	 * @Test
+	 * public void testVarMethodCall () throws ParseException {
+	 * final Parser parser = new Parser(Arrays.asList(new VariableToken(x), new
+	 * PeriodToken(), new VariableToken(get), new OpenparToken(),
+	 * new VariableToken(hi), new CloseparToken()));
+	 * 
+	 * }
+	 */
+
 }
