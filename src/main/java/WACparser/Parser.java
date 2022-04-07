@@ -192,10 +192,37 @@ public class Parser {
 	 */
 
 	// new classname(exp*)
+//	public ParseResult<Exp> parseNewClassExp(final int position) throws ParseException {
+//		Token token = getToken(position + 1); // should be the classname
+//		assertTokenHereIs(position + 1, new VariableToken(token.toString()));
+//		final ParseResult<Exp> className = parsePrimaryExp(position);
+//		assertTokenHereIs(className.position, new OpenparToken());
+//		List<Exp> inParens = new ArrayList();
+//		int newPosition = className.position + 1;
+//		token = getToken(newPosition);
+//		final ParseResult<Exp> result;
+//		if (token instanceof CloseparToken) {
+//			result = new ParseResult<Exp>(new NewClassExp(className.result, inParens), newPosition + 1);
+//		} else {
+//			boolean shouldRun = true;
+//			while (shouldRun) {
+//				try {
+//					final ParseResult<Exp> exp = parseExp(newPosition);
+//					inParens.add(exp.result);
+//					newPosition = exp.position;
+//				} catch (final ParseException e) {
+//					shouldRun = false;
+//				}
+//			}
+//			assertTokenHereIs(newPosition, new CloseparToken());
+//			result = new ParseResult<Exp>(new NewClassExp(className.result, inParens), newPosition + 1);
+//		}
+//		return result;
+//	}
 	public ParseResult<Exp> parseNewClassExp(final int position) throws ParseException {
-		Token token = getToken(position + 1); // should be the classname
-		assertTokenHereIs(position + 1, new VariableToken(token.toString()));
-		final ParseResult<Exp> className = parsePrimaryExp(position + 1);
+		Token token = getToken(position); // should be the classname
+		assertTokenHereIs(position, new VariableToken(token.toString()));
+		final ParseResult<Exp> className = parsePrimaryExp(position);
 		assertTokenHereIs(className.position, new OpenparToken());
 		List<Exp> inParens = new ArrayList();
 		int newPosition = className.position + 1;
@@ -219,7 +246,6 @@ public class Parser {
 		}
 		return result;
 	}
-
 	/*
 	 * // var.methodname(exp*)
 	 * public ParseResult<Exp> parseVarMethodCall(final int position) throws
@@ -251,7 +277,7 @@ public class Parser {
 
 	// var.methodname(exp*)
 	public ParseResult<Exp> parseVarMethodCall(final int position) throws ParseException {
-		ParseResult<Exp> varName = parsePrimaryExp(position); // parse in variable name
+		ParseResult<Exp> varName = parsePrimaryExp(position + 1); // parse in variable name
 		// ignore the . we already checked it was there
 		Token token = getToken(position + 2);
 		assertTokenHereIs(position + 2, new VariableToken(token.toString()));
@@ -292,7 +318,7 @@ public class Parser {
 			assertTokenHereIs(position + 1, new PeriodToken());
 			return parseVarMethodCall(position); // var.methodname(exp*)
 		} else if (token instanceof NewToken) {
-			return parseNewClassExp(position); // new classname(exp*)
+			return parseNewClassExp(position + 1); // new classname(exp*)
 		} else {
 			return parseComparisonExp(position); // comparison_exp
 		}
