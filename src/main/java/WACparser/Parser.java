@@ -92,7 +92,6 @@ public class Parser {
 						anotherPrimary.position);
 			} catch (final ParseException e) {
 				shouldRun = false;
-				throw new ParseException("");
 			}
 		}
 
@@ -126,7 +125,6 @@ public class Parser {
 						anotherMultiplicative.position);
 			} catch (final ParseException e) {
 				shouldRun = false;
-				throw new ParseException("");
 			}
 		}
 
