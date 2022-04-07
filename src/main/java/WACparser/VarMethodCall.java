@@ -1,32 +1,35 @@
 package WACparser;
 
+import java.util.List;
+
 // made for the 'exp ::= var.methodname(exp*)' situation
 public class VarMethodCall implements Exp {
-    public final Exp left;
     public final Exp varName;
-    public final Exp inParens;
+    public final MethodNameExp methodName;
+	public final List<Exp> inParens;
+	
 
-    public VarMethodCall(final Exp left, final Exp varName, final Exp inParens) {
-        this.left = left;
+    public VarMethodCall(final Exp varName, final MethodNameExp methodName, final List<Exp> inParens) {
         this.varName = varName;
+		this.methodName = methodName;
         this.inParens = inParens;
     }
 
     public boolean equals(final Object other) {
         if (other instanceof VarMethodCall) {
-            final VarMethodCall otherVarMethodCall = (VarMethodCall) other;
-            return (left.equals(otherVarMethodCall.left) && varName.equals(otherVarMethodCall.varName) && inParens.equals(otherVarMethodCall.inParens));
+            final VarMethodCall otherVarMethodCall = (VarMethodCall)other;
+            return (varName.equals(otherVarMethodCall.varName) && methodName.equals(otherVarMethodCall.methodName) && inParens.equals(otherVarMethodCall.inParens));
         } else {
             return false;
         }
     }
 
     public int hashCode() {
-        return (left.hashCode() + varName.hashCode() + inParens.hashCode());
+        return (varName.hashCode() + methodName.hashCode() + inParens.hashCode());
     }
 
     public String toString() {
-        return ("NewClassExp(" + left.toString() + ", " + varName.toString() + ", " + inParens.toString() + ")");
+        return ("NewClassExp(" + varName.toString() + ", " + methodName.toString() + ", " + inParens.toString() + ")");
     }
 
 }
