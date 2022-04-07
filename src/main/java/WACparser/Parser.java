@@ -170,37 +170,15 @@ public class Parser {
 		return current;
 	}
 
-	// old code
-	/*
-	 * // new classname(exp*)
-	 * public ParseResult<Exp> parseNewClassExp(final int position) throws
-	 * ParseException {
-	 * ParseResult<Exp> current = parseNewExp(position);
-	 * final ParseResult<Exp> className = parsePrimaryExp(current.position);
-	 * // (exp*)
-	 * final Token token = getToken(className.position);
-	 * if (token instanceof OpenparToken) {
-	 * final ParseResult<Exp> inParens = parseExp(className.position + 1);
-	 * assertTokenHereIs(inParens.position, new CloseparToken());
-	 * // return new ParseResult<Exp>(current.result, className.result,
-	 * inParens.result, inParens.position + 1);
-	 * current = new ParseResult<Exp>(new NewClassExp(current.result,
-	 * className.result,
-	 * inParens.result),
-	 * inParens.position + 1);
-	 * } else {
-	 * throw new ParseException("expected '('; received: " + token);
-	 * }
-	 * 
-	 * return current;
-	 * } // parseNewClassExp
-	 */
 
 	// new classname(exp*)
 	public ParseResult<Exp> parseNewClassExp(final int position) throws ParseException {
 		Token token = getToken(position + 1); // should be the classname
-		assertTokenHereIs(position + 1, new VariableToken(token.toString()));
+		final String name = ((VariableToken)token).name;
+		assertTokenHereIs(position + 1, new VariableToken(name));
 		final ParseResult<Exp> className = parsePrimaryExp(position + 1);
+/* 		final ParseResult<Exp> className = parsePrimaryExp(position + 1);
+		final ClassnameExp cN = new ClassnameExp(className.result); */
 		assertTokenHereIs(className.position, new OpenparToken());
 		List<Exp> inParens = new ArrayList();
 		int newPosition = className.position + 1;
@@ -208,6 +186,7 @@ public class Parser {
 		final ParseResult<Exp> result;
 		if (token instanceof CloseparToken) {
 			result = new ParseResult<Exp>(new NewClassExp(className.result, inParens), newPosition + 1);
+			//result = new ParseResult<Exp>(new NewClassExp(cN, inParens), newPosition + 1);
 		} else {
 			boolean shouldRun = true;
 			while (shouldRun) {
@@ -221,9 +200,11 @@ public class Parser {
 			}
 			assertTokenHereIs(newPosition, new CloseparToken());
 			result = new ParseResult<Exp>(new NewClassExp(className.result, inParens), newPosition + 1);
+			//result = new ParseResult<Exp>(new NewClassExp(cN, inParens), newPosition + 1);
 		}
 		return result;
 	}
+
 
 	/*
 	 * // var.methodname(exp*)
@@ -302,36 +283,7 @@ public class Parser {
 			return parseComparisonExp(position); // comparison_exp
 		}
 	} // parseExp
-
-	// done by Sarah
-	// exp ::= comparison_exp | var.methodname(exp*) | new classname(exp*)
-	// changing order to: (3) | ? | ?
-	/*
-	 * public ParseResult<Exp> parseExp(final int position) throws ParseException {
-	 * final Token token = getToken(position);
-	 * if (token instanceof NewToken) { // creating an object
-	 * token = getToken(position + 1);
-	 * assertTokenHereIs(position + 1, new VariableToken(token.toString()));
-	 * //parse in the classname
-	 * assertTokenHereIs(classname.position, new OpenparToken());
-	 * final List<Exp> exps = new ArrayList<Exp>(); //create list to hold
-	 * expressions
-	 * boolean shouldRun = true;
-	 * currentPosition = classname.position + 1;
-	 * while (shouldRun) {
-	 * try {
-	 * final ParseResult<Exp> exp = parseExp(currentPosition);
-	 * exps.add(exp.result);
-	 * currentPosition = exp.position;
-	 * } catch (final ParseException e) {
-	 * shouldRun = false;
-	 * }
-	 * }
-	 * assertTokenHereIs(currentPosition, new CloseparToken());
-	 * //return the ParseResult with the CreateObject object in it
-	 * }
-	 * }
-	 */
+	
 
 	// vardec ::= type var = exp;
 	/*
