@@ -39,16 +39,18 @@ public class ParserTest {
 				parser.parsePrimaryExp(0));
 	}
 
-	/*
-	 * // x.get(hi)
-	 * 
-	 * @Test
-	 * public void testVarMethodCall () throws ParseException {
-	 * final Parser parser = new Parser(Arrays.asList(new VariableToken(x), new
-	 * PeriodToken(), new VariableToken(get), new OpenparToken(),
-	 * new VariableToken(hi), new CloseparToken()));
-	 * 
-	 * }
-	 */
 
+	
+	// x.get(hi)
+	@Test
+	public void testVarMethodCall () throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
+											new VariableToken("hi"), new CloseparToken()));
+		final Exp variable = new VariableExp("x");
+		final MethodNameExp methodName = new MethodNameExp("get");
+		final List<Exp> inside = new ArrayList();
+		inside.add(new VariableExp("hi"));
+		final Exp expected = new VarMethodCall(variable, methodName, inside);
+		assertEquals(new ParseResult<Exp>(expected, 7), parser.parseVarMethodCall(0));
+	}
 }
