@@ -253,21 +253,9 @@ public class ParserTest {
 		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 5), parser.parseVarMethodCall(0));
 	}
 	
+	
 	// x.get(hi)
 	@Test
-	public void testVarMethodCallWithParamsTest () throws ParseException {
-		final Parser parser = new Parser(Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
-											new VariableToken("hi"), new CloseparToken()));
-		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
-		final List<Exp> inside = new ArrayList();
-		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
-		inside.add(param.result);
-		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 6), parser.parseVarMethodCallTest(0));
-	}
-	
-	
-/* 	@Test
 	public void testVarMethodCallWithParams () throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 											new VariableToken("hi"), new CloseparToken()));
@@ -277,11 +265,11 @@ public class ParserTest {
 		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
 		inside.add(param.result);
 		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 6), parser.parseVarMethodCall(0));
-	} */
+	}
 	
 	
 /* 
-	
+	//just a sanity check test 
 	@Test
 	public void testTest() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new VariableToken("hi")));
