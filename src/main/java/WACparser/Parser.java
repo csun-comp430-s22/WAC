@@ -205,71 +205,38 @@ public class Parser {
 		}
 		return result;
 	}
-
-
-	/*
-	 * // var.methodname(exp*)
-	 * public ParseResult<Exp> parseVarMethodCall(final int position) throws
-	 * ParseException {
-	 * ParseResult<Exp> current = parsePrimaryExp(position);
-	 * final Token token = getToken(current.position);
-	 *
-	 * if (token instanceof PeriodToken) {
-	 * final ParseResult<Exp> methodName = parsePrimaryExp(current.position + 1);
-	 * final Token token2 = getToken(methodName.position);
-	 * if (token2 instanceof OpenparToken) {
-	 * final ParseResult<Exp> inParens = parseExp(current.position + 1);
-	 * assertTokenHereIs(inParens.position, new CloseparToken());
-	 * // return new ParseResult<Exp>(current.result, methodName.result,
-	 * inParens.result);
-	 * current = new ParseResult<Exp>(new VarMethodCall(current.result,
-	 * methodName.result,
-	 * inParens.result),
-	 * inParens.position + 1);
-	 * } else {
-	 * throw new ParseException("expected '('; received: " + token);
-	 * }
-	 * } else {
-	 * throw new ParseException("expected '.'; received: " + token);
-	 * }
-	 * return current;
-	 * } // parseVarMethodCall
-	 */
-
-	// var.methodname(exp*)
-	public ParseResult<Exp> parseVarMethodCall(final int position) throws ParseException {
-		ParseResult<Exp> varName = parsePrimaryExp(position); // parse in variable name
-		// ignore the . we already checked it was there
-		Token token = getToken(position + 2);
-		assertTokenHereIs(position + 2, new VariableToken(token.toString()));
-		ParseResult<Exp> methodName = parsePrimaryExp(position + 2); // parse in methodname
-		assertTokenHereIs(position + 3, new OpenparToken());
-		List<Exp> inParens = new ArrayList(); // create list for exps
-		int newPosition = position + 4;
-		token = getToken(newPosition); // get either the first token of exp or ')'
-		final ParseResult<Exp> result;
-		if (token instanceof CloseparToken) {
-			result = new ParseResult<Exp>(
-					new VarMethodCall(varName.result, new MethodNameExp(new Methodname(methodName.result.toString())), inParens),
-					position + 5);
-		} else {
-			boolean shouldRun = true;
-			while (shouldRun) {
-				try {
-					final ParseResult<Exp> exp = parseExp(newPosition);
-					inParens.add(exp.result);
-					newPosition = exp.position;
-				} catch (final ParseException e) {
-					shouldRun = false;
-				}
+	 
+	 
+	 // var.methodname(exp*)
+	 public ParseResult<Exp> parseVarMethodCall(final int position) throws ParseException {
+		 ParseResult<Exp> varName = parsePrimaryExp(position);
+		 final Token token = getToken(position + 2);
+		 final String name = ((VariableToken)token).name;
+		 assertTokenHereIs(position + 2, new VariableToken(name));
+		 ParseResult<Exp> methodName = parsePrimaryExp(position + 2);
+		 assertTokenHereIs(position + 3, new OpenparToken());
+		 List<Exp> inside = new ArrayList();
+		 Token token2 = getToken(position + 4);
+		 if (token2 instanceof CloseparToken) {
+			 return new ParseResult<Exp>(new VarMethodCall(varName.result, methodName.result, inside), position + 5);
+		 } else if (token2 instanceof VariableToken) {
+			ParseResult<Exp> exp = parsePrimaryExp(position + 4);
+			inside.add(exp.result);
+			int iter = position + 5;
+			token2 = getToken(iter);
+			while (token2 instanceof VariableToken) {	//cant use next
+				ParseResult<Exp> exp2 = parsePrimaryExp(position + iter);
+				inside.add(exp2.result);
+				iter = iter + 1;
+				token2 = getToken(iter);
 			}
-			assertTokenHereIs(newPosition, new CloseparToken());
-			result = new ParseResult<Exp>(
-					new VarMethodCall(varName.result, new MethodNameExp(new Methodname(methodName.result.toString())), inParens),
-					newPosition + 1);
-		}
-		return result;
-	}
+			assertTokenHereIs(position + 5, new CloseparToken());
+			return new ParseResult<Exp>(new VarMethodCall(varName.result, methodName.result, inside), position + 6);
+		 } else {
+			 throw new ParseException("");
+		 }
+	 }
+
 
 	// exp ::= var.methodname(exp*) | new classname(exp*) | comparison_exp
 	public ParseResult<Exp> parseExp(final int position) throws ParseException {
@@ -551,81 +518,3 @@ public class Parser {
 	 */
 
 }
-
-// Expression Parsin End
-
-// helpful comments down here
-
-/*
- * // additive_op ::= + | -
- * public ParseResult<Op> parseAdditiveOp(final int position) throws
- * ParseException {
- * final Token token = getToken(position);
- * if (token instanceof PlusToken) {
- * return new ParseResult<Op>(new PlusOp(), position + 1);
- * } else if (token instanceof MinusToken) {
- * return new ParseResult<Op>(new MinusOp(), position + 1);
- * } else {
- * throw new ParseException("expected + or -; received: " + token);
- * }
- * }
- *
- * //additive_exp ::= primary_exp (additive_op primary_exp)*
- * public ParseResult<Exp> parseAdditiveExp(final int position) throws
- * ParseException {
- * ParseResult<Exp> current = parsePrimaryExp(position);
- * boolean shouldRun = true;
- *
- * while (shouldRun) {
- * try {
- * final ParseResult<Op> additiveOp = parseAdditiveOp(current.position);
- * final ParseResult<Exp> anotherPrimary = parsePrimaryExp(additiveOp.position);
- * current = new ParseResult<Exp>(new OpExp(current.result, additiveOp.result,
- * anotherPrimary.result), anotherPrimary.position);
- * } catch (final ParseException e) {
- * shouldRun = false;
- * }
- * }
- * return current;
- * }
- *
- * // stmt ::= if (exp) stmt else stmt | { stmt }* | println(exp);
- * public ParseResult<Stmt> parseStmt(final int position) throws ParseException
- * {
- * final Token token = getToken(position);
- * if (token instanceof IfToken) {
- * assertTokenHereIs(position + 1, new OpenparToken());
- * final ParseResult<Exp> guard = parseExp(position + 2);
- * assertTokenHereIs(guard.position, new CloseparToken());
- * final ParseResult<Stmt> trueBranch = parseStmt(guard.position + 1);
- * assertTokenHereIs(trueBranch.position, new ElseToken());
- * final ParseResult<Stmt> falseBranch = parseStmt(trueBranch.position + 1);
- * return new ParseResult<Stmt>(new IfExp(guard.result, trueBranch.result,
- * falseBranch.result), falseBranch.position);
- * } else if (token instanceof leftCurlyToken) {
- * final List<Stmt> stmts = new ArrayList<Stmt>();
- * int curPosition = position + 1;
- * boolean shouldRun = true;
- * while (shouldRun) {
- * try {
- * final ParseResult<Stmt> stmt = parseStmt(curPosition);
- * stmts.add(stmt.result);
- * curPosition = stmt.position;
- * } catch (final ParseException e) {
- * shouldRun = false;
- * }
- * }
- * return new ParseResult<Stmt>(new BlockStmt(stmts), curPosition);
- * } else if (token instanceof PrintlnToken) {
- * assertTokenHereIs(position + 1, new OpenparToken());
- * final ParseResult<Exp> exp = parseExp(position + 2);
- * assertTokenHereIs(exp.position, new CloseparToken());
- * assertTokenHereIs(exp.position + 1, new SemicolToken());
- * return new ParseResult<Stmt>(new PrintlnStmt(exp.result), exp.position + 2);
- * } else {
- * throw new ParseException("expected statement; received: " + token);
- * }
- * }
- */
-
-// end of helpful comments
