@@ -517,8 +517,9 @@ public class Parser {
 	 * }
 	 * }
 	 */
+	 
 	// modified by Adrian
-/* 	  public ParseResult<Stmt> parseStmt(final int position) throws ParseException
+	  public ParseResult<Stmt> parseStmt(final int position) throws ParseException
 	  {
 	  final Token token = getToken(position);
 	  // vardec
@@ -603,7 +604,7 @@ public class Parser {
 	  else {
 		  throw new ParseException("expected statement; received: " + token);
 	  }
-	  } */
+	  }
 	  
 	  
 	  

@@ -323,7 +323,6 @@ public class ParserTest {
 //		assertEquals(new ParseResult<Exp>(new BreakExp(), 1),
 //				parser.parseStmt(0));
 //	}
-}
 	
 
 	@Test
@@ -333,6 +332,7 @@ public class ParserTest {
 		
 		assertEquals(expected, parser.parseParam(0));
 	}
+
 
 }	
 	
