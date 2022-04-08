@@ -124,6 +124,13 @@ public class ParserTest {
 		assertEquals(new ParseResult<Exp>(expected, 5),
 				parser.parseMultiplicativeExp(0));
 	}
+	
+	
+	@Test
+	public void testPlusOp() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new PlusToken()));
+		assertEquals(new ParseResult<Op>(new PlusOp(), 1), parser.parseAdditiveOp(0));
+	}
 
 
 	@Test
@@ -145,19 +152,18 @@ public class ParserTest {
 		assertEquals(new ParseResult<Exp>(new IntegerExp(123), 1), parser.parseAdditiveExp(0));
 	}
 
-
 	@Test
 	public void testAdditiveExpSingleOperator() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(1),
 				new PlusToken(),
 				new IntegerToken(2)));
 		assertEquals(new ParseResult<Exp>(new OpExp(new IntegerExp(1),
-						new PlusOp(),
-						new IntegerExp(2)),
-						3),
+				new PlusOp(),
+				new IntegerExp(2)),
+				3),
 				parser.parseAdditiveExp(0));
 	}
-
+	
 	@Test
 	public void testAdditiveExpMultiOperator() throws ParseException {
 		// 1 + 2 - 3 ==> (1 + 2) - 3
@@ -175,13 +181,11 @@ public class ParserTest {
 				parser.parseAdditiveExp(0));
 	}
 
-
 	@Test
 	public void testLessThanOp() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new lessThanToken()));
 		assertEquals(new ParseResult<Op>(new LessThanOp(), 1), parser.parseComparisonOp(0));
 	}
-
 
 	@Test
 	public void testGreaterThanOp() throws ParseException {
@@ -189,13 +193,11 @@ public class ParserTest {
 		assertEquals(new ParseResult<Op>(new GreaterThanOp(), 1), parser.parseComparisonOp(0));
 	}
 
-
 	@Test
 	public void testEqualEqualsOp() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new equalEqualToken()));
 		assertEquals(new ParseResult<Op>(new EqualEqualsOp(), 1), parser.parseComparisonOp(0));
 	}
-
 
 	@Test
 	public void testNotEqualsOp() throws ParseException {
@@ -203,13 +205,11 @@ public class ParserTest {
 		assertEquals(new ParseResult<Op>(new NotEqualsOp(), 1), parser.parseComparisonOp(0));
 	}
 
-
 	@Test
 	public void testComparisonExpOnlyPrimary() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(123)));
 		assertEquals(new ParseResult<Exp>(new IntegerExp(123), 1), parser.parseComparisonExp(0));
 	}
-
 
 	@Test
 	public void testComparisonExpSingleOperator() throws ParseException {
@@ -217,9 +217,10 @@ public class ParserTest {
 				new lessThanToken(),
 				new IntegerToken(2)));
 		assertEquals(new ParseResult<Exp>(new OpExp(new IntegerExp(1),
-						new LessThanOp(),
-						new IntegerExp(2)),
-						3),
+
+				new LessThanOp(),
+				new IntegerExp(2)),
+				3),
 				parser.parseComparisonExp(0));
 	}
 
@@ -230,19 +231,18 @@ public class ParserTest {
 		assertEquals(new ParseResult<Exp>(new OpExp(new IntegerExp(1), new LessThanOp(), new IntegerExp(2)), 3), parser.parseExp(0));
 	}
 
-
 	// new classname(exp*)
 	// new Dog(12)
 	@Test
 	public void testParseNewClassExp() throws ParseException {
-		final Parser parser = new Parser(Arrays.asList(new NewToken(), new VariableToken("Dog"), new OpenparToken(), new IntegerToken(12), new CloseparToken()));
-		List<Exp> inside = new ArrayList();
-		inside.add(new IntegerExp(12));
-		final ParseResult<Exp> expected = new ParseResult<Exp>(new NewClassExp(new VariableExp(new Variable("Dog")), inside), 5);
-		assertEquals(expected, parser.parseNewClassExp(0));
+	final Parser parser = new Parser(Arrays.asList(new NewToken(), new VariableToken("Dog"), new OpenparToken(), new IntegerToken(12), new CloseparToken()));
+	List<Exp> inside = new ArrayList();
+	inside.add(new IntegerExp(12));
+	final ParseResult<Exp> expected = new ParseResult<Exp>(new NewClassExp(new VariableExp(new Variable("Dog")), inside), 5);
+	assertEquals(expected, parser.parseNewClassExp(0));
 	}
-
-
+	
+	
 /* 	// x.get(hi)
 	@Test
 	public void testVarMethodCall () throws ParseException {
@@ -254,5 +254,3 @@ public class ParserTest {
 		inside.add(new VariableExp(new Variable("hi")));
 		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 7), parser.parseVarMethodCall(0));
 	} */
-
-}

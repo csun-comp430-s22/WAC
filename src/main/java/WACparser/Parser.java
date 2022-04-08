@@ -153,13 +153,14 @@ public class Parser {
 		try {
 			final Token token = getToken(position + 1);
 			if ((token instanceof lessThanToken) || (token instanceof greaterThanToken)
-					|| (token instanceof equalEqualToken) || (token instanceof notEqualToken)) {
+				|| (token instanceof equalEqualToken) || (token instanceof notEqualToken)) {
 				final ParseResult<Op> comparisonOp = parseComparisonOp(current.position);
 				final ParseResult<Exp> anotherAdditive = parseAdditiveExp(comparisonOp.position);
 				current = new ParseResult<Exp>(new OpExp(current.result,
-						comparisonOp.result,
-						anotherAdditive.result),
-						anotherAdditive.position);
+												comparisonOp.result,
+												anotherAdditive.result),
+												anotherAdditive.position); 
+
 			} else {
 				return current;
 			}
@@ -283,7 +284,6 @@ public class Parser {
 			return parseComparisonExp(position); // comparison_exp
 		}
 	} // parseExp
-
 
 	// vardec ::= type var = exp;
 	/*
