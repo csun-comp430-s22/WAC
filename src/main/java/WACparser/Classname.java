@@ -1,9 +1,9 @@
 package WACparser;
 
-public class Variable {
+public class Classname {
     public final String name;
 
-    public Variable(final String name) {
+    public Classname(final String name) {
         this.name = name;
     }
 
@@ -11,13 +11,12 @@ public class Variable {
         return name.hashCode();
     }
 
-	
     public boolean equals(final Object other) {
-        return (other instanceof Variable &&
-                name.equals(((Variable) other).name));
+        return (other instanceof Classname &&
+                name.equals(((Classname) other).name));
     }
 
     public String toString() {
-        return "Variable(" + name + ")";
+        return "Classname(" + name + ")";
     }
 }
