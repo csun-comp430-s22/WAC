@@ -381,22 +381,26 @@ public class Parser {
 			final ParseResult<Exp> retExp = parseExp(position + 1);
 			assertTokenHereIs(retExp.position, new SemicolToken());
 			return new ParseResult<Stmt>(new ReturnStmt(retExp.result), retExp.position + 1);
+		} else if (token instanceof leftCurlyToken) {
+			List<Stmt> stmts = new ArrayList();
+			Token nextToken = getToken(position + 1);
+			if (nextToken instanceof rightCurlyToken) {
+				return new ParseResult<Stmt>(new BlockStmt(stmts), position + 2);
+			} else {
+				ParseResult<Stmt> stmt1 = parseStmt(position + 1);
+				stmts.add(stmt1.result);
+				int iter = stmt1.position;
+				nextToken = getToken(iter);
+				while (!(nextToken instanceof rightCurlyToken)) {
+					ParseResult<Stmt> stmt2 = parseStmt(iter);
+					stmts.add(stmt2.result);
+					iter = iter + 1;
+					nextToken = getToken(iter);
+				}
+				assertTokenHereIs(iter, new rightCurlyToken());
+				return new ParseResult<Stmt>(new BlockStmt(stmts), iter + 1);
+			}
 		}
-/* 	  else if (token instanceof leftCurlyToken) {
-		  final List<Stmt> stmts = new ArrayList<Stmt>();
-		  int curPosition = position + 1;
-		  boolean shouldRun = true;
-		  while (shouldRun) {
-		  try {
-		  final ParseResult<Stmt> stmt = parseStmt(curPosition);
-		  stmts.add(stmt.result);
-		  curPosition = stmt.position;
-		  } catch (final ParseException e) {
-		  shouldRun = false;
-		  }
-		  }
-		  return new ParseResult<Stmt>(new BlockStmt(stmts), curPosition);
-		  } */
 /* 	  else if (token instanceof PrintlnToken) {
 		  assertTokenHereIs(position + 1, new OpenparToken());
 		  final ParseResult<Exp> exp = parseExp(position + 2);

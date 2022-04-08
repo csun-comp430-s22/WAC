@@ -403,6 +403,19 @@ public class ParserTest {
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new ReturnStmt(exp.result), 3);
 		assertEquals(expected, parser.parseStmt(0));
 	}
+	
+	
+	// {x = y;}
+	@Test
+	public void testBlockStmtWithOneStmtThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new leftCurlyToken(), new VariableToken("x"), new EqualToken(), new VariableToken("y"), new SemicolToken(), new rightCurlyToken()));
+		final ParseResult<Stmt> stmt1 = new ParseResult<Stmt>(new VariableValueChange(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))), 3);
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		stmts.add(stmt1.result);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BlockStmt(stmts), 6);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+	
 
 	@Test
 	public void testSuperStatment() throws ParseException{
