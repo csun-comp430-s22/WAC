@@ -306,25 +306,6 @@ public class ParserTest {
 	}
 
 
-	//int x = 3;
-	@Test
-	public void testParseVardecForStmt() throws ParseException {
-		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("x"), new EqualToken(), new IntegerToken(3), new SemicolToken()));
-		final Type type = new IntType();
-		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp exp = new VariableExp(new Variable("3"));
-		final ParseResult<Vardec> variableDec = new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5);
-		assertEquals(new ParseResult<Stmt>(new VardecStmt(variableDec), 5), parser.parseStmt(0));
-	}
-
-//	@Test
-//	public void testBreakStmt() thows ParseException {
-//		final Parser parser = new Parser(Arrays.asList(new BreakToken()));
-//		assertEquals(new ParseResult<Exp>(new BreakExp(), 1),
-//				parser.parseStmt(0));
-//	}
-	
-
 	@Test
 	public void testParam() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("x")));
@@ -332,7 +313,6 @@ public class ParserTest {
 		
 		assertEquals(expected, parser.parseParam(0));
 	}
-
 
 }	
 	
