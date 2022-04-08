@@ -102,9 +102,9 @@ public class ParserTest {
 				new MultiplicationToken(),
 				new IntegerToken(2)));
 		assertEquals(new ParseResult<Exp>(new OpExp(new IntegerExp(1),
-				new MultiplicationOp(),
-				new IntegerExp(2)),
-				3),
+						new MultiplicationOp(),
+						new IntegerExp(2)),
+						3),
 				parser.parseMultiplicativeExp(0));
 	}
 
@@ -138,14 +138,13 @@ public class ParserTest {
 		final Parser parser = new Parser(Arrays.asList(new MinusToken()));
 		assertEquals(new ParseResult<Op>(new MinusOp(), 1), parser.parseAdditiveOp(0));
 	}
-	
+
 	@Test
 	public void testAdditiveExpOnlyPrimary() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(123)));
 		assertEquals(new ParseResult<Exp>(new IntegerExp(123), 1), parser.parseAdditiveExp(0));
 	}
-	
-	
+
 	@Test
 	public void testAdditiveExpSingleOperator() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(1),
@@ -174,63 +173,57 @@ public class ParserTest {
 		assertEquals(new ParseResult<Exp>(expected, 5),
 				parser.parseAdditiveExp(0));
 	}
-	
-	
+
 	@Test
 	public void testLessThanOp() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new lessThanToken()));
 		assertEquals(new ParseResult<Op>(new LessThanOp(), 1), parser.parseComparisonOp(0));
 	}
-	
-	
+
 	@Test
 	public void testGreaterThanOp() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new greaterThanToken()));
 		assertEquals(new ParseResult<Op>(new GreaterThanOp(), 1), parser.parseComparisonOp(0));
 	}
-	
-	
+
 	@Test
 	public void testEqualEqualsOp() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new equalEqualToken()));
 		assertEquals(new ParseResult<Op>(new EqualEqualsOp(), 1), parser.parseComparisonOp(0));
 	}
-	
-	
+
 	@Test
 	public void testNotEqualsOp() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new notEqualToken()));
 		assertEquals(new ParseResult<Op>(new NotEqualsOp(), 1), parser.parseComparisonOp(0));
 	}
-	
-	
+
 	@Test
 	public void testComparisonExpOnlyPrimary() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(123)));
 		assertEquals(new ParseResult<Exp>(new IntegerExp(123), 1), parser.parseComparisonExp(0));
 	}
-	
-	
+
 	@Test
 	public void testComparisonExpSingleOperator() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(1),
 				new lessThanToken(),
 				new IntegerToken(2)));
 		assertEquals(new ParseResult<Exp>(new OpExp(new IntegerExp(1),
+
 				new LessThanOp(),
 				new IntegerExp(2)),
 				3),
 				parser.parseComparisonExp(0));
 	}
-	
+
 	// 1 < 2
 	@Test
 	public void testParseExpForComparison() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(1), new lessThanToken(), new IntegerToken(2)));
 		assertEquals(new ParseResult<Exp>(new OpExp(new IntegerExp(1), new LessThanOp(), new IntegerExp(2)), 3), parser.parseExp(0));
 	}
-	
-	
+
 	// new classname(exp*)
 	// new Dog(12)
 	@Test
@@ -243,17 +236,76 @@ public class ParserTest {
 	}
 	
 	
-/* 	// x.get(hi)
+	//x.get()
 	@Test
 	public void testVarMethodCall () throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(), new CloseparToken()));
+		final Exp variable = new VariableExp(new Variable("x"));
+		final Exp name = new VariableExp(new Variable("get"));
+		final List<Exp> inside = new ArrayList();
+		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 5), parser.parseVarMethodCall(0));
+	}
+	
+	
+	// x.get(hi)
+	@Test
+	public void testVarMethodCallWithParams () throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 											new VariableToken("hi"), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new MethodNameExp(new Methodname("get"));
+		final Exp name = new VariableExp(new Variable("get"));
 		final List<Exp> inside = new ArrayList();
-		inside.add(new VariableExp(new Variable("hi")));
-		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 7), parser.parseVarMethodCall(0));
-	} */
+		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
+		inside.add(param.result);
+		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 6), parser.parseVarMethodCall(0));
+	}
+	
+	// new classname(exp*)
+	// new Dog(12)
+	@Test
+	public void testParseExpForNewClassExp() throws ParseException {
+	final Parser parser = new Parser(Arrays.asList(new NewToken(), new VariableToken("Dog"), new OpenparToken(), new IntegerToken(12), new CloseparToken()));
+	List<Exp> inside = new ArrayList();
+	inside.add(new IntegerExp(12));
+	final ParseResult<Exp> expected = new ParseResult<Exp>(new NewClassExp(new VariableExp(new Variable("Dog")), inside), 5);
+	assertEquals(expected, parser.parseExp(0));
+	}
+	
+
+	//x.get()
+	//Starting point at ParseExp
+	@Test
+	public void testParseExpToVarMethodCall () throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(), new CloseparToken()));
+		final Exp variable = new VariableExp(new Variable("x"));
+		final Exp name = new VariableExp(new Variable("get"));
+		final List<Exp> inside = new ArrayList();
+		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 5), parser.parseExp(0));
+	}
+
+	
+	
+	//int x = 3;
+	@Test
+	public void testparseVardec() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("x"), new EqualToken(), new IntegerToken(3), new SemicolToken()));
+		final Type type = new IntType();
+		final Exp variable = new VariableExp(new Variable("x"));
+		final Exp exp = new VariableExp(new Variable("3"));
+		assertEquals(new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5), parser.parseVardec(0));;
+  }
+	//new classname(exp*)
+	//Starting point at ParseExp
+	@Test
+	public void testParseExpToNewClassExp() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new NewToken(), new VariableToken("Dog"), new OpenparToken(), new IntegerToken(12), new CloseparToken()));
+		List<Exp> inside = new ArrayList();
+		inside.add(new IntegerExp(12));
+		final ParseResult<Exp> expected = new ParseResult<Exp>(new NewClassExp(new VariableExp(new Variable("Dog")), inside), 5);
+		assertEquals(expected, parser.parseExp(0));
+	}
+}
+
 
 	@Test
 	public void testParam() throws ParseException {
@@ -264,9 +316,18 @@ public class ParserTest {
 	}
 	
 	
-	
-	
-	
-	
-	
- }
+/* 
+	//just a sanity check test 
+	@Test
+	public void testTest() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken("hi")));
+		final ParseResult<Exp> oop = parser.parsePrimaryExp(0);
+		List<Exp> test = new ArrayList();
+		test.add(oop.result);
+		
+		List<Exp> test2 = new ArrayList();
+		final ParseResult<Exp> oop2 = new ParseResult(new VariableExp(new Variable("hi")), 1);
+		test2.add(oop2.result);
+		
+		assertEquals(test, test2);
+	} */
