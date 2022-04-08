@@ -244,8 +244,14 @@ public class Parser {
 		final Token token = getToken(position);
 
 		if (token instanceof VariableToken) { // needs to assert that the next token is a .
-			assertTokenHereIs(position + 1, new PeriodToken());
-			return parseVarMethodCall(position); // var.methodname(exp*)
+			final Token token2 = getToken(position + 1);
+			if (token2 instanceof PeriodToken) {
+				return parseVarMethodCall(position);
+			} else {
+				return parseComparisonExp(position);
+			}
+/* 			assertTokenHereIs(position + 1, new PeriodToken());
+			return parseVarMethodCall(position); // var.methodname(exp*) */
 		} else if (token instanceof NewToken) {
 			return parseNewClassExp(position); // new classname(exp*)
 		} else {
@@ -306,6 +312,7 @@ public class Parser {
 	}
 	
 	
+	//helper method for parseStmt
 	public ParseResult<Stmt> parseBreakStmt(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if(token instanceof BreakToken ) {
@@ -322,6 +329,7 @@ public class Parser {
 	}
 
 	
+	//helper method for parseStmt
 	public ParseResult<Stmt> parseSuperStmt(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if(token instanceof SuperToken) {
@@ -370,18 +378,15 @@ public class Parser {
 			final ParseResult<Stmt> breakResult;
 			breakResult = parseBreakStmt(position);
 			return breakResult;
+		} else if(token instanceof IfToken) {
+			assertTokenHereIs(position + 1, new OpenparToken());
+			final ParseResult<Exp> ifGuard = parseExp(position + 2);
+			assertTokenHereIs(ifGuard.position, new CloseparToken());
+			final ParseResult<Stmt> trueBranch = parseStmt(ifGuard.position + 1);
+			assertTokenHereIs(trueBranch.position, new ElseToken());
+			final ParseResult<Stmt> falseBranch = parseStmt(trueBranch.position + 1);
+			return new ParseResult<Stmt>(new IfStmt(ifGuard.result, trueBranch.result, falseBranch.result), falseBranch.position);
 		}
-
-/* 	  else if (token instanceof IfToken) {
-		  assertTokenHereIs(position + 1, new OpenparToken());
-		  final ParseResult<Exp> guard = parseExp(position + 2);
-		  assertTokenHereIs(guard.position, new CloseparToken());
-		  final ParseResult<Stmt> trueBranch = parseStmt(guard.position + 1);
-		  assertTokenHereIs(trueBranch.position, new ElseToken());
-		  final ParseResult<Stmt> falseBranch = parseStmt(trueBranch.position + 1);
-		  return new ParseResult<Stmt>(new IfStmt(guard.result, trueBranch.result,
-					 falseBranch.result), falseBranch.position);
-	  } */
 /* 	  else if (token instanceof ReturnToken) {
 		  final ParseResult<Exp> guard = parseExp(position + 1);
 		  assertTokenHereIs(guard.position, new SemicolToken());
@@ -424,7 +429,9 @@ public class Parser {
 		  return new ParseResult<Stmt>(new ThisStmt(), position +5);
 	  } */
 		else {
-			throw new ParseException("expected statement; received: " + token);
+			final ParseResult<Exp> compExp = parseComparisonExp(position);
+			final ParseResult<Stmt> compStmt = new ParseResult<Stmt>(new ExpStmt(compExp.result), compExp.position);
+			return compStmt;
 		}
 	}
 	
