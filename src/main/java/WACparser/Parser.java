@@ -160,6 +160,7 @@ public class Parser {
 												comparisonOp.result,
 												anotherAdditive.result),
 												anotherAdditive.position); 
+
 			} else {
 				return current;
 			}
@@ -212,7 +213,7 @@ public class Parser {
 	 * ParseException {
 	 * ParseResult<Exp> current = parsePrimaryExp(position);
 	 * final Token token = getToken(current.position);
-	 * 
+	 *
 	 * if (token instanceof PeriodToken) {
 	 * final ParseResult<Exp> methodName = parsePrimaryExp(current.position + 1);
 	 * final Token token2 = getToken(methodName.position);
@@ -283,7 +284,6 @@ public class Parser {
 			return parseComparisonExp(position); // comparison_exp
 		}
 	} // parseExp
-	
 
 	// vardec ::= type var = exp;
 	/*
@@ -335,7 +335,7 @@ public class Parser {
 	 * position = position + 2; //position is now set the thing after the extends
 	 * classname
 	 * }
-	 * 
+	 *
 	 * //here need to parse in the 0 or more vardec = exp;
 	 * if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token
 	 * instanceof StringToken)) { //if we read in a type
@@ -357,7 +357,7 @@ public class Parser {
 	 * }
 	 * }
 	 * }
-	 * 
+	 *
 	 * //here is where a constructor might appear
 	 * if (token instanceof VariableToken) {
 	 * assertTokenHereIs(position, OpenparToken()); //we know that we've hit a
@@ -446,7 +446,7 @@ public class Parser {
 	 * assertTokenHereIs(position + 1, new SemicolToken());
 	 * return new ParseResult<Stmt>(new BreakStmt(), position);
 	 * }
-	 * 
+	 *
 	 * else if (token instanceof IfToken) {
 	 * assertTokenHereIs(position + 1, new OpenparToken());
 	 * final ParseResult<Exp> guard = parseExp(position + 2);
@@ -498,8 +498,8 @@ public class Parser {
 	 * assertTokenHereIs(position + 4 , new VariableToken(token.toString()));
 	 * return new ParseResult<Stmt>(new ThisStmt(), position +5);
 	 * }
-	 * 
-	 * 
+	 *
+	 *
 	 * else {
 	 * throw new ParseException("expected statement; received: " + token);
 	 * }
@@ -538,8 +538,8 @@ public class Parser {
 	 * }
 	 * return new ParseResult<Program>(new Program(classes, stmts), currentPos);
 	 * }
-	 * 
-	 * 
+	 *
+	 *
 	 * public Program parseProgram() throws ParseException {
 	 * final ParseResult<Program> program = parseProgram(0);
 	 * if (program.position == tokens.size()) {
@@ -569,13 +569,13 @@ public class Parser {
  * throw new ParseException("expected + or -; received: " + token);
  * }
  * }
- * 
+ *
  * //additive_exp ::= primary_exp (additive_op primary_exp)*
  * public ParseResult<Exp> parseAdditiveExp(final int position) throws
  * ParseException {
  * ParseResult<Exp> current = parsePrimaryExp(position);
  * boolean shouldRun = true;
- * 
+ *
  * while (shouldRun) {
  * try {
  * final ParseResult<Op> additiveOp = parseAdditiveOp(current.position);
@@ -588,7 +588,7 @@ public class Parser {
  * }
  * return current;
  * }
- * 
+ *
  * // stmt ::= if (exp) stmt else stmt | { stmt }* | println(exp);
  * public ParseResult<Stmt> parseStmt(final int position) throws ParseException
  * {
