@@ -321,15 +321,21 @@ public class Parser {
 		}
 	}
 	 
-
+	// stmt ::= vardec | var = exp; | while (exp) stmt | break; | if (exp) stmt else stmt | return exp;
+	//			| {stmt*} | println(exp*) | super(var); | this.var = var; | exp;
 	public ParseResult<Stmt> parseStmt(final int position) throws ParseException {
 	final Token token = getToken(position);
 	// vardec
 		if( (token instanceof IntToken) || (token instanceof BooleanToken) || (token
-				 instanceof StringToken) ) {
+				 instanceof StringToken)  || (token instanceof VariableToken)) {
+			final Token token2 = getToken(position + 1);
+			final String token2Name = ((VariableToken)token2).name;
+			assertTokenHereIs(position + 1, new VariableToken(token2Name));
 			final ParseResult<Vardec> declare = parseVardec(position);
 			return new ParseResult<Stmt>(new VardecStmt(declare), declare.position);
-		}
+		} /* else if ((token instanceof VariableToken) && (getToken(position + 1) instanceof EqualToken) {
+			
+		} */
 /* 	  else if((token instanceof VariableToken) && !((getToken(position - 1)
 				 instanceof IntToken) || (getToken(position - 1) instanceof BooleanToken) ||
 				 (getToken(position - 1) instanceof StringToken))){
