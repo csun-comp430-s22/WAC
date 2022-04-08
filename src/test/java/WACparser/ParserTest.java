@@ -339,12 +339,23 @@ public class ParserTest {
 	}
 	
 	
+	// break;
 	@Test
 	public void testBreakStatment() throws ParseException{
 		final Parser parser = new Parser(Arrays.asList(new BreakToken(), new SemicolToken()));
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BreakStmt("break",";" ),2);
 		assertEquals(expected, parser.parseBreakStmt(0));
 		
+	}
+	
+	// x = 5;
+	@Test
+	public void testVariableValueChangeThroughStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken("x"), new EqualToken(), new IntegerToken(5), new SemicolToken()));
+		final ParseResult<Exp> variable =  new ParseResult<Exp>(new VariableExp(new Variable("x")), 1);
+		final ParseResult<Exp> exp = new ParseResult<Exp>(new IntegerExp(5), 1);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new VariableValueChange(variable.result, exp.result), 4);
+		assertEquals(expected, parser.parseStmt(0));
 	}
 
 
