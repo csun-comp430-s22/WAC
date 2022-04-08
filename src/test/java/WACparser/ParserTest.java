@@ -334,6 +334,15 @@ public class ParserTest {
 		
 	}
 
+	@Test
+	public void testSuperStatment() throws ParseException{
+		final Parser parser = new Parser(Arrays.asList(new SuperToken(), new OpenparToken(),new VariableToken("x"),new CloseparToken(),new SemicolToken()));
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new SuperStmt("super",new VariableExp(new Variable("x"))),5);
+		assertEquals(expected, parser.parseSuperStmt(0));
+		
+	}
+	
+	
 }
 
 /*
