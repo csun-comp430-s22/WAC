@@ -252,29 +252,36 @@ public class Parser {
 		}
 	} // parseExp
 
-	// vardec ::= type var = exp;
-	/*
-	 * public ParseResult<Vardec> parseVardec(final int position) throws
-	 * ParseException {
-	 * final Token token = getToken(position);
-	 * if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token
-	 * instanceof StringToken)) {
-	 * final ParseResult<Type> type = parseType(position);
-	 * assertTokenHereIs(type.position, new VariableToken("hi")); //CHECK THIS LATER
-	 * WITH TESTING
-	 * final ParseResult<Exp> varName = parsePrimaryExp(type.position);
-	 * assertTokenHereIs(varName.position, new EqualToken());
-	 * // MISSING parseExp!!!
-	 * final ParseResult<Exp> value = parseExp(varName.position + 1);
-	 * assertTokenHereIs(value.position, new SemicolToken());
-	 * return new ParseResult<Vardec>(new VariableDeclaration(type.result,
-	 * varName.result, value.result), value.position + 1);
-	 * } else {
-	 * throw new ParseException("Expected a variable declaration but received: " +
-	 * token);
-	 * }
-	 * }
-	 */
+
+	//vardec ::= type var = exp;
+	public ParseResult<Vardec> parseVardec(final int position) throws ParseException {
+		final Token token = getToken(position);	// get type
+		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken)
+				|| (token instanceof VariableToken)) {
+			final Token token2 = getToken(position + 1);	// get var
+			final String name = ((VariableToken)token2).name;
+			assertTokenHereIs(position + 1, new VariableToken(name));
+			final Token token3 = getToken(position + 2);
+			if (token3 instanceof EqualToken) {
+				final ParseResult<Type> type = parseType(position);
+				final ParseResult<Exp> variable = parsePrimaryExp(position + 1);
+				final ParseResult<Exp> exp = parseExp(position + 3);
+				assertTokenHereIs(position + 4, new SemicolToken());
+				return new ParseResult<Vardec>(new VariableDeclaration(type.result, variable.result, exp.result), position + 5);
+			} else {
+				//return parseParam(position);	//relies on parseParam
+				//so for now we'll return something else:
+				final ParseResult<Type> theType = new ParseResult<Type>(new IntType(), 1);
+				final ParseResult<Exp> exp1 = new ParseResult<Exp>(new VariableExp(new Variable("idk")), 1);
+				final ParseResult<Exp> exp2 = new ParseResult<Exp>(new VariableExp(new Variable("idk2")), 1);
+				return new ParseResult<Vardec>(new VariableDeclaration(theType.result, exp1.result, exp2.result), 3);
+			}
+		}
+		else {
+			throw new ParseException("");
+		}
+	}
+
 
 	// param ::= type var
 	// still needs to be implemented
