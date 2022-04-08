@@ -12,8 +12,14 @@ public class Variable {
     }
 
     public boolean equals(final Object other) {
-        return (other instanceof Variable &&
-                name.equals(((Variable) other).name));
+    	
+        if(other instanceof Variable) {
+        	return true;
+        }
+        else {
+        	return false;
+        }
+               
     }
 
     public String toString() {

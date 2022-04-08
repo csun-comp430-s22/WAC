@@ -311,7 +311,51 @@ public class Parser {
 
 	// param ::= type var
 	// still needs to be implemented
-
+	public ParseResult<Param> parseParam(final int position) throws ParseException {
+		
+		final Token token = getToken(position);
+		final ParseResult<Param> result;
+		if(token instanceof IntToken) 
+		  {
+		    assertTokenHereIs(position, new IntToken());
+		    final Token  token2 = getToken(position+1);
+		    assertTokenHereIs(position+1, token2);
+		    result = new ParseResult<Param>(new Parameter(new IntType(),new VariableExp(new Variable(token2.toString())) ), 2);
+		    return result ;
+		  }
+		else if (token instanceof BooleanToken) 
+		  {
+			assertTokenHereIs(position, new BooleanToken());
+			final Token  token2 = getToken(position+1);
+			 assertTokenHereIs(position+1, token2);
+		     result = new ParseResult<Param>(new Parameter(new BooleanType(),new VariableExp(new Variable(token2.toString())) ), 2);
+		    return result ;
+		  }
+		else if(token instanceof StringToken) 
+		  {
+			assertTokenHereIs(position, new StringToken());
+			final Token  token2 = getToken(position+1);
+			 assertTokenHereIs(position+1, token2);
+		     result = new ParseResult<Param>(new Parameter(new StringType(),new VariableExp(new Variable(token2.toString())) ), 2);
+		    return result ;
+		  }
+		else if (token instanceof Variable) 
+		  {
+			assertTokenHereIs(position, new VariableToken(token.toString()));
+			final Token  token2 = getToken(position+1);
+			 assertTokenHereIs(position+1, token2);
+		     result = new ParseResult<Param>(new Parameter(new ClassnameType(new Classname(token.toString())),new VariableExp(new Variable(token2.toString())) ), 2);
+		    return result ;
+		  }
+		else {
+			throw new ParseException("type not found");
+		}
+			
+			
+		
+		
+	}
+	
 	// classdef ::= class classname extends classname {
 	// vardec*
 	// constructor(param*) stmt
