@@ -304,7 +304,22 @@ public class Parser {
 			throw new ParseException("");
 		}
 	}
-
+	
+	
+	public ParseResult<Stmt> parseBreakStmt(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if(token instanceof BreakToken ) {
+			final Token token2 = getToken(position+1);
+			final String b = ((BreakToken) token).toString();
+			assertTokenHereIs(position + 1,new SemicolToken() );
+			final String s = ((SemicolToken)token2).toString();
+			return new ParseResult<Stmt>(new BreakStmt(b,s), position+2 );
+			
+		}
+		else {
+			throw new ParseException("Break token not found");
+		}
+	}
 	/*
 	 * // methoddef ::= type methodname(param*) stmt
 	 * public ParseResult<Methoddef> parseMethodDef(final int position) throws
