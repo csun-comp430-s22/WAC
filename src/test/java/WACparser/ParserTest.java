@@ -102,9 +102,9 @@ public class ParserTest {
 				new MultiplicationToken(),
 				new IntegerToken(2)));
 		assertEquals(new ParseResult<Exp>(new OpExp(new IntegerExp(1),
-				new MultiplicationOp(),
-				new IntegerExp(2)),
-				3),
+						new MultiplicationOp(),
+						new IntegerExp(2)),
+						3),
 				parser.parseMultiplicativeExp(0));
 	}
 
@@ -134,18 +134,24 @@ public class ParserTest {
 
 
 	@Test
+	public void testPlusOp() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new PlusToken()));
+		assertEquals(new ParseResult<Op>(new PlusOp(), 1), parser.parseAdditiveOp(0));
+	}
+
+
+	@Test
 	public void testMinusOp() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new MinusToken()));
 		assertEquals(new ParseResult<Op>(new MinusOp(), 1), parser.parseAdditiveOp(0));
 	}
-	
+
 	@Test
 	public void testAdditiveExpOnlyPrimary() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(123)));
 		assertEquals(new ParseResult<Exp>(new IntegerExp(123), 1), parser.parseAdditiveExp(0));
 	}
-	
-	
+
 	@Test
 	public void testAdditiveExpSingleOperator() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(1),
@@ -174,63 +180,57 @@ public class ParserTest {
 		assertEquals(new ParseResult<Exp>(expected, 5),
 				parser.parseAdditiveExp(0));
 	}
-	
-	
+
 	@Test
 	public void testLessThanOp() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new lessThanToken()));
 		assertEquals(new ParseResult<Op>(new LessThanOp(), 1), parser.parseComparisonOp(0));
 	}
-	
-	
+
 	@Test
 	public void testGreaterThanOp() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new greaterThanToken()));
 		assertEquals(new ParseResult<Op>(new GreaterThanOp(), 1), parser.parseComparisonOp(0));
 	}
-	
-	
+
 	@Test
 	public void testEqualEqualsOp() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new equalEqualToken()));
 		assertEquals(new ParseResult<Op>(new EqualEqualsOp(), 1), parser.parseComparisonOp(0));
 	}
-	
-	
+
 	@Test
 	public void testNotEqualsOp() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new notEqualToken()));
 		assertEquals(new ParseResult<Op>(new NotEqualsOp(), 1), parser.parseComparisonOp(0));
 	}
-	
-	
+
 	@Test
 	public void testComparisonExpOnlyPrimary() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(123)));
 		assertEquals(new ParseResult<Exp>(new IntegerExp(123), 1), parser.parseComparisonExp(0));
 	}
-	
-	
+
 	@Test
 	public void testComparisonExpSingleOperator() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(1),
 				new lessThanToken(),
 				new IntegerToken(2)));
 		assertEquals(new ParseResult<Exp>(new OpExp(new IntegerExp(1),
+
 				new LessThanOp(),
 				new IntegerExp(2)),
 				3),
 				parser.parseComparisonExp(0));
 	}
-	
+
 	// 1 < 2
 	@Test
 	public void testParseExpForComparison() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntegerToken(1), new lessThanToken(), new IntegerToken(2)));
 		assertEquals(new ParseResult<Exp>(new OpExp(new IntegerExp(1), new LessThanOp(), new IntegerExp(2)), 3), parser.parseExp(0));
 	}
-	
-	
+
 	// new classname(exp*)
 	// new Dog(12)
 	@Test
@@ -283,5 +283,3 @@ public class ParserTest {
 		
 		assertEquals(test, test2);
 	} */
-
- }
