@@ -278,17 +278,6 @@ public class Parser {
 				return new ParseResult<Vardec>(new VariableDeclaration(type.result, variable.result, exp.result),
 						position + 5);
 			} else {
-				// return parseParam(position); //relies on parseParam
-				// so for now we'll return something else:
-				/*
-				 * final ParseResult<Type> theType = new ParseResult<Type>(new IntType(), 1);
-				 * final ParseResult<Exp> exp1 = new ParseResult<Exp>(new VariableExp(new
-				 * Variable("idk")), 1);
-				 * final ParseResult<Exp> exp2 = new ParseResult<Exp>(new VariableExp(new
-				 * Variable("idk2")), 1);
-				 * return new ParseResult<Vardec>(new VariableDeclaration(theType.result,
-				 * exp1.result, exp2.result), 3);
-				 */
 				throw new ParseException("");
 			}
 		} else {
