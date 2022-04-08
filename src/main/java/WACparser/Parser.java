@@ -516,8 +516,9 @@ public class Parser {
 	 * }
 	 * }
 	 */
+	 
 	// modified by Adrian
-/* 	  public ParseResult<Stmt> parseStmt(final int position) throws ParseException
+	  public ParseResult<Stmt> parseStmt(final int position) throws ParseException
 	  {
 	  final Token token = getToken(position);
 	  if( (token instanceof IntToken) || (token instanceof BooleanToken) || (token
@@ -602,7 +603,7 @@ public class Parser {
 	  else {
 	  throw new ParseException("expected statement; received: " + token);
 	  }
-	  } */
+	  }
 	  
 	  
 	  
