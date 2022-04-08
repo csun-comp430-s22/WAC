@@ -365,6 +365,17 @@ public class ParserTest {
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new VariableValueChange(variable.result, exp.result), 4);
 		assertEquals(expected, parser.parseStmt(0));
 	}
+	
+	
+	// while (x < 5) x = 1;
+	@Test
+	public void testWhileStmtThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new WhileToken(), new OpenparToken(), new VariableToken("x"), new lessThanToken(), new IntegerToken(5), 
+														new CloseparToken(), new VariableToken("x"), new PlusToken(), new IntegerToken(1), new SemicolToken()));
+		final ParseResult<Exp> guard = new ParseResult<Exp>(new OpExp(new VariableExp(new Variable("x")), new LessThanOp(), new IntegerExp(5)), 3);
+		final ParseResult<Stmt> stmt = new ParseResult<Stmt>(new VariableValueChange(new VariableExp(new Variable("x")), new IntegerExp(1)), 4);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new WhileStmt(guard.result, stmt.result), 10);
+	}
 
 
 	@Test

@@ -360,13 +360,12 @@ public class Parser {
 			} else {
 				throw new ParseException("");
 			}
-/* 	  else if(token instanceof WhileToken) {
-		  assertTokenHereIs(position + 1, new OpenparToken());
-		  final ParseResult<Exp> guard = parseExp(position + 2);
-		  assertTokenHereIs(guard.position, new CloseparToken());
-		  final ParseResult<Stmt> loopBranch = parseStmt(guard.position + 1);
-		  return new ParseResult<Stmt>(new WhileStmt(), loopBranch.position);
-	  } */
+		} else if (token instanceof WhileToken) {
+			assertTokenHereIs(position + 1, new OpenparToken());
+			final ParseResult<Exp> guard = parseExp(position + 2);
+			assertTokenHereIs(guard.position, new CloseparToken());
+			final ParseResult<Stmt> whileStmt = parseStmt(guard.position + 1);
+			return new ParseResult<Stmt>(new WhileStmt(guard.result, whileStmt.result), whileStmt.position);
 		} else if (token instanceof BreakToken ) {
 			final ParseResult<Stmt> breakResult;
 			breakResult = parseBreakStmt(position);
