@@ -301,51 +301,6 @@ public class Parser {
 	
 	
 	
-/* 	public ParseResult<Param> parseParam(final int position) throws ParseException {
-		
-		final Token token = getToken(position);
-		final ParseResult<Param> result;
-		if(token instanceof IntToken) 
-		  {
-		    assertTokenHereIs(position, new IntToken());
-		    final Token  token2 = getToken(position+1);
-		    assertTokenHereIs(position+1, token2);
-		    result = new ParseResult<Param>(new Parameter(new IntType(),new VariableExp(new Variable(token2.toString())) ), 2);
-		    return result ;
-		  }
-		else if (token instanceof BooleanToken) 
-		  {
-			assertTokenHereIs(position, new BooleanToken());
-			final Token  token2 = getToken(position+1);
-			 assertTokenHereIs(position+1, token2);
-		     result = new ParseResult<Param>(new Parameter(new BooleanType(),new VariableExp(new Variable(token2.toString())) ), 2);
-		    return result ;
-		  }
-		else if(token instanceof StringToken) 
-		  {
-			assertTokenHereIs(position, new StringToken());
-			final Token  token2 = getToken(position+1);
-			 assertTokenHereIs(position+1, token2);
-		     result = new ParseResult<Param>(new Parameter(new StringType(),new VariableExp(new Variable(token2.toString())) ), 2);
-		    return result ;
-		  }
-		else if (token instanceof Variable) 
-		  {
-			assertTokenHereIs(position, new VariableToken(token.toString()));
-			final Token  token2 = getToken(position+1);
-			 assertTokenHereIs(position+1, token2);
-		     result = new ParseResult<Param>(new Parameter(new ClassnameType(new Classname(token.toString())),new VariableExp(new Variable(token2.toString())) ), 2);
-		    return result ;
-		  }
-		else {
-			throw new ParseException("type not found");
-		}
-			
-			
-		
-		
-	} */
-	
 	// classdef ::= class classname extends classname {
 	// vardec*
 	// constructor(param*) stmt
@@ -540,7 +495,7 @@ public class Parser {
 	 * }
 	 */
 	// modified by Adrian
-	  public ParseResult<Stmt> parseStmt(final int position) throws ParseException
+/* 	  public ParseResult<Stmt> parseStmt(final int position) throws ParseException
 	  {
 	  final Token token = getToken(position);
 	  if( (token instanceof IntToken) || (token instanceof BooleanToken) || (token
@@ -625,7 +580,13 @@ public class Parser {
 	  else {
 	  throw new ParseException("expected statement; received: " + token);
 	  }
-	  }
+	  } */
+	  
+	  
+	  
+	  
+	  
+	  
 	// still won't work because we need to finish the other methods it calls
 	/*
 	 * //new code

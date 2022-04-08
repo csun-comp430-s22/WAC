@@ -304,7 +304,6 @@ public class ParserTest {
 		final ParseResult<Exp> expected = new ParseResult<Exp>(new NewClassExp(new VariableExp(new Variable("Dog")), inside), 5);
 		assertEquals(expected, parser.parseExp(0));
 	}
-}
 
 
 	@Test
@@ -314,7 +313,8 @@ public class ParserTest {
 		
 		assertEquals(expected, parser.parseParam(0));
 	}
-	
+
+}	
 	
 /* 
 	//just a sanity check test 
