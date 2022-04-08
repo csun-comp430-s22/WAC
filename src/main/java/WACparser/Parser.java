@@ -271,10 +271,11 @@ public class Parser {
 			} else {
 				//return parseParam(position);	//relies on parseParam
 				//so for now we'll return something else:
-				final ParseResult<Type> theType = new ParseResult<Type>(new IntType(), 1);
+/* 				final ParseResult<Type> theType = new ParseResult<Type>(new IntType(), 1);
 				final ParseResult<Exp> exp1 = new ParseResult<Exp>(new VariableExp(new Variable("idk")), 1);
 				final ParseResult<Exp> exp2 = new ParseResult<Exp>(new VariableExp(new Variable("idk2")), 1);
-				return new ParseResult<Vardec>(new VariableDeclaration(theType.result, exp1.result, exp2.result), 3);
+				return new ParseResult<Vardec>(new VariableDeclaration(theType.result, exp1.result, exp2.result), 3); */
+				throw new ParseException("");
 			}
 		}
 		else {
@@ -301,6 +302,28 @@ public class Parser {
 	
 	
 	
+/* 	// methoddef ::= type methodname(param*) stmt
+	public ParseResult<Methoddef> parseMethodDef(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken) || (token instanceof VariableToken)) {
+			final ParseResult<Type> type = parseType(position);	// parse in the type
+			final Token token2 = getToken(position + 1);
+			final String nameToken2 = ((VariableToken)token2).name;
+			assertTokenHereIs(position + 1, new VariableToken(name));
+			final ParseResult<Exp> methodName = parsePrimaryExp(position + 1);	// parse in the methodname
+			assertTokenHereIs(position + 2, new OpenparToken());
+			//here is where I'll deal with the list of params but let me try without it first
+			//so currently we can only pass an empty list of params
+			assertTokenHereIs(position + 3, new CloseparToken());
+			final ParseResult<Stmt> stmt = new parseStmt(position + 4);	//isn't gonna work until stmt is made
+		} else {
+			throw new ParseException("");
+		}
+	} */
+	
+
+
+
 	// classdef ::= class classname extends classname {
 	// vardec*
 	// constructor(param*) stmt
@@ -400,8 +423,7 @@ public class Parser {
 	 * }
 	 */
 
-	// methoddef ::= type methodname(param*) stmt
-	// still needs to be implemented
+
 
 	// stmt ::= vardec | var = exp; | while (exp) stmt | break; | if (exp) stmt else
 	// stmt | return exp; |
