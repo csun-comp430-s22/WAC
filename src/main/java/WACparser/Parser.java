@@ -320,6 +320,24 @@ public class Parser {
 			throw new ParseException("Break token not found");
 		}
 	}
+
+	
+	public ParseResult<Stmt> parseSuperStmt(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if(token instanceof SuperToken) {
+			assertTokenHereIs( position+1, new OpenparToken());
+			final Token token2 = getToken(position + 2); // get var
+			final String var = ((VariableToken) token2).name;
+			assertTokenHereIs(position+2, new VariableToken(var) );
+			assertTokenHereIs(position+3, new CloseparToken());
+			assertTokenHereIs(position+4, new SemicolToken());
+			return new ParseResult<Stmt>(new SuperStmt(((SuperToken)token).toString(),new VariableExp(new Variable(var))),position+5);
+		}
+		else {
+			throw new ParseException("SuperToken not found");
+		}
+	}
+
 	 
 	// stmt ::= var = exp; | vardec | while (exp) stmt | break; | if (exp) stmt else stmt | return exp;
 	//			| {stmt*} | println(exp*) | super(var); | this.var = var; | exp;
@@ -412,6 +430,7 @@ public class Parser {
 	}
 	
 	
+
 	/*
 	 * // methoddef ::= type methodname(param*) stmt
 	 * public ParseResult<Methoddef> parseMethodDef(final int position) throws
