@@ -234,38 +234,56 @@ public class Parser {
 	 * return current;
 	 * } // parseVarMethodCall
 	 */
+	 
+	 
+	 //lets try something simpler
+	 public ParseResult<Exp> parseVarMethodCallTest(final int position) throws ParseException {
+		 ParseResult<Exp> varName = parsePrimaryExp(position);
+		 ParseResult<Exp> methodName = parsePrimaryExp(position + 2);
+		 List<Exp> inside = new ArrayList();
+		 ParseResult<Exp> exp = parsePrimaryExp(position + 4);
+		 inside.add(exp.result);
+		 return new ParseResult<Exp>(new VarMethodCall(varName.result, methodName.result, inside), position + 6);
+	 }
+	 
 
 	// var.methodname(exp*)
 	public ParseResult<Exp> parseVarMethodCall(final int position) throws ParseException {
 		ParseResult<Exp> varName = parsePrimaryExp(position); // parse in variable name
 		// ignore the . we already checked it was there
 		Token token = getToken(position + 2);
-		assertTokenHereIs(position + 2, new VariableToken(token.toString()));
+		final String name = ((VariableToken)token).name;
+		assertTokenHereIs(position + 2, new VariableToken(name));
 		ParseResult<Exp> methodName = parsePrimaryExp(position + 2); // parse in methodname
 		assertTokenHereIs(position + 3, new OpenparToken());
-		List<Exp> inParens = new ArrayList(); // create list for exps
-		int newPosition = position + 4;
-		token = getToken(newPosition); // get either the first token of exp or ')'
+		List<Exp> inside = new ArrayList(); // create list for exps
+		//int newPosition = position + 4;
+		token = getToken(position + 4); // get either the first token of exp or ')'
 		final ParseResult<Exp> result;
 		if (token instanceof CloseparToken) {
 			result = new ParseResult<Exp>(
-					new VarMethodCall(varName.result, new MethodNameExp(new Methodname(methodName.result.toString())), inParens),
+					new VarMethodCall(varName.result, methodName.result, inside),
 					position + 5);
 		} else {
 			boolean shouldRun = true;
 			while (shouldRun) {
 				try {
-					final ParseResult<Exp> exp = parseExp(newPosition);
-					inParens.add(exp.result);
-					newPosition = exp.position;
+					final ParseResult<Exp> exp = parseExp(position + 4);
+					inside.add(exp.result);
+					//newPosition = exp.position;
 				} catch (final ParseException e) {
 					shouldRun = false;
+					//newPosition = newPosition + 1;
 				}
 			}
-			assertTokenHereIs(newPosition, new CloseparToken());
+			//assertTokenHereIs(newPosition, new CloseparToken());
+			assertTokenHereIs(position + 5, new CloseparToken());
+/* 			result = new ParseResult<Exp>(
+					new VarMethodCall(varName.result, methodName.result, inParens),
+					newPosition + 1); */
 			result = new ParseResult<Exp>(
-					new VarMethodCall(varName.result, new MethodNameExp(new Methodname(methodName.result.toString())), inParens),
-					newPosition + 1);
+					new VarMethodCall(varName.result, methodName.result, inside),
+					position + 6);
 		}
 		return result;
 	}
