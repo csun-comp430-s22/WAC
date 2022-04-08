@@ -134,13 +134,6 @@ public class ParserTest {
 
 
 	@Test
-	public void testPlusOp() throws ParseException {
-		final Parser parser = new Parser(Arrays.asList(new PlusToken()));
-		assertEquals(new ParseResult<Op>(new PlusOp(), 1), parser.parseAdditiveOp(0));
-	}
-
-
-	@Test
 	public void testMinusOp() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new MinusToken()));
 		assertEquals(new ParseResult<Op>(new MinusOp(), 1), parser.parseAdditiveOp(0));
@@ -266,6 +259,7 @@ public class ParserTest {
 		inside.add(param.result);
 		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 6), parser.parseVarMethodCall(0));
 	}
+}
 	
 	
 /* 
