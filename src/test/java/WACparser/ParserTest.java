@@ -348,6 +348,14 @@ public class ParserTest {
 		
 	}
 	
+	
+	@Test
+	public void testBreakStatementThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new BreakToken(), new SemicolToken()));
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BreakStmt("break",";" ),2);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+	
 	// x = 5;
 	@Test
 	public void testVariableValueChangeThroughStmt() throws ParseException {
