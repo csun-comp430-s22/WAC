@@ -258,7 +258,7 @@ public class ParserTest {
 	@Test
 	public void testParam() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("x")));
-		final ParseResult<Param> expected = new ParseResult<Param>(new Parameter(new IntType(),new VariableExp(new Variable("x")) ), 2);
+		final ParseResult<Param> expected = new ParseResult<Param>(new Parameter(new IntType(), new VariableExp(new Variable("x")) ), 2);
 		
 		assertEquals(expected, parser.parseParam(0));
 	}

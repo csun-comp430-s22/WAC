@@ -4,9 +4,9 @@ public class Parameter implements Param {
 	
 	public final Type parameterType;
 	
-	public final VariableExp variable;
+	public final Exp variable;
 	
-	public Parameter (final Type parameterType,final VariableExp variable ) 
+	public Parameter (final Type parameterType,final Exp variable ) 
 	    {
 		  this.parameterType = parameterType;
 		  this.variable = variable;

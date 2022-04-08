@@ -11,15 +11,10 @@ public class Variable {
         return name.hashCode();
     }
 
+	
     public boolean equals(final Object other) {
-    	
-        if(other instanceof Variable) {
-        	return true;
-        }
-        else {
-        	return false;
-        }
-               
+        return (other instanceof Variable &&
+                name.equals(((Variable) other).name));
     }
 
     public String toString() {

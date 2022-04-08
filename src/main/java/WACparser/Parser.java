@@ -312,6 +312,22 @@ public class Parser {
 	// param ::= type var
 	// still needs to be implemented
 	public ParseResult<Param> parseParam(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken) || (token instanceof VariableToken)) {
+			final ParseResult<Type> type = parseType(position);
+			final Token token2 = getToken(position + 1);
+			final String name = ((VariableToken)token2).name;
+			assertTokenHereIs(position + 1, new VariableToken(name));
+			final ParseResult<Exp> varName = parsePrimaryExp(position + 1);
+			return new ParseResult<Param>(new Parameter(type.result, varName.result), position + 2);
+		} else {
+			throw new ParseException("");
+		}
+	}
+	
+	
+	
+/* 	public ParseResult<Param> parseParam(final int position) throws ParseException {
 		
 		final Token token = getToken(position);
 		final ParseResult<Param> result;
@@ -354,7 +370,7 @@ public class Parser {
 			
 		
 		
-	}
+	} */
 	
 	// classdef ::= class classname extends classname {
 	// vardec*
