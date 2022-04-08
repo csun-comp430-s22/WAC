@@ -271,8 +271,6 @@ public class ParserTest {
 	assertEquals(expected, parser.parseExp(0));
 	}
 	
-	
-
 
 	//x.get()
 	//Starting point at ParseExp
@@ -307,6 +305,15 @@ public class ParserTest {
 		assertEquals(expected, parser.parseExp(0));
 	}
 }
+
+
+	@Test
+	public void testParam() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("x")));
+		final ParseResult<Param> expected = new ParseResult<Param>(new Parameter(new IntType(), new VariableExp(new Variable("x")) ), 2);
+		
+		assertEquals(expected, parser.parseParam(0));
+	}
 	
 	
 /* 
