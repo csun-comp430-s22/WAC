@@ -393,13 +393,22 @@ public class ParserTest {
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new IfStmt(ifGuard.result, trueBranch.result, falseBranch.result), 15);
 		assertEquals(expected, parser.parseStmt(0));
 	}
+	
+	
+	// return y;
+	@Test
+	public void testReturnStmtThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ReturnToken(), new VariableToken("y"), new SemicolToken()));
+		final ParseResult<Exp> exp = new ParseResult<Exp>(new VariableExp(new Variable("y")), 1);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new ReturnStmt(exp.result), 3);
+		assertEquals(expected, parser.parseStmt(0));
+	}
 
 	@Test
 	public void testSuperStatment() throws ParseException{
 		final Parser parser = new Parser(Arrays.asList(new SuperToken(), new OpenparToken(),new VariableToken("x"),new CloseparToken(),new SemicolToken()));
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new SuperStmt("super",new VariableExp(new Variable("x"))),5);
 		assertEquals(expected, parser.parseSuperStmt(0));
-		
 	}
 	
 	
