@@ -326,6 +326,13 @@ public class ParserTest {
 
 		assertEquals(expected, parser.parseParam(0));
 	}
+	@Test
+	public void testBreakStatment() throws ParseException{
+		final Parser parser = new Parser(Arrays.asList(new BreakToken(), new SemicolToken()));
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BreakStmt("break",";" ),2);
+		assertEquals(expected, parser.parseBreakStmt(0));
+		
+	}
 
 }
 
