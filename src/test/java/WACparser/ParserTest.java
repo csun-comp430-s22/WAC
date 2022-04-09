@@ -416,6 +416,16 @@ public class ParserTest {
 		assertEquals(expected, parser.parseStmt(0));
 	}
 	
+	
+	// {}
+	@Test
+	public void testEmptyBlockStmtThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new leftCurlyToken(), new rightCurlyToken()));
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BlockStmt(stmts), 2);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+	
 
 	@Test
 	public void testSuperStatment() throws ParseException{
@@ -448,23 +458,92 @@ public class ParserTest {
 	}
 	
 	
-}
+	// y;
+	@Test
+	public void testFallThroughExpTruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken("y"), new SemicolToken()));
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new ExpStmt(new VariableExp(new Variable("y"))), 2);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+	
+	
+	
+/* 	// Int Bark() {1 + 2}
+	@Test
+	public void testParseMethoddef() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("Bark"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new IntegerToken(1), new PlusToken(), 
+															new IntegerToken(2), new rightCurlyToken()));
+		final ParseResult<Type> type = new ParseResult<Type>(new IntType(), 1);
+		final ParseResult<Exp> methodname = new ParseResult<Exp>(new VariableExp(new Variable("Bark")), 1);
+		final List<Param> params = new ArrayList<Param>();
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		final ParseResult<Stmt> exp = new ParseResult<Stmt>(new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2))), 3);
+		stmts.add(exp.result);
+		final ParseResult<Stmt> block = new ParseResult<Stmt>(new BlockStmt(stmts), 9);
+		final ParseResult<Methoddef> expected = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, block.result), 5);
+		assertEquals(expected, parser.parseMethodDef(0));
+	} */
+	
+	
+	// Int x() {}
+	@Test
+	public void testParseMethoddefTest() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("X"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new rightCurlyToken()));
+		//final ParseResult<Type> type = new ParseResult<Type>(new IntType(), 1);
+		final Parser parser1 = new Parser(Arrays.asList(new IntToken()));
+		final ParseResult<Type> type = parser1.parseType(0);
+		//end of this
+		//final ParseResult<Exp> methodname = new ParseResult<Exp>(new VariableExp(new Variable("X")), 1);
+		final Parser parser2 = new Parser(Arrays.asList(new VariableToken("X")));
+		final ParseResult<Exp> methodname = parser2.parsePrimaryExp(0);
+		//end of this
+		final List<Param> params = new ArrayList<Param>();
+		//final List<Stmt> stmts = new ArrayList<Stmt>();
+		//final ParseResult<Stmt> block = new ParseResult<Stmt>(new BlockStmt(stmts), 2);
+		final Parser parser3 = new Parser(Arrays.asList(new leftCurlyToken(), new rightCurlyToken()));
+		final ParseResult<Stmt> stmt = parser3.parseStmt(0);
+		//end of this
+		final ParseResult<Methoddef> expected = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), 6);
+		assertEquals(expected, parser.parseMethodDef(0));
+	}
+	
+	
+	// Int X() {}
+	// similar to above but diff for sanity check
+	// will clean up later
+	@Test
+	public void testParseMethoddefTest1() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("X"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new rightCurlyToken()));
+		final ParseResult<Type> type = new ParseResult<Type>(new IntType(), 1);
 
-/*
- * //just a sanity check test
- * 
- * @Test
- * public void testTest() throws ParseException {
- * final Parser parser = new Parser(Arrays.asList(new VariableToken("hi")));
- * final ParseResult<Exp> oop = parser.parsePrimaryExp(0);
- * List<Exp> test = new ArrayList();
- * test.add(oop.result);
- * 
- * List<Exp> test2 = new ArrayList();
- * final ParseResult<Exp> oop2 = new ParseResult(new VariableExp(new
- * Variable("hi")), 1);
- * test2.add(oop2.result);
- * 
- * assertEquals(test, test2);
- * }
- */
+		//end of this
+		final ParseResult<Exp> methodname = new ParseResult<Exp>(new VariableExp(new Variable("X")), 1);
+
+		//end of this
+		final List<Param> params = new ArrayList<Param>();
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		final ParseResult<Stmt> stmt = new ParseResult<Stmt>(new BlockStmt(stmts), 2);
+
+		//end of this
+		final ParseResult<Methoddef> expected = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), 6);
+		assertEquals(expected, parser.parseMethodDef(0));
+	}
+	
+	
+	// Int X() {y;}
+	@Test
+	public void testParseMethoddefTest2() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("X"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new VariableToken("y"), new SemicolToken(), new rightCurlyToken()));
+		final ParseResult<Type> type = new ParseResult<Type>(new IntType(), 1);
+		final ParseResult<Exp> methodname = new ParseResult<Exp>(new VariableExp(new Variable("X")), 1);
+		final List<Param> params = new ArrayList<Param>();
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		final ParseResult<Stmt> stmt1 = new ParseResult<Stmt>(new ExpStmt(new VariableExp(new Variable("y"))), 1);
+		stmts.add(stmt1.result);
+		final ParseResult<Stmt> stmt = new ParseResult<Stmt>(new BlockStmt(stmts), 2);
+		final ParseResult<Methoddef> expected = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), 8);
+		assertEquals(expected, parser.parseMethodDef(0));
+	}
+	
+	
+}
