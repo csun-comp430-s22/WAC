@@ -425,6 +425,29 @@ public class ParserTest {
 	}
 	
 	
+	@Test
+	public void testSuperStatmentThruStmt() throws ParseException{
+		final Parser parser = new Parser(Arrays.asList(new SuperToken(), new OpenparToken(),new VariableToken("x"),new CloseparToken(),new SemicolToken()));
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new SuperStmt("super",new VariableExp(new Variable("x"))),5);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+	
+	
+	@Test
+	public void testThisStatment() throws ParseException{
+		final Parser parser= new Parser(Arrays.asList(new ThisToken(), new PeriodToken(), new VariableToken("x"), new EqualToken(),new VariableToken("y"), new SemicolToken()));
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))),6 );
+		assertEquals(expected,parser.parseThisStmt(0));
+	}
+	
+	@Test
+	public void testThisStatmentThruStmt() throws ParseException{
+		final Parser parser= new Parser(Arrays.asList(new ThisToken(), new PeriodToken(), new VariableToken("x"), new EqualToken(),new VariableToken("y"), new SemicolToken()));
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))),6 );
+		assertEquals(expected,parser.parseStmt(0));
+	}
+	
+	
 }
 
 /*
