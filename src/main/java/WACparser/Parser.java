@@ -428,7 +428,7 @@ public class Parser {
 		  final ParseResult<Exp> exp = parseExp(position + 2);
 		  assertTokenHereIs(exp.position  , new CloseparToken());
 		  assertTokenHereIs(exp.position + 1, new SemicolToken());
-		  return new ParseResult<Stmt>(new PrintlnStmt(exp.result), exp.position + 1);
+		  return new ParseResult<Stmt>(new PrintlnStmt(exp.result), exp.position + 2);
 		  } 
 		 else if (token instanceof SuperToken) {
 			 final ParseResult<Stmt> superStmt = parseSuperStmt(position);

@@ -447,6 +447,7 @@ public class ParserTest {
 		assertEquals(expected,parser.parseStmt(0));
 	}
 	
+	//println(1 < 2);
 	@Test
 	public void testPrintlnStmtThruStmt() throws ParseException{
 		
