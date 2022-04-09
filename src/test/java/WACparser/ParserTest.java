@@ -357,14 +357,91 @@ public class ParserTest {
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new VariableValueChange(variable.result, exp.result), 4);
 		assertEquals(expected, parser.parseStmt(0));
 	}
+<<<<<<< HEAD
 */
     // super(var);
+=======
+	
+	
+	// while (x < 5) x = 1;
+	@Test
+	public void testWhileStmtThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new WhileToken(), new OpenparToken(), new VariableToken("x"), new lessThanToken(), new IntegerToken(5), 
+														new CloseparToken(), new VariableToken("x"), new EqualToken(), new IntegerToken(1), new SemicolToken()));
+		final ParseResult<Exp> guard = new ParseResult<Exp>(new OpExp(new VariableExp(new Variable("x")), new LessThanOp(), new IntegerExp(5)), 3);
+		final ParseResult<Stmt> stmt = new ParseResult<Stmt>(new VariableValueChange(new VariableExp(new Variable("x")), new IntegerExp(1)), 4);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new WhileStmt(guard.result, stmt.result), 10);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+
+	// if (a > 1) 
+	// a = 0; 
+	// else 
+	// a = 1;
+	// this test does not include brackets since it's one stmt each
+	@Test
+	public void testIfStmtWithOneStmtEachThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IfToken(), new OpenparToken(), new VariableToken("a"), new greaterThanToken(), new IntegerToken(1), new CloseparToken(), new VariableToken("a"),
+														new EqualToken(), new IntegerToken(0), new SemicolToken(), new ElseToken(), new VariableToken("a"), new EqualToken(), new IntegerToken(1), new SemicolToken()));
+		final ParseResult<Exp> ifGuard = new ParseResult<Exp>(new OpExp(new VariableExp(new Variable("a")), new GreaterThanOp(), new IntegerExp(1)), 3);
+		final ParseResult<Stmt> trueBranch = new ParseResult<Stmt>(new VariableValueChange(new VariableExp(new Variable("a")), new IntegerExp(0)), 4);
+		final ParseResult<Stmt> falseBranch = new ParseResult<Stmt>(new VariableValueChange(new VariableExp(new Variable("a")), new IntegerExp(1)), 4);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new IfStmt(ifGuard.result, trueBranch.result, falseBranch.result), 15);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+	
+	
+	// return y;
+	@Test
+	public void testReturnStmtThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ReturnToken(), new VariableToken("y"), new SemicolToken()));
+		final ParseResult<Exp> exp = new ParseResult<Exp>(new VariableExp(new Variable("y")), 1);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new ReturnStmt(exp.result), 3);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+	
+	
+	// {x = y;}
+	@Test
+	public void testBlockStmtWithOneStmtThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new leftCurlyToken(), new VariableToken("x"), new EqualToken(), new VariableToken("y"), new SemicolToken(), new rightCurlyToken()));
+		final ParseResult<Stmt> stmt1 = new ParseResult<Stmt>(new VariableValueChange(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))), 3);
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		stmts.add(stmt1.result);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BlockStmt(stmts), 6);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+	
+
+>>>>>>> origin/QA_testing
 	@Test
 	public void testSuperStatment() throws ParseException{
 		final Parser parser = new Parser(Arrays.asList(new SuperToken(), new OpenparToken(),new VariableToken("x"),new CloseparToken(),new SemicolToken()));
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new SuperStmt("super",new VariableExp(new Variable("x"))),5);
 		assertEquals(expected, parser.parseSuperStmt(0));
-		
+	}
+	
+	
+	@Test
+	public void testSuperStatmentThruStmt() throws ParseException{
+		final Parser parser = new Parser(Arrays.asList(new SuperToken(), new OpenparToken(),new VariableToken("x"),new CloseparToken(),new SemicolToken()));
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new SuperStmt("super",new VariableExp(new Variable("x"))),5);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+	
+	
+	@Test
+	public void testThisStatment() throws ParseException{
+		final Parser parser= new Parser(Arrays.asList(new ThisToken(), new PeriodToken(), new VariableToken("x"), new EqualToken(),new VariableToken("y"), new SemicolToken()));
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))),6 );
+		assertEquals(expected,parser.parseThisStmt(0));
+	}
+	
+	@Test
+	public void testThisStatmentThruStmt() throws ParseException{
+		final Parser parser= new Parser(Arrays.asList(new ThisToken(), new PeriodToken(), new VariableToken("x"), new EqualToken(),new VariableToken("y"), new SemicolToken()));
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))),6 );
+		assertEquals(expected,parser.parseStmt(0));
 	}
 	//this.variable=variable;
 	@Test
