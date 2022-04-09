@@ -1,4 +1,6 @@
-/* package WACparser;
+package WACparser;
+
+import java.util.List;
 
 public class MethodDefinition implements Methoddef {
 	public final Type type;
@@ -6,7 +8,7 @@ public class MethodDefinition implements Methoddef {
 	public final List<Param> params;	//not gonna work until i get param
 	public final Stmt stmt;
 	
-	public Methoddef(final Type type, final Exp methodname, final List<Param> params, final stmt) {
+	public MethodDefinition(final Type type, final Exp methodname, final List<Param> params, final Stmt stmt) {
 		this.type = type;
 		this.methodname = methodname;
 		this.params = params;
@@ -15,8 +17,8 @@ public class MethodDefinition implements Methoddef {
 	
 	public boolean equals(final Object other) {
 		if (other instanceof Methoddef) {
-			final MethodDefinition otherMD = (MethodDefinition)other;\
-			return (type.equals(otherMD.type) && methodname.equals(otherMD.methodname) && params.equals(otherMD.methodname) && stmt.equals(otherMD.stmt));
+			final MethodDefinition otherMD = (MethodDefinition)other;
+			return (type.equals(otherMD.type) && methodname.equals(otherMD.methodname) && params.equals(otherMD.params) && stmt.equals(otherMD.stmt));
 		} else {
 			return false;
 		}
@@ -29,4 +31,4 @@ public class MethodDefinition implements Methoddef {
 	public String toString() {
 		return ("Methoddef(" + type.toString() + "," + methodname.toString() + "," + params.toString() + "," + stmt.toString());
 	}
-} */
+}
