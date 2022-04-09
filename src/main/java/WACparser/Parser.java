@@ -423,13 +423,13 @@ public class Parser {
 				return new ParseResult<Stmt>(new BlockStmt(stmts), iter + 1);
 			}
 		}
-/* 	  else if (token instanceof PrintlnToken) {
+ 	  else if (token instanceof PrintlnToken) {
 		  assertTokenHereIs(position + 1, new OpenparToken());
 		  final ParseResult<Exp> exp = parseExp(position + 2);
-		  assertTokenHereIs(exp.position, new CloseparToken());
+		  assertTokenHereIs(exp.position  , new CloseparToken());
 		  assertTokenHereIs(exp.position + 1, new SemicolToken());
-		  return new ParseResult<Stmt>(new PrintlnStmt(exp.result), exp.position + 2);
-		  } */
+		  return new ParseResult<Stmt>(new PrintlnStmt(exp.result), exp.position + 1);
+		  } 
 		 else if (token instanceof SuperToken) {
 			 final ParseResult<Stmt> superStmt = parseSuperStmt(position);
 			 return superStmt;
