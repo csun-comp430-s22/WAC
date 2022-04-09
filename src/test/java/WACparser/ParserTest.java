@@ -327,7 +327,7 @@ public class ParserTest {
 		assertEquals(expected, parser.parseParam(0));
 	}
 	
-/*	
+	
 	@Test
 	public void testParseVardecForStmt() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("x"), new EqualToken(), new IntegerToken(3), new SemicolToken()));
@@ -337,7 +337,7 @@ public class ParserTest {
 		final ParseResult<Vardec> variableDec = new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5);
 		assertEquals(new ParseResult<Stmt>(new VardecStmt(variableDec), 5), parser.parseStmt(0));
 	}
-	*/
+	
 	
 	// break;
 	@Test
@@ -348,8 +348,16 @@ public class ParserTest {
 		
 	}
 	
+	
+	@Test
+	public void testBreakStatementThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new BreakToken(), new SemicolToken()));
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BreakStmt("break",";" ),2);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+	
 	// x = 5;
-	/*@Test
+	@Test
 	public void testVariableValueChangeThroughStmt() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new VariableToken("x"), new EqualToken(), new IntegerToken(5), new SemicolToken()));
 		final ParseResult<Exp> variable =  new ParseResult<Exp>(new VariableExp(new Variable("x")), 1);
@@ -357,10 +365,6 @@ public class ParserTest {
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new VariableValueChange(variable.result, exp.result), 4);
 		assertEquals(expected, parser.parseStmt(0));
 	}
-<<<<<<< HEAD
-*/
-    // super(var);
-=======
 	
 	
 	// while (x < 5) x = 1;
@@ -413,7 +417,6 @@ public class ParserTest {
 	}
 	
 
->>>>>>> origin/QA_testing
 	@Test
 	public void testSuperStatment() throws ParseException{
 		final Parser parser = new Parser(Arrays.asList(new SuperToken(), new OpenparToken(),new VariableToken("x"),new CloseparToken(),new SemicolToken()));
@@ -442,13 +445,6 @@ public class ParserTest {
 		final Parser parser= new Parser(Arrays.asList(new ThisToken(), new PeriodToken(), new VariableToken("x"), new EqualToken(),new VariableToken("y"), new SemicolToken()));
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))),6 );
 		assertEquals(expected,parser.parseStmt(0));
-	}
-	//this.variable=variable;
-	@Test
-	public void testThisStatment() throws ParseException{
-		final Parser parser= new Parser(Arrays.asList(new ThisToken(), new PeriodToken(), new VariableToken("x"), new EqualToken(),new VariableToken("y"), new SemicolToken()));
-		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))),6 );
-		assertEquals(expected,parser.parseThisStmt(0));
 	}
 	
 	

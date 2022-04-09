@@ -359,32 +359,10 @@ public class Parser {
 
 	}
 
-	
-	public ParseResult<Stmt> parseThisStmt(final int position) throws ParseException {
-		final Token token = getToken(position);
-		if(token instanceof ThisToken) {
-			assertTokenHereIs(position+1, new PeriodToken());
-			final Token token2 = getToken(position + 2); // get var
-			final String var = ((VariableToken) token2).name;
-			assertTokenHereIs(position+2, new VariableToken(var));
-			assertTokenHereIs(position+3, new EqualToken());
-			final Token token3 = getToken(position + 4); // get var2
-			final String var2 = ((VariableToken) token3).name;
-			assertTokenHereIs(position+4,new VariableToken(var2));
-			assertTokenHereIs(position+5, new SemicolToken());
-			return new ParseResult<Stmt>(new ThisStmt(new VariableExp(new Variable(var)), new VariableExp(new Variable(var2))),position+6);
-			
-		}
-		else {
-			throw new ParseException("ThisToken not found");
-		}
-		
-	}
-
 	 
 	// stmt ::= var = exp; | vardec | while (exp) stmt | break; | if (exp) stmt else stmt | return exp;
 	//			| {stmt*} | println(exp*) | super(var); | this.var = var; | exp;
-	/*public ParseResult<Stmt> parseStmt(final int position) throws ParseException {
+	public ParseResult<Stmt> parseStmt(final int position) throws ParseException {
 		final Token token = getToken(position);
 		// vardec
 		if ((token instanceof VariableToken) && (getToken(position + 1) instanceof EqualToken)) {
@@ -403,16 +381,6 @@ public class Parser {
 			} else {
 				throw new ParseException("");
 			}
-<<<<<<< HEAD
-/* 	  else if(token instanceof WhileToken) {
-		  assertTokenHereIs(position + 1, new OpenparToken());
-		  final ParseResult<Exp> guard = parseExp(position + 2);
-		  assertTokenHereIs(guard.position, new CloseparToken());
-		  final ParseResult<Stmt> loopBranch = parseStmt(guard.position + 1);
-		  return new ParseResult<Stmt>(new WhileStmt(), loopBranch.position);
-	  } */
-		/*} else if (token instanceof BreakToken ) {
-=======
 		} else if (token instanceof WhileToken) {
 			assertTokenHereIs(position + 1, new OpenparToken());
 			final ParseResult<Exp> guard = parseExp(position + 2);
@@ -420,7 +388,6 @@ public class Parser {
 			final ParseResult<Stmt> whileStmt = parseStmt(guard.position + 1);
 			return new ParseResult<Stmt>(new WhileStmt(guard.result, whileStmt.result), whileStmt.position);
 		} else if (token instanceof BreakToken ) {
->>>>>>> origin/QA_testing
 			final ParseResult<Stmt> breakResult;
 			breakResult = parseBreakStmt(position);
 			return breakResult;
@@ -463,24 +430,6 @@ public class Parser {
 		  assertTokenHereIs(exp.position + 1, new SemicolToken());
 		  return new ParseResult<Stmt>(new PrintlnStmt(exp.result), exp.position + 2);
 		  } */
-<<<<<<< HEAD
-/* 	  else if (token instanceof SuperToken) {
-		  assertTokenHereIs(position + 1, new SuperToken());
-		  assertTokenHereIs(position + 2, new OpenparToken());
-		  assertTokenHereIs(position + 3, new VariableToken(token.toString()) );
-		  assertTokenHereIs(position + 4, new SemicolToken());
-		  return new ParseResult<Stmt>(new SuperStmt(), position +5);
-	  } */
-/* 	  else if(token instanceof ThisToken) {
-		  assertTokenHereIs(position + 1 , new PeriodToken());
-		  assertTokenHereIs(position + 2, new VariableToken(token.toString()) );
-		  assertTokenHereIs(position + 3 , new EqualToken());
-		  assertTokenHereIs(position + 4 , new VariableToken(token.toString()));
-		  return new ParseResult<Stmt>(new ThisStmt(), position +5);
-	  } */
-		/*else {
-			throw new ParseException("expected statement; received: " + token);
-=======
 		 else if (token instanceof SuperToken) {
 			 final ParseResult<Stmt> superStmt = parseSuperStmt(position);
 			 return superStmt;
@@ -491,12 +440,10 @@ public class Parser {
 			final ParseResult<Exp> compExp = parseComparisonExp(position);
 			final ParseResult<Stmt> compStmt = new ParseResult<Stmt>(new ExpStmt(compExp.result), compExp.position);
 			return compStmt;
->>>>>>> origin/QA_testing
 		}
-	}
-	*/
 	
 
+	
 
 	/*
 	 * // methoddef ::= type methodname(param*) stmt
@@ -671,4 +618,3 @@ public class Parser {
 	 * }
 	 */
 
-}
