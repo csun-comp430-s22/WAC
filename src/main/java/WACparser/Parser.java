@@ -425,21 +425,19 @@ public class Parser {
 				assertTokenHereIs(iter, new rightCurlyToken());
 				return new ParseResult<Stmt>(new BlockStmt(stmts), iter + 1);
 			}
-		}
-/* 	  else if (token instanceof PrintlnToken) {
+		} else if (token instanceof PrintlnToken) {
 		  assertTokenHereIs(position + 1, new OpenparToken());
 		  final ParseResult<Exp> exp = parseExp(position + 2);
-		  assertTokenHereIs(exp.position, new CloseparToken());
+		  assertTokenHereIs(exp.position  , new CloseparToken());
 		  assertTokenHereIs(exp.position + 1, new SemicolToken());
 		  return new ParseResult<Stmt>(new PrintlnStmt(exp.result), exp.position + 2);
-		  } */
-		 else if (token instanceof SuperToken) {
+		} else if (token instanceof SuperToken) {
 			 final ParseResult<Stmt> superStmt = parseSuperStmt(position);
 			 return superStmt;
-		 } else if (token instanceof ThisToken) {
+		} else if (token instanceof ThisToken) {
 			 final ParseResult<Stmt> thisStmt = parseThisStmt(position);
 			 return thisStmt;
-		 } else {
+		} else {
 			final ParseResult<Exp> theExp = parseExp(position);
 			assertTokenHereIs(theExp.position, new SemicolToken());
 			final ParseResult<Stmt> theExpStmt = new ParseResult<Stmt>(new ExpStmt(theExp.result), theExp.position + 1);
