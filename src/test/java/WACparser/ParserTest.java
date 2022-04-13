@@ -467,33 +467,26 @@ public class ParserTest {
 	}
 	
 	
-	//println(1 < 2);
+	// println();
 	@Test
-	public void testPrintlnStmtThruStmt() throws ParseException{
-		
-		final Parser parser =  new Parser (Arrays.asList(new PrintlnToken(), new OpenparToken(),new IntegerToken(1), new lessThanToken(), new IntegerToken(2), new CloseparToken(),
-				new SemicolToken() ));
-		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new PrintlnStmt(new OpExp(new IntegerExp(1), new LessThanOp(), new IntegerExp(2))),7);
+	public void testEmptyPrintlnStmtThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new PrintlnToken(), new OpenparToken(), new CloseparToken(), new SemicolToken()));
+		final List<Exp> exps = new ArrayList<Exp>();
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new PrintlnStmt(exps), 4);
 		assertEquals(expected, parser.parseStmt(0));
 	}
 	
 	
-	
-/* 	// Int Bark() {1 + 2}
+	//println("hello");
 	@Test
-	public void testParseMethoddef() throws ParseException {
-		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("Bark"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new IntegerToken(1), new PlusToken(), 
-															new IntegerToken(2), new rightCurlyToken()));
-		final ParseResult<Type> type = new ParseResult<Type>(new IntType(), 1);
-		final ParseResult<Exp> methodname = new ParseResult<Exp>(new VariableExp(new Variable("Bark")), 1);
-		final List<Param> params = new ArrayList<Param>();
-		final List<Stmt> stmts = new ArrayList<Stmt>();
-		final ParseResult<Stmt> exp = new ParseResult<Stmt>(new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2))), 3);
-		stmts.add(exp.result);
-		final ParseResult<Stmt> block = new ParseResult<Stmt>(new BlockStmt(stmts), 9);
-		final ParseResult<Methoddef> expected = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, block.result), 5);
-		assertEquals(expected, parser.parseMethodDef(0));
-	} */
+	public void testPrintlnStmtWithOneExpThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new PrintlnToken(), new OpenparToken(), new strToken("hello"), new CloseparToken(), new SemicolToken()));
+		final ParseResult<Exp> exp1 = new ParseResult<Exp>(new StrExp("hello"), 1);
+		final List<Exp> exps = new ArrayList<Exp>();
+		exps.add(exp1.result);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new PrintlnStmt(exps), 5);
+		assertEquals(expected, parser.parseStmt(0));
+	}
 	
 	
 	// Int x() {}

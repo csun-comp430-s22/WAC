@@ -425,12 +425,28 @@ public class Parser {
 				assertTokenHereIs(iter, new rightCurlyToken());
 				return new ParseResult<Stmt>(new BlockStmt(stmts), iter + 1);
 			}
-		} else if (token instanceof PrintlnToken) {
-		  assertTokenHereIs(position + 1, new OpenparToken());
-		  final ParseResult<Exp> exp = parseExp(position + 2);
-		  assertTokenHereIs(exp.position  , new CloseparToken());
-		  assertTokenHereIs(exp.position + 1, new SemicolToken());
-		  return new ParseResult<Stmt>(new PrintlnStmt(exp.result), exp.position + 2);
+		} else if (token instanceof PrintlnToken) {			//still need to adjust for list of exps
+			assertTokenHereIs(position + 1, new OpenparToken());
+			List<Exp> exps = new ArrayList();
+			Token theNextToken = getToken(position + 2);
+			if (theNextToken instanceof CloseparToken) {
+				assertTokenHereIs(position + 3, new SemicolToken());
+				return new ParseResult<Stmt>(new PrintlnStmt(exps), position + 4);
+			} else {
+				ParseResult<Exp> exp1 = parseExp(position + 2);
+				exps.add(exp1.result);
+				int iter1 = exp1.position;
+				theNextToken = getToken(iter1);
+				while (!(theNextToken instanceof CloseparToken)) {
+					ParseResult<Exp> exp2 = parseExp(iter1);
+					exps.add(exp2.result);
+					iter1 = iter1 + 1;
+					theNextToken = getToken(iter1);
+				}
+				assertTokenHereIs(iter1, new CloseparToken());
+				assertTokenHereIs(iter1 + 1, new SemicolToken());
+				return new ParseResult<Stmt>(new PrintlnStmt(exps), iter1 + 2);
+			}
 		} else if (token instanceof SuperToken) {
 			 final ParseResult<Stmt> superStmt = parseSuperStmt(position);
 			 return superStmt;
