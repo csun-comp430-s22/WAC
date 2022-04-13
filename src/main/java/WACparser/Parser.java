@@ -209,6 +209,7 @@ public class Parser {
 		return result;
 	}
 
+
 	// var.methodname(exp*)
 	public ParseResult<Exp> parseVarMethodCall(final int position) throws ParseException {
 		ParseResult<Exp> varName = parsePrimaryExp(position);
@@ -226,14 +227,14 @@ public class Parser {
 			inside.add(exp.result);
 			int iter = position + 5;
 			token2 = getToken(iter);
-			while (token2 instanceof VariableToken) { // cant use next
+			while ((token2 instanceof VariableToken) || (token2 instanceof IntegerToken)) { // cant use next
 				ParseResult<Exp> exp2 = parsePrimaryExp(position + iter);
 				inside.add(exp2.result);
 				iter = iter + 1;
 				token2 = getToken(iter);
 			}
-			assertTokenHereIs(position + 5, new CloseparToken());
-			return new ParseResult<Exp>(new VarMethodCall(varName.result, methodName.result, inside), position + 6);
+			assertTokenHereIs(iter, new CloseparToken());
+			return new ParseResult<Exp>(new VarMethodCall(varName.result, methodName.result, inside), iter + 1);
 		} else {
 			throw new ParseException("");
 		}
@@ -243,7 +244,7 @@ public class Parser {
 	public ParseResult<Exp> parseExp(final int position) throws ParseException {
 		final Token token = getToken(position);
 
-		if (token instanceof VariableToken) { // needs to assert that the next token is a .
+		if (token instanceof VariableToken) {
 			try {
 				final Token token2 = getToken(position + 1);
 				if (token2 instanceof PeriodToken) {
@@ -260,6 +261,7 @@ public class Parser {
 			return parseComparisonExp(position); // comparison_exp
 		}
 	} // parseExp
+
 
 	// vardec ::= type var = exp;
 	public ParseResult<Vardec> parseVardec(final int position) throws ParseException {
@@ -462,8 +464,7 @@ public class Parser {
 	}
 	
 	
-	//let's try something simpler
-	// Int x() {}
+	// methoddef ::= type methodname(param*) stmt
 	public ParseResult<Methoddef> parseMethodDef(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken) || (token instanceof VariableToken)) {
@@ -483,29 +484,31 @@ public class Parser {
 			throw new ParseException("");
 		}
 	}
-
 	
-/* 	 // methoddef ::= type methodname(param*) stmt
-	 public ParseResult<Methoddef> parseMethodDef(final int position) throws ParseException {
+	
+	
+	
+	//saving in case i fuck everything up
+/* 		// methoddef ::= type methodname(param*) stmt
+	public ParseResult<Methoddef> parseMethodDef(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken) || (token instanceof VariableToken)) {
-			final ParseResult<Type> type = parseType(position); // parse in the type
+			final ParseResult<Type> type = parseType(position);
 			final Token token2 = getToken(position + 1);
 			final String nameToken2 = ((VariableToken)token2).name;
 			assertTokenHereIs(position + 1, new VariableToken(nameToken2));
-			final ParseResult<Exp> methodName = parsePrimaryExp(position + 1); // parse in the methodname
+			final ParseResult<Exp> methodname = parsePrimaryExp(position + 1);
 			assertTokenHereIs(position + 2, new OpenparToken());
-			final List<Param> params = new ArrayList();
-			//here is where I'll deal with the list of params but let me try without it first
-			//so currently we can only pass an empty list of params
+			final List<Param> params = new ArrayList<Param>();
+			//will deal with list of params later
 			assertTokenHereIs(position + 3, new CloseparToken());
 			final ParseResult<Stmt> stmt = parseStmt(position + 4);
-			final ParseResult<Methoddef> methodDefinition = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodName.result, params, stmt.result), stmt.position);
-			return methodDefinition;
+			final ParseResult<Methoddef> result = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), stmt.position);
+			return result;
 		} else {
 			throw new ParseException("");
 		}
-	 } */
+	} */
 	
 
 	// classdef ::= class classname extends classname {
