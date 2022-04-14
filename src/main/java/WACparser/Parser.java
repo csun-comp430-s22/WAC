@@ -475,11 +475,28 @@ public class Parser {
 			final ParseResult<Exp> methodname = parsePrimaryExp(position + 1);
 			assertTokenHereIs(position + 2, new OpenparToken());
 			final List<Param> params = new ArrayList<Param>();
-			//will deal with list of params later
-			assertTokenHereIs(position + 3, new CloseparToken());
-			final ParseResult<Stmt> stmt = parseStmt(position + 4);
-			final ParseResult<Methoddef> result = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), stmt.position);
-			return result;
+			Token nextToken = getToken(position + 3);
+			if (nextToken instanceof CloseparToken) {
+				final ParseResult<Stmt> stmt = parseStmt(position + 4);
+				final ParseResult<Methoddef> result = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), stmt.position);
+				return result;
+			}
+			else {
+				ParseResult<Param> param1 = parseParam(position + 3);
+				params.add(param1.result);
+				int iter = param1.position;
+				nextToken = getToken(iter);
+				while (!(nextToken instanceof CloseparToken)) {
+					ParseResult<Param> param2 = parseParam(iter);
+					params.add(param2.result);
+					iter = iter + 1;
+					nextToken = getToken(iter);
+				}
+				assertTokenHereIs(iter, new CloseparToken());
+				final ParseResult<Stmt> stmt1 = parseStmt(iter + 1);
+				final ParseResult<Methoddef> result1 = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt1.result), stmt1.position);
+				return result1;
+			}
 		} else {
 			throw new ParseException("");
 		}

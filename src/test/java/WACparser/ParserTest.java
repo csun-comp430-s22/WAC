@@ -597,7 +597,7 @@ public class ParserTest {
 	
 	// Int X() {y;}
 	@Test
-	public void testParseMethoddefTest2() throws ParseException {
+	public void testParseMethoddefWithStmtTest() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("X"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new VariableToken("y"), new SemicolToken(), new rightCurlyToken()));
 		final ParseResult<Type> type = new ParseResult<Type>(new IntType(), 1);
 		final ParseResult<Exp> methodname = new ParseResult<Exp>(new VariableExp(new Variable("X")), 1);
@@ -607,6 +607,24 @@ public class ParserTest {
 		stmts.add(stmt1.result);
 		final ParseResult<Stmt> stmt = new ParseResult<Stmt>(new BlockStmt(stmts), 2);
 		final ParseResult<Methoddef> expected = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), 8);
+		assertEquals(expected, parser.parseMethodDef(0));
+	}
+	
+	
+	// Int X(boolean a) {y;}
+	@Test
+	public void testParseMethoddefWithParamAndOneStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("X"), new OpenparToken(), new BooleanToken(), new VariableToken("a"), new CloseparToken(), new leftCurlyToken(), new VariableToken("y"), new SemicolToken(), new rightCurlyToken()));
+		final ParseResult<Type> type = new ParseResult<Type>(new IntType(), 1);
+		final ParseResult<Exp> methodname = new ParseResult<Exp>(new VariableExp(new Variable("X")), 1);
+		final List<Param> params = new ArrayList<Param>();
+		final ParseResult<Param> param1 = new ParseResult<Param>(new Parameter(new BooleanType(), new VariableExp(new Variable("a"))), 2);
+		params.add(param1.result);
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		final ParseResult<Stmt> stmt1 = new ParseResult<Stmt>(new ExpStmt(new VariableExp(new Variable("y"))), 1);
+		stmts.add(stmt1.result);
+		final ParseResult<Stmt> stmt = new ParseResult<Stmt>(new BlockStmt(stmts), 2);
+		final ParseResult<Methoddef> expected = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), 10);
 		assertEquals(expected, parser.parseMethodDef(0));
 	}
 	
