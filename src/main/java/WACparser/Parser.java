@@ -502,6 +502,16 @@ public class Parser {
 		}
 	}
 	
+	
+	// classdef ::= class classname extends classname {
+	// vardec*
+	// constructor(param*) stmt
+	// methoddef*
+	// }
+/* 	public ParseResult<Classdef> parseClassdef(final int position) throws ParseException {
+		
+	} */
+	
 
 	// classdef ::= class classname extends classname {
 	// vardec*
