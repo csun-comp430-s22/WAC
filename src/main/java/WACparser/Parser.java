@@ -502,31 +502,6 @@ public class Parser {
 		}
 	}
 	
-	
-	
-	
-	//saving in case i fuck everything up
-/* 		// methoddef ::= type methodname(param*) stmt
-	public ParseResult<Methoddef> parseMethodDef(final int position) throws ParseException {
-		final Token token = getToken(position);
-		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken) || (token instanceof VariableToken)) {
-			final ParseResult<Type> type = parseType(position);
-			final Token token2 = getToken(position + 1);
-			final String nameToken2 = ((VariableToken)token2).name;
-			assertTokenHereIs(position + 1, new VariableToken(nameToken2));
-			final ParseResult<Exp> methodname = parsePrimaryExp(position + 1);
-			assertTokenHereIs(position + 2, new OpenparToken());
-			final List<Param> params = new ArrayList<Param>();
-			//will deal with list of params later
-			assertTokenHereIs(position + 3, new CloseparToken());
-			final ParseResult<Stmt> stmt = parseStmt(position + 4);
-			final ParseResult<Methoddef> result = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), stmt.position);
-			return result;
-		} else {
-			throw new ParseException("");
-		}
-	} */
-	
 
 	// classdef ::= class classname extends classname {
 	// vardec*
