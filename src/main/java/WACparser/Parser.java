@@ -508,9 +508,59 @@ public class Parser {
 	// constructor(param*) stmt
 	// methoddef*
 	// }
-/* 	public ParseResult<Classdef> parseClassdef(final int position) throws ParseException {
-		
-	} */
+	public ParseResult<Classdef> parseClassdef(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if (token instanceof ClassToken) {
+			final Token token1 = getToken(position + 1);
+			final String name = (VariableToken)token1.name;
+			assertTokenHereIs(position + 1, new VariableToken(name));
+			final ParseResult<Exp> classname = parsePrimaryExp(position + 1);	//parse in the classname
+			final Token token2 = getToken(classname.position);
+			if (token2 instanceof extendsToken) {		// case where we have an extends and secondary classname
+				final Token token3 = getToken(classname.position + 1);
+				final String name1 = (VariableToken)token3.name;
+				assertTokenHereIs(classname.position + 1, new VariableToken(name1));
+				final ParseResult<Exp> extendsClassname = parsePrimaryExp(classname.position + 1);	//parse in the secondary classname if it exists
+				assertTokenHereIs(extendsClassname.position, new leftCurlyToken());
+				final List<Vardec> vardecs = new ArrayList<Vardec>();
+				int keepTrack = extendsClassname.position + 1;
+				Token nextToken = getToken(keepTrack);
+				Token nextNextToken = getToken(keepTrack + 1);
+				if (((nextToken instanceof IntToken) || (nextToken instanceof BooleanToken) || (nextToken instanceof StringToken) ||(nextToken instanceof VariableToken))
+						&& (!(nextNextToken instanceof OpenparToken))) {		//we know we have at least one vardec
+					final ParseResult<Vardec> vardec = parseVardec(keepTrack);
+					vardecs.add(vardec.result);
+					keepTrack = vardec.position;
+					nextToken = getToken(keepTrack);
+					nextNextToken = getToken(keepTrack + 1);
+					while (((nextToken instanceof IntToken) || (nextToken instanceof BooleanToken) || (nextToken instanceof StringToken) ||(nextToken instanceof VariableToken))
+							&& (!(nextNextToken instanceof OpenparToken))) {	// while we still have more vardecs to read in
+						final ParseResult<Vardec> vardec1 = parseVardec(keepTrack);
+						vardecs.add(vardec1.result);
+						keepTrack = vardec1.result;
+						nextToken = getToken(keepTrack);
+						nextNextToken = getToken(keepTrack + 1);
+					}
+				}
+				//we either have no vardecs or have finished reading in all of the vardecs at this point
+				if ((nextToken instanceof VariableToken) && (nextNextToken instanceof OpenparToken)) {	// we have a constructor (WHICH IS GOOD BCUZ IT'S REQUIRED)
+					assertTokenHereIs(keepTrack, new VariableToken(name));	//checking to make sure the constructor name is the same as the class name
+					final List<Param> params = new ArrayList<Param>();
+					Token token4 = getToken(keepTrack + 2);
+					if (!(token4 instanceof CloseparToken)) {	// we have at least one parameter
+						//left off here
+					}
+				} else {
+					throw new ParseException("Expected start of a constructor but received: " + nextToken.toString() + "," + nextNextToken.toString());
+				}
+				
+			} else if (token2 instanceof leftCurlyToken) {	// case where we don't have an extends and secondary classname
+				
+			}
+		} else {
+			throw new ParseException("expected a class token but recieved: " + token.toString());
+		}
+	}
 	
 
 	// classdef ::= class classname extends classname {
