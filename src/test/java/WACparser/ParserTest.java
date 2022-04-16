@@ -629,4 +629,104 @@ public class ParserTest {
 	}
 	
 	
+	// class Dog extends Animal { Dog() 1+2; }
+	@Test
+	public void testParseClassDefWithExtendsNoVardecNoParamsNoMethoddefs() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new VariableToken("Dog"),
+														new OpenparToken(), new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final Exp extendsClassname = new VariableExp(new Variable("Animal"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final List<Param> params = new ArrayList<Param>();
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, extendsClassname, vardecs, params, stmt, methoddefs), 13);
+		assertEquals(expected, parser.parseClassdef(0));
+	}
+	
+	
+	//class Dog extends Animal {
+	//	String name = "Steve";
+	//	Dog()
+	//	1 + 2;
+	//	}
+	@Test
+	public void testParseClassDefWithExtendsOneVardecNoParamsNoMethoddefs() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new StringToken(),
+														new VariableToken("name"), new EqualToken(), new strToken("Steve"), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
+														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final Exp extendsClassname = new VariableExp(new Variable("Animal"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		vardecs.add(vardec);
+		final List<Param> params = new ArrayList<Param>();
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, extendsClassname, vardecs, params, stmt, methoddefs), 18);
+		assertEquals(expected, parser.parseClassdef(0));
+	}
+	
+	
+	//class Dog extends Animal {
+	//	String name = "Steve";
+	//	Dog(int x)
+	//	1 + 2;
+	//	}
+	@Test
+	public void testParseClassDefWithExtendsOneVardecOneParamNoMethoddefs() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new StringToken(),
+														new VariableToken("name"), new EqualToken(), new strToken("Steve"), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(),
+														new IntToken(), new VariableToken("x"),	new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), 
+														new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final Exp extendsClassname = new VariableExp(new Variable("Animal"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		vardecs.add(vardec);
+		final List<Param> params = new ArrayList<Param>();
+		final Param param = new Parameter(new IntType(), new VariableExp(new Variable("x")));
+		params.add(param);
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, extendsClassname, vardecs, params, stmt, methoddefs), 20);
+		assertEquals(expected, parser.parseClassdef(0));
+	}
+	
+	
+	//class Dog extends Animal {
+	//	String name = "Steve";
+	//	Dog(int x)
+	//	1 + 2;
+	//  Boolean Cute() {true;}
+	//	}
+	@Test
+	public void testParseClassDefWithExtendsOneVardecOneParamOneMethoddef() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new StringToken(),
+														new VariableToken("name"), new EqualToken(), new strToken("Steve"), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(),
+														new IntToken(), new VariableToken("x"),	new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), 
+														new BooleanToken(), new VariableToken("Cute"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new trueToken(), new SemicolToken(),
+														new rightCurlyToken(), new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final Exp extendsClassname = new VariableExp(new Variable("Animal"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		vardecs.add(vardec);
+		final List<Param> params = new ArrayList<Param>();
+		final Param param = new Parameter(new IntType(), new VariableExp(new Variable("x")));
+		params.add(param);
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final List<Param> methodParams = new ArrayList<Param>();
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		final Stmt methodStmt = new ExpStmt(new TrueExp());
+		stmts.add(methodStmt);
+		final Stmt blockStmt = new BlockStmt(stmts);
+		final Methoddef methoddef = new MethodDefinition(new BooleanType(), new VariableExp(new Variable("Cute")), methodParams, blockStmt);
+		methoddefs.add(methoddef);
+		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, extendsClassname, vardecs, params, stmt, methoddefs), 28);
+		assertEquals(expected, parser.parseClassdef(0));
+	}
+	
+	
 }
