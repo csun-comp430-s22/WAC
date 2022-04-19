@@ -42,7 +42,7 @@ public class Parser {
 			return new ParseResult<Type>(new ClassnameType(new Classname(name)),
 					position + 1);
 		} else {
-			throw new ParseException("");
+			throw new ParseException("Expected IntToken, BooleanToken, StringToken, or VariableToken but received: " + token.toString());
 		}
 	}
 
@@ -63,7 +63,7 @@ public class Parser {
 		} else if (token instanceof falseToken) {
 			return new ParseResult<Exp>(new FalseExp(), position + 1);
 		} else {
-			throw new ParseException("");
+			throw new ParseException("Expected a primary expression but received: " + token.toString());
 		}
 	}
 
@@ -211,7 +211,7 @@ public class Parser {
 	}
 
 
-	// var.methodname(exp*)
+	// var.methodname(primary_exp*)
 	public ParseResult<Exp> parseVarMethodCall(final int position) throws ParseException {
 		ParseResult<Exp> varName = parsePrimaryExp(position);
 		final Token token = getToken(position + 2);
@@ -223,12 +223,14 @@ public class Parser {
 		Token token2 = getToken(position + 4);
 		if (token2 instanceof CloseparToken) {
 			return new ParseResult<Exp>(new VarMethodCall(varName.result, methodName.result, inside), position + 5);
-		} else if (token2 instanceof VariableToken) {
+		} else if ((token2 instanceof VariableToken) || (token2 instanceof IntegerToken) || (token2 instanceof strToken) 
+					|| (token2 instanceof trueToken) || (token2 instanceof falseToken)) {
 			ParseResult<Exp> exp = parsePrimaryExp(position + 4);
 			inside.add(exp.result);
 			int iter = position + 5;
 			token2 = getToken(iter);
-			while ((token2 instanceof VariableToken) || (token2 instanceof IntegerToken)) { // cant use next
+			while ((token2 instanceof VariableToken) || (token2 instanceof IntegerToken) || (token2 instanceof strToken) 
+					|| (token2 instanceof trueToken) || (token2 instanceof falseToken)) {
 				ParseResult<Exp> exp2 = parsePrimaryExp(position + iter);
 				inside.add(exp2.result);
 				iter = iter + 1;
@@ -237,7 +239,7 @@ public class Parser {
 			assertTokenHereIs(iter, new CloseparToken());
 			return new ParseResult<Exp>(new VarMethodCall(varName.result, methodName.result, inside), iter + 1);
 		} else {
-			throw new ParseException("");
+			throw new ParseException("Expected a Closepar or a Primary Expression but received: " + token.toString());
 		}
 	}
 
