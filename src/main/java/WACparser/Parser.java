@@ -229,12 +229,22 @@ public class Parser {
 			inside.add(exp.result);
 			int iter = position + 5;
 			token2 = getToken(iter);
-			while ((token2 instanceof VariableToken) || (token2 instanceof IntegerToken) || (token2 instanceof strToken) 
-					|| (token2 instanceof trueToken) || (token2 instanceof falseToken)) {
-				ParseResult<Exp> exp2 = parsePrimaryExp(position + iter);
-				inside.add(exp2.result);
-				iter = iter + 1;
+			if (!(token2 instanceof CloseparToken)) {
+				Token commaToken = getToken(position + 5);
+				iter = position + 6;
 				token2 = getToken(iter);
+				while ((commaToken instanceof CommaToken) && ((token2 instanceof VariableToken) || (token2 instanceof IntegerToken) || (token2 instanceof strToken) 
+						|| (token2 instanceof trueToken) || (token2 instanceof falseToken))) {
+					ParseResult<Exp> exp2 = parsePrimaryExp(position + iter);
+					inside.add(exp2.result);
+					iter = iter + 1;
+					token2 = getToken(iter);
+					if (!(token2 instanceof CloseparToken)) {
+						iter = iter + 2;
+						commaToken = getToken(iter-1);
+						token2 = getToken(iter);
+					}
+				}
 			}
 			assertTokenHereIs(iter, new CloseparToken());
 			return new ParseResult<Exp>(new VarMethodCall(varName.result, methodName.result, inside), iter + 1);

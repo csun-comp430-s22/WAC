@@ -442,12 +442,12 @@ public class ParserTest {
 	}
 	
 	
-	//x.get(hi 25)
+	//x.get(hi , 25)
 	@Test
 	public void testVarMethodCallWithVarThenIntParams() throws ParseException {
 		final Parser parser = new Parser(
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
-						new VariableToken("hi"), new IntegerToken(25), new CloseparToken()));
+						new VariableToken("hi"), new CommaToken(), new IntegerToken(25), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
 		final Exp name = new VariableExp(new Variable("get"));
 		final List<Exp> inside = new ArrayList();
@@ -455,16 +455,16 @@ public class ParserTest {
 		final ParseResult<Exp> param2 = new ParseResult<Exp>(new IntegerExp(25), 1);
 		inside.add(param.result);
 		inside.add(param2.result);
-		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 7), parser.parseVarMethodCall(0));
+		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 8), parser.parseVarMethodCall(0));
 	}
 	
 	
-	//x.get(hi "hi")
+	//x.get(hi , "hi")
 	@Test
 	public void testVarMethodCallWithVarThenStringParams() throws ParseException {
 		final Parser parser = new Parser(
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
-						new VariableToken("hi"), new strToken("hi"), new CloseparToken()));
+						new VariableToken("hi"), new CommaToken(), new strToken("hi"), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
 		final Exp name = new VariableExp(new Variable("get"));
 		final List<Exp> inside = new ArrayList();
@@ -472,16 +472,16 @@ public class ParserTest {
 		final ParseResult<Exp> param2 = new ParseResult<Exp>(new StrExp("hi"), 1);
 		inside.add(param.result);
 		inside.add(param2.result);
-		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 7), parser.parseVarMethodCall(0));
+		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 8), parser.parseVarMethodCall(0));
 	}
 	
 	
-	//x.get(hi true)
+	//x.get(hi , true)
 	@Test
 	public void testVarMethodCallWithVarThenTrueParams() throws ParseException {
 		final Parser parser = new Parser(
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
-						new VariableToken("hi"), new trueToken(), new CloseparToken()));
+						new VariableToken("hi"), new CommaToken(), new trueToken(), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
 		final Exp name = new VariableExp(new Variable("get"));
 		final List<Exp> inside = new ArrayList();
@@ -489,16 +489,16 @@ public class ParserTest {
 		final ParseResult<Exp> param2 = new ParseResult<Exp>(new TrueExp(), 1);
 		inside.add(param.result);
 		inside.add(param2.result);
-		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 7), parser.parseVarMethodCall(0));
+		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 8), parser.parseVarMethodCall(0));
 	}
 	
 	
-	//x.get(hi false)
+	//x.get(hi , false)
 	@Test
 	public void testVarMethodCallWithVarThenFalseParams() throws ParseException {
 		final Parser parser = new Parser(
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
-						new VariableToken("hi"), new falseToken(), new CloseparToken()));
+						new VariableToken("hi"), new CommaToken(), new falseToken(), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
 		final Exp name = new VariableExp(new Variable("get"));
 		final List<Exp> inside = new ArrayList();
@@ -506,7 +506,7 @@ public class ParserTest {
 		final ParseResult<Exp> param2 = new ParseResult<Exp>(new FalseExp(), 1);
 		inside.add(param.result);
 		inside.add(param2.result);
-		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 7), parser.parseVarMethodCall(0));
+		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 8), parser.parseVarMethodCall(0));
 	}
 	
 	
