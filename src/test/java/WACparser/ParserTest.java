@@ -729,4 +729,88 @@ public class ParserTest {
 	}
 	
 	
+	// Will test the program method which we're going to pass in one classdef and one statment
+	// Expected a ParseResult of type Program which contains a list of classdefs and a list of stmts
+	// class Dog extends Animal { Dog() 1+2; }
+	@Test
+	public void testParseProgramWithOneClassdefAndNoStmts () throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new VariableToken("Dog"),
+														new OpenparToken(), new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final Exp extendsClassname = new VariableExp(new Variable("Animal"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final List<Param> params = new ArrayList<Param>();
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ClassDefinition theClass = new ClassDefinition(classname, extendsClassname, vardecs, params, stmt, methoddefs);
+		
+		final List<Classdef> CDList = new ArrayList<Classdef>();
+		CDList.add(theClass);
+		final List<Stmt> StmtList = new ArrayList<Stmt>();
+		final ParseResult<Program> expected = new ParseResult(new Program(CDList, StmtList), 13);
+		assertEquals(expected, parser.parseProgram(0));
+	}
+	
+	
+	// class Dog extends Animal { Dog() 1+2; }
+	// println("hello"); 
+	@Test
+	public void testParseProgramWithOneClassdefAndOneStmts () throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new VariableToken("Dog"),
+														new OpenparToken(), new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken(),
+														new PrintlnToken(), new OpenparToken(), new CloseparToken(), new SemicolToken()));
+		// to make the ClassDefintion
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final Exp extendsClassname = new VariableExp(new Variable("Animal"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final List<Param> params = new ArrayList<Param>();
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ClassDefinition theClass = new ClassDefinition(classname, extendsClassname, vardecs, params, stmt, methoddefs);
+		
+		// to make the Stmt
+		final List<Exp> exps = new ArrayList<Exp>();
+		final Stmt theStmt = new PrintlnStmt(exps);
+		
+		// to make the Program
+		final List<Classdef> CDList = new ArrayList<Classdef>();
+		CDList.add(theClass);
+		final List<Stmt> StmtList = new ArrayList<Stmt>();
+		StmtList.add(theStmt);
+		final ParseResult<Program> expected = new ParseResult(new Program(CDList, StmtList), 17);
+		assertEquals(expected, parser.parseProgram(0));
+	}
+	
+	
+	// same as above but passes through the parseProgram that takes no params
+	// class Dog extends Animal { Dog() 1+2; }
+	// println("hello"); 
+	@Test
+	public void testParseProgramWithOneClassdefAndOneStmtThruNoParamsParseProgram () throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new VariableToken("Dog"),
+														new OpenparToken(), new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken(),
+														new PrintlnToken(), new OpenparToken(), new CloseparToken(), new SemicolToken()));
+		// to make the ClassDefintion
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final Exp extendsClassname = new VariableExp(new Variable("Animal"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final List<Param> params = new ArrayList<Param>();
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ClassDefinition theClass = new ClassDefinition(classname, extendsClassname, vardecs, params, stmt, methoddefs);
+		
+		// to make the Stmt
+		final List<Exp> exps = new ArrayList<Exp>();
+		final Stmt theStmt = new PrintlnStmt(exps);
+		
+		// to make the Program
+		final List<Classdef> CDList = new ArrayList<Classdef>();
+		CDList.add(theClass);
+		final List<Stmt> StmtList = new ArrayList<Stmt>();
+		StmtList.add(theStmt);
+		final ParseResult<Program> expected = new ParseResult(new Program(CDList, StmtList), 17);
+		assertEquals(expected.result, parser.parseProgram());
+	}
+	
+	
 }

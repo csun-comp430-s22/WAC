@@ -4,6 +4,7 @@ import WAClexer.*;
 
 import java.util.List;
 import java.util.ArrayList;
+//import java.util.*;
 
 public class Parser {
 	private final List<Token> tokens;
@@ -571,10 +572,6 @@ public class Parser {
 			throw new ParseException("expected a class token but recieved: " + token.toString());
 		}
 	}
-	 
-	 
-	  
-	  
 
 	
 	//new code
@@ -583,26 +580,26 @@ public class Parser {
 		final List<Stmt> stmts = new ArrayList<Stmt>();
 		boolean shouldRunClasses = true;
 		boolean shouldRunStmts = true;
-		int currentPos = position;
+		int newPosition = position;
 		while (shouldRunClasses) {
 			try {
-				final ParseResult<Classdef> theClass = parseClassdef(currentPos);
+				final ParseResult<Classdef> theClass = parseClassdef(newPosition);
 				classes.add(theClass.result);
-				currentPos = theClass.position;
+				newPosition = theClass.position;
 			} catch (final ParseException e) {
 				shouldRunClasses = false;
 			}
 		}
 		while (shouldRunStmts) {
 			try {
-				final ParseResult<Stmt> stmt = parseStmt(currentPos);
+				final ParseResult<Stmt> stmt = parseStmt(newPosition);
 				stmts.add(stmt.result);
-				currentPos = stmt.position;
+				newPosition = stmt.position;
 			} catch (final ParseException e) {
 				shouldRunStmts = false;
 			}
 		}
-		return new ParseResult<Program>(new Program(classes, stmts), currentPos);
+		return new ParseResult<Program>(new Program(classes, stmts), newPosition);
 	}
 	
 	
