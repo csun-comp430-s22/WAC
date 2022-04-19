@@ -510,6 +510,41 @@ public class ParserTest {
 	}
 	
 	
+	//x.get(hi , x)
+	@Test
+	public void testVarMethodCallWithVarThenVarParams() throws ParseException {
+		final Parser parser = new Parser(
+				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
+						new VariableToken("hi"), new CommaToken(), new VariableToken("x"), new CloseparToken()));
+		final Exp variable = new VariableExp(new Variable("x"));
+		final Exp name = new VariableExp(new Variable("get"));
+		final List<Exp> inside = new ArrayList();
+		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
+		final ParseResult<Exp> param2 = new ParseResult<Exp>(new VariableExp(new Variable("x")), 1);
+		inside.add(param.result);
+		inside.add(param2.result);
+		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 8), parser.parseVarMethodCall(0));
+	}
+	
+	
+	// Test to assure that we need comma seperation between primary exps
+	//x.get(hi < x)
+	@Test(expected = ParseException.class)
+	public void testVarMethodCallWithErroneousSeperation() throws ParseException {
+		final Parser parser = new Parser(
+				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
+						new VariableToken("hi"), new lessThanToken(), new VariableToken("x"), new CloseparToken()));
+		final Exp variable = new VariableExp(new Variable("x"));
+		final Exp name = new VariableExp(new Variable("get"));
+		final List<Exp> inside = new ArrayList();
+		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
+		final ParseResult<Exp> param2 = new ParseResult<Exp>(new VariableExp(new Variable("x")), 1);
+		inside.add(param.result);
+		inside.add(param2.result);
+		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 8), parser.parseVarMethodCall(0));
+	}
+	
+	
 	// Test to assure that parseVarMethodCall throws an Exception when expected to
 	@Test(expected = ParseException.class)
 	public void testVarMethodCallUnhappyPath() throws ParseException {
