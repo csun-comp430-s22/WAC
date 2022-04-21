@@ -409,12 +409,12 @@ public class Parser {
 				ParseResult<Stmt> stmt1 = parseStmt(position + 1);
 				stmts.add(stmt1.result);
 				int count = stmt1.position;
-				nextToken = getToken(count);
-				while (!(nextToken instanceof rightCurlyToken)) {
+				Token theNextToken = getToken(count);
+				while (!(theNextToken instanceof rightCurlyToken)) {
 					ParseResult<Stmt> stmt2 = parseStmt(count);
 					stmts.add(stmt2.result);
-					count = count + 1;
-					nextToken = getToken(count);
+					count = stmt2.position;
+					theNextToken = getToken(count);
 				}
 				assertTokenHereIs(count, new rightCurlyToken());
 				return new ParseResult<Stmt>(new BlockStmt(stmts), count + 1);

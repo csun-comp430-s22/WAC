@@ -805,7 +805,35 @@ public class ParserTest {
 	}
 	
 	
-/* 	// {x = y; println();}
+	// {println();}
+	@Test
+	public void testBlockStmtWithOnePrintlnStmtsThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new leftCurlyToken(), new PrintlnToken(), new OpenparToken(), new CloseparToken(), new SemicolToken(), new rightCurlyToken()));
+		final List<Exp> emptyPrint = new ArrayList<Exp>();
+		final ParseResult<Stmt> stmt1 = new ParseResult<Stmt>(new PrintlnStmt(emptyPrint), 4);
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		stmts.add(stmt1.result);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BlockStmt(stmts), 6);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+	
+	
+	// {println(); println();}
+	@Test
+	public void testBlockStmtWithTwoPrintlnStmtsThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new leftCurlyToken(), new PrintlnToken(), new OpenparToken(), new CloseparToken(), new SemicolToken(), 
+														new PrintlnToken(), new OpenparToken(), new CloseparToken(), new SemicolToken(), new rightCurlyToken()));
+		final List<Exp> emptyPrint = new ArrayList<Exp>();
+		final ParseResult<Stmt> stmt1 = new ParseResult<Stmt>(new PrintlnStmt(emptyPrint), 4);
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		stmts.add(stmt1.result);
+		stmts.add(stmt1.result);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BlockStmt(stmts), 10);
+		assertEquals(expected, parser.parseStmt(0));
+	}
+	
+	
+	// {x = y; println();}
 	@Test
 	public void testBlockStmtWithTwoStmtsThruStmt() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new leftCurlyToken(), new VariableToken("x"), new EqualToken(), new VariableToken("y"), new SemicolToken(), 
@@ -818,7 +846,7 @@ public class ParserTest {
 		stmts.add(stmt2.result);
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BlockStmt(stmts), 10);
 		assertEquals(expected, parser.parseStmt(0));
-	} */
+	}
 	
 	
 	// {}
