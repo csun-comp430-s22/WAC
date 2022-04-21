@@ -316,6 +316,14 @@ public class ParserTest {
 		assertEquals(new ParseResult<Exp>(new OpExp(new IntegerExp(1), new EqualEqualsOp(), new IntegerExp(2)), 3),
 				parser.parseExp(0));
 	}
+	
+	
+	// x
+	@Test
+	public void testParseExpForSingleVariableShouldFallThru() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken("x")));
+		assertEquals(new ParseResult<Exp>(new VariableExp(new Variable("x")), 1), parser.parseExp(0));
+	}
 
 
 	// new Node()
@@ -527,6 +535,25 @@ public class ParserTest {
 	}
 	
 	
+	//x.get(hi , x,  5)
+	@Test
+	public void testVarMethodCallWithVarThenVarThenIntParams() throws ParseException {
+		final Parser parser = new Parser(
+				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
+						new VariableToken("hi"), new CommaToken(), new VariableToken("x"),  new CommaToken(), new IntegerToken(5), new CloseparToken()));
+		final Exp variable = new VariableExp(new Variable("x"));
+		final Exp name = new VariableExp(new Variable("get"));
+		final List<Exp> inside = new ArrayList();
+		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
+		final ParseResult<Exp> param2 = new ParseResult<Exp>(new VariableExp(new Variable("x")), 1);
+		final ParseResult<Exp> param3 = new ParseResult<Exp>(new IntegerExp(5), 1);
+		inside.add(param.result);
+		inside.add(param2.result);
+		inside.add(param3.result);
+		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 10), parser.parseVarMethodCall(0));
+	}
+	
+	
 	// Test to assure that we need comma seperation between primary exps
 	//x.get(hi < x)
 	@Test(expected = ParseException.class)
@@ -568,14 +595,56 @@ public class ParserTest {
 
 	// int x = 3;
 	@Test
-	public void testparseVardec() throws ParseException {
+	public void testParseVardecIntType() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("x"), new EqualToken(),
 				new IntegerToken(3), new SemicolToken()));
 		final Type type = new IntType();
 		final Exp variable = new VariableExp(new Variable("x"));
 		final Exp exp = new VariableExp(new Variable("3"));
 		assertEquals(new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5), parser.parseVardec(0));
-		;
+	}
+	
+	
+	// boolean x = true;
+	@Test
+	public void testParseVardecBooleanType() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new BooleanToken(), new VariableToken("x"), new EqualToken(),
+														new trueToken(), new SemicolToken()));
+		final Type type = new BooleanType();
+		final Exp variable = new VariableExp(new Variable("x"));
+		final Exp exp = new TrueExp();
+		assertEquals(new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5), parser.parseVardec(0));
+	}
+	
+	
+	// Dog x = new Dog();
+	@Test
+	public void testParseVardecVariableType() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken("Dog"), new VariableToken("x"), new EqualToken(),	new NewToken(), 
+														new VariableToken("Dog"), new OpenparToken(), new CloseparToken(), new SemicolToken()));
+		final Type type = new ClassnameType(new Classname("Dog"));
+		final Exp variable = new VariableExp(new Variable("x"));
+		final List<Exp> emptyParams = new ArrayList<Exp>();
+		final Exp exp = new NewClassExp(new VariableExp(new Variable("Dog")), emptyParams);
+		assertEquals(new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 8), parser.parseVardec(0));
+	}
+	
+	
+	// < x = 3;
+	@Test(expected = ParseException.class)
+	public void testparseVardecUnhappyPath1() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new lessThanToken(), new VariableToken("x"), new EqualToken(),
+				new IntegerToken(3), new SemicolToken()));
+		parser.parseVardec(0);
+	}
+	
+	
+	// int x > 3;
+	@Test(expected = ParseException.class)
+	public void testparseVardecUnhappyPath2() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("x"), new greaterThanToken(),
+				new IntegerToken(3), new SemicolToken()));
+		parser.parseVardec(0);
 	}
 
 
@@ -587,6 +656,14 @@ public class ParserTest {
 				new Parameter(new IntType(), new VariableExp(new Variable("x"))), 2);
 
 		assertEquals(expected, parser.parseParam(0));
+	}
+	
+	
+	// true
+	@Test(expected = ParseException.class)
+	public void testParseParamUnhappyPath() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new trueToken()));
+		parser.parseParam(0);
 	}
 	
 	
@@ -604,7 +681,7 @@ public class ParserTest {
 	
 	// break;
 	@Test
-	public void testBreakStatment() throws ParseException{
+	public void testBreakStatement() throws ParseException{
 		final Parser parser = new Parser(Arrays.asList(new BreakToken(), new SemicolToken()));
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BreakStmt("break",";" ),2);
 		assertEquals(expected, parser.parseBreakStmt(0));
@@ -694,7 +771,7 @@ public class ParserTest {
 
 	// super(x);
 	@Test
-	public void testSuperStatment() throws ParseException{
+	public void testSuperStatement() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new SuperToken(), new OpenparToken(),new VariableToken("x"),new CloseparToken(),new SemicolToken()));
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new SuperStmt("super",new VariableExp(new Variable("x"))),5);
 		assertEquals(expected, parser.parseSuperStmt(0));

@@ -235,12 +235,12 @@ public class Parser {
 				token2 = getToken(iter);
 				while ((commaToken instanceof CommaToken) && ((token2 instanceof VariableToken) || (token2 instanceof IntegerToken) || (token2 instanceof strToken) 
 						|| (token2 instanceof trueToken) || (token2 instanceof falseToken))) {
-					ParseResult<Exp> exp2 = parsePrimaryExp(position + iter);
+					ParseResult<Exp> exp2 = parsePrimaryExp(iter);
 					inside.add(exp2.result);
 					iter = iter + 1;
 					token2 = getToken(iter);
 					if (!(token2 instanceof CloseparToken)) {
-						iter = iter + 2;
+						iter = iter + 1;
 						commaToken = getToken(iter-1);
 						token2 = getToken(iter);
 					}
@@ -260,11 +260,8 @@ public class Parser {
 		if (token instanceof VariableToken) {
 			try {
 				final Token token2 = getToken(position + 1);
-				if (token2 instanceof PeriodToken) {
-					return parseVarMethodCall(position);
-				} else {
-					return parseComparisonExp(position);
-				}
+				assertTokenHereIs(position + 1, new PeriodToken());
+				return parseVarMethodCall(position);
 			} catch (final ParseException e) {
 				return parseComparisonExp(position);
 			}
@@ -289,14 +286,14 @@ public class Parser {
 				final ParseResult<Type> type = parseType(position);
 				final ParseResult<Exp> variable = parsePrimaryExp(position + 1);
 				final ParseResult<Exp> exp = parseExp(position + 3);
-				assertTokenHereIs(position + 4, new SemicolToken());
+				assertTokenHereIs(exp.position, new SemicolToken());
 				return new ParseResult<Vardec>(new VariableDeclaration(type.result, variable.result, exp.result),
-						position + 5);
+						exp.position + 1);
 			} else {
-				throw new ParseException("");
+				throw new ParseException("Expected an = token but received: " + token3.toString());
 			}
 		} else {
-			throw new ParseException("");
+			throw new ParseException("Expected a type but received: " + token.toString());
 		}
 	}
 
@@ -313,7 +310,7 @@ public class Parser {
 			final ParseResult<Exp> varName = parsePrimaryExp(position + 1);
 			return new ParseResult<Param>(new Parameter(type.result, varName.result), position + 2);
 		} else {
-			throw new ParseException("");
+			throw new ParseException("Expected a type but recived: " + token.toString());
 		}
 	}
 	
@@ -321,57 +318,40 @@ public class Parser {
 	//helper method for parseStmt
 	public ParseResult<Stmt> parseBreakStmt(final int position) throws ParseException {
 		final Token token = getToken(position);
-		if(token instanceof BreakToken ) {
-			final Token token2 = getToken(position+1);
-			final String b = ((BreakToken) token).toString();
-			assertTokenHereIs(position + 1,new SemicolToken() );
-			final String s = ((SemicolToken)token2).toString();
-			return new ParseResult<Stmt>(new BreakStmt(b,s), position+2 );
-			
-		}
-		else {
-			throw new ParseException("Break token not found");
-		}
+		final Token token2 = getToken(position+1);
+		final String b = ((BreakToken) token).toString();
+		assertTokenHereIs(position + 1,new SemicolToken() );
+		final String s = ((SemicolToken)token2).toString();
+		return new ParseResult<Stmt>(new BreakStmt(b,s), position+2 );
 	}
 
 	
 	//helper method for parseStmt
 	public ParseResult<Stmt> parseSuperStmt(final int position) throws ParseException {
 		final Token token = getToken(position);
-		if(token instanceof SuperToken) {
-			assertTokenHereIs( position+1, new OpenparToken());
-			final Token token2 = getToken(position + 2); // get var
-			final String var = ((VariableToken) token2).name;
-			assertTokenHereIs(position+2, new VariableToken(var) );
-			assertTokenHereIs(position+3, new CloseparToken());
-			assertTokenHereIs(position+4, new SemicolToken());
-			return new ParseResult<Stmt>(new SuperStmt(((SuperToken)token).toString(),new VariableExp(new Variable(var))),position+5);
-		}
-		else {
-			throw new ParseException("SuperToken not found");
-		}
+					assertTokenHereIs( position+1, new OpenparToken());
+		final Token token2 = getToken(position + 2); // get var
+		final String var = ((VariableToken) token2).name;
+		assertTokenHereIs(position+2, new VariableToken(var) );
+		assertTokenHereIs(position+3, new CloseparToken());
+		assertTokenHereIs(position+4, new SemicolToken());
+		return new ParseResult<Stmt>(new SuperStmt(((SuperToken)token).toString(),new VariableExp(new Variable(var))),position+5);
 	}
+	
 	
 	//helper method for parseStmt
 	public ParseResult<Stmt> parseThisStmt(final int position) throws ParseException {
 		final Token token = getToken(position);
-		if(token instanceof ThisToken) {
-			assertTokenHereIs(position+1, new PeriodToken());
-			final Token token2 = getToken(position + 2); // get var
-			final String var = ((VariableToken) token2).name;
-			assertTokenHereIs(position+2, new VariableToken(var));
-			assertTokenHereIs(position+3, new EqualToken());
-			final Token token3 = getToken(position + 4); // get var2
-			final String var2 = ((VariableToken) token3).name;
-			assertTokenHereIs(position+4,new VariableToken(var2));
-			assertTokenHereIs(position+5, new SemicolToken());
-			return new ParseResult<Stmt>(new ThisStmt(new VariableExp(new Variable(var)), new VariableExp(new Variable(var2))),position+6);
-
-		}
-		else {
-			throw new ParseException("ThisToken not found");
-		}
-
+		assertTokenHereIs(position+1, new PeriodToken());
+		final Token token2 = getToken(position + 2); // get var
+		final String var = ((VariableToken) token2).name;
+		assertTokenHereIs(position+2, new VariableToken(var));
+		assertTokenHereIs(position+3, new EqualToken());
+		final Token token3 = getToken(position + 4); // get var2
+		final String var2 = ((VariableToken) token3).name;
+		assertTokenHereIs(position+4,new VariableToken(var2));
+		assertTokenHereIs(position+5, new SemicolToken());
+		return new ParseResult<Stmt>(new ThisStmt(new VariableExp(new Variable(var)), new VariableExp(new Variable(var2))),position+6);
 	}
 
 	 
