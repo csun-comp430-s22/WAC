@@ -650,10 +650,32 @@ public class ParserTest {
 
 	//int x
 	@Test
-	public void testParam() throws ParseException {
+	public void testParamIntType() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("x")));
 		final ParseResult<Param> expected = new ParseResult<Param>(
 				new Parameter(new IntType(), new VariableExp(new Variable("x"))), 2);
+
+		assertEquals(expected, parser.parseParam(0));
+	}
+	
+	
+	//String x
+	@Test
+	public void testParamStringType() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new StringToken(), new VariableToken("x")));
+		final ParseResult<Param> expected = new ParseResult<Param>(
+				new Parameter(new StringType(), new VariableExp(new Variable("x"))), 2);
+
+		assertEquals(expected, parser.parseParam(0));
+	}
+	
+	
+	//Dog x
+	@Test
+	public void testParamVariableType() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken("Dog"), new VariableToken("x")));
+		final ParseResult<Param> expected = new ParseResult<Param>(
+				new Parameter(new ClassnameType(new Classname("Dog")), new VariableExp(new Variable("x"))), 2);
 
 		assertEquals(expected, parser.parseParam(0));
 	}
@@ -669,11 +691,35 @@ public class ParserTest {
 	
 	//int x = 3;
 	@Test
-	public void testParseVardecForStmt() throws ParseException {
+	public void testParseVardecThruStmtIntType() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("x"), new EqualToken(), new IntegerToken(3), new SemicolToken()));
 		final Type type = new IntType();
 		final Exp variable = new VariableExp(new Variable("x"));
 		final Exp exp = new VariableExp(new Variable("3"));
+		final ParseResult<Vardec> variableDec = new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5);
+		assertEquals(new ParseResult<Stmt>(new VardecStmt(variableDec), 5), parser.parseStmt(0));
+	}
+	
+	
+	// Boolean x = true;
+	@Test
+	public void testParseVardecThruStmtBooleanType() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new BooleanToken(), new VariableToken("x"), new EqualToken(), new trueToken(), new SemicolToken()));
+		final Type type = new BooleanType();
+		final Exp variable = new VariableExp(new Variable("x"));
+		final Exp exp = new TrueExp();
+		final ParseResult<Vardec> variableDec = new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5);
+		assertEquals(new ParseResult<Stmt>(new VardecStmt(variableDec), 5), parser.parseStmt(0));
+	}
+	
+	
+	// String x = "hi";
+	@Test
+	public void testParseVardecThruStmtStringType() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new StringToken(), new VariableToken("x"), new EqualToken(), new strToken("hi"), new SemicolToken()));
+		final Type type = new StringType();
+		final Exp variable = new VariableExp(new Variable("x"));
+		final Exp exp = new StrExp("hi");
 		final ParseResult<Vardec> variableDec = new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5);
 		assertEquals(new ParseResult<Stmt>(new VardecStmt(variableDec), 5), parser.parseStmt(0));
 	}
@@ -757,6 +803,22 @@ public class ParserTest {
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BlockStmt(stmts), 6);
 		assertEquals(expected, parser.parseStmt(0));
 	}
+	
+	
+/* 	// {x = y; println();}
+	@Test
+	public void testBlockStmtWithTwoStmtsThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new leftCurlyToken(), new VariableToken("x"), new EqualToken(), new VariableToken("y"), new SemicolToken(), 
+														new PrintlnToken(), new OpenparToken(), new CloseparToken(), new SemicolToken(), new rightCurlyToken()));
+		final ParseResult<Stmt> stmt1 = new ParseResult<Stmt>(new VariableValueChange(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))), 3);
+		final List<Exp> emptyPrint = new ArrayList<Exp>();
+		final ParseResult<Stmt> stmt2 = new ParseResult<Stmt>(new PrintlnStmt(emptyPrint), 4);
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		stmts.add(stmt1.result);
+		stmts.add(stmt2.result);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new BlockStmt(stmts), 10);
+		assertEquals(expected, parser.parseStmt(0));
+	} */
 	
 	
 	// {}
