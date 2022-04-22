@@ -347,6 +347,20 @@ public class ParserTest {
 				new NewClassExp(new VariableExp(new Variable("Dog")), inside), 5);
 		assertEquals(expected, parser.parseNewClassExp(0));
 	}
+	
+	
+	// new Dog(12, 5)
+	@Test
+	public void testParseNewClassExpWithTwoParams() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new NewToken(), new VariableToken("Dog"), new OpenparToken(),
+														new IntegerToken(12), new CommaToken(), new IntegerToken(5), new CloseparToken()));
+		List<Exp> inside = new ArrayList();
+		inside.add(new IntegerExp(12));
+		inside.add(new IntegerExp(5));
+		final ParseResult<Exp> expected = new ParseResult<Exp>(
+				new NewClassExp(new VariableExp(new Variable("Dog")), inside), 7);
+		assertEquals(expected, parser.parseNewClassExp(0));
+	}
 
 
 	// new classname(exp*)
@@ -924,6 +938,18 @@ public class ParserTest {
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new PrintlnStmt(exps), 5);
 		assertEquals(expected, parser.parseStmt(0));
 	}
+	
+	
+/* 	//println("hello", "hi");
+	@Test
+	public void testPrintlnStmtWithOneExpThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new PrintlnToken(), new OpenparToken(), new strToken("hello"), new CloseparToken(), new SemicolToken()));
+		final ParseResult<Exp> exp1 = new ParseResult<Exp>(new StrExp("hello"), 1);
+		final List<Exp> exps = new ArrayList<Exp>();
+		exps.add(exp1.result);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new PrintlnStmt(exps), 5);
+		assertEquals(expected, parser.parseStmt(0));
+	} */
 	
 	
 	// Int x() {}

@@ -178,10 +178,6 @@ public class Parser {
 		final String name = ((VariableToken) token).name;
 		assertTokenHereIs(position + 1, new VariableToken(name));
 		final ParseResult<Exp> className = parsePrimaryExp(position + 1);
-		/*
-		 * final ParseResult<Exp> className = parsePrimaryExp(position + 1);
-		 * final ClassnameExp cN = new ClassnameExp(className.result);
-		 */
 		assertTokenHereIs(className.position, new OpenparToken());
 		List<Exp> inParens = new ArrayList();
 		int newPosition = className.position + 1;
@@ -189,23 +185,24 @@ public class Parser {
 		final ParseResult<Exp> result;
 		if (token instanceof CloseparToken) {
 			result = new ParseResult<Exp>(new NewClassExp(className.result, inParens), newPosition + 1);
-			// result = new ParseResult<Exp>(new NewClassExp(cN, inParens), newPosition +
-			// 1);
 		} else {
 			boolean shouldRun = true;
 			while (shouldRun) {
 				try {
 					final ParseResult<Exp> exp = parseExp(newPosition);
 					inParens.add(exp.result);
-					newPosition = exp.position;
+					Token testToken = getToken(exp.position);
+					if (testToken instanceof CommaToken) {
+						newPosition = exp.position + 1;
+					} else {
+						newPosition = exp.position;
+					}
 				} catch (final ParseException e) {
 					shouldRun = false;
 				}
 			}
 			assertTokenHereIs(newPosition, new CloseparToken());
 			result = new ParseResult<Exp>(new NewClassExp(className.result, inParens), newPosition + 1);
-			// result = new ParseResult<Exp>(new NewClassExp(cN, inParens), newPosition +
-			// 1);
 		}
 		return result;
 	}
@@ -434,7 +431,7 @@ public class Parser {
 				while (!(theNextToken instanceof CloseparToken)) {
 					ParseResult<Exp> exp2 = parseExp(iter1);
 					exps.add(exp2.result);
-					iter1 = iter1 + 1;
+					iter1 = exp2.position;
 					theNextToken = getToken(iter1);
 				}
 				assertTokenHereIs(iter1, new CloseparToken());
