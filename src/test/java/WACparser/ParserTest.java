@@ -1044,6 +1044,51 @@ public class ParserTest {
 	}
 	
 	
+	// Int X(boolean a, int x) {y;}
+	@Test
+	public void testParseMethoddefWithTwoParamsAndOneStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("X"), new OpenparToken(), new BooleanToken(), new VariableToken("a"), new CommaToken(),
+														new IntToken(), new VariableToken("x"), new CloseparToken(), new leftCurlyToken(), new VariableToken("y"), new SemicolToken(), new rightCurlyToken()));
+		final ParseResult<Type> type = new ParseResult<Type>(new IntType(), 1);
+		final ParseResult<Exp> methodname = new ParseResult<Exp>(new VariableExp(new Variable("X")), 1);
+		final List<Param> params = new ArrayList<Param>();
+		final ParseResult<Param> param1 = new ParseResult<Param>(new Parameter(new BooleanType(), new VariableExp(new Variable("a"))), 2);
+		final ParseResult<Param> param2 = new ParseResult<Param>(new Parameter(new IntType(), new VariableExp(new Variable("x"))), 2);
+		params.add(param1.result);
+		params.add(param2.result);
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		final ParseResult<Stmt> stmt1 = new ParseResult<Stmt>(new ExpStmt(new VariableExp(new Variable("y"))), 1);
+		stmts.add(stmt1.result);
+		final ParseResult<Stmt> stmt = new ParseResult<Stmt>(new BlockStmt(stmts), 2);
+		final ParseResult<Methoddef> expected = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), 13);
+		assertEquals(expected, parser.parseMethodDef(0));
+	}
+	
+	
+	// Int X(boolean a, int x, boolean b) {y;}
+	@Test
+	public void testParseMethoddefWithThreeParamsAndOneStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("X"), new OpenparToken(), new BooleanToken(), new VariableToken("a"), new CommaToken(),
+														new IntToken(), new VariableToken("x"), new CommaToken(), new BooleanToken(), new VariableToken("b"), new CloseparToken(), 
+														new leftCurlyToken(), new VariableToken("y"), new SemicolToken(), new rightCurlyToken()));
+		final ParseResult<Type> type = new ParseResult<Type>(new IntType(), 1);
+		final ParseResult<Exp> methodname = new ParseResult<Exp>(new VariableExp(new Variable("X")), 1);
+		final List<Param> params = new ArrayList<Param>();
+		final ParseResult<Param> param1 = new ParseResult<Param>(new Parameter(new BooleanType(), new VariableExp(new Variable("a"))), 2);
+		final ParseResult<Param> param2 = new ParseResult<Param>(new Parameter(new IntType(), new VariableExp(new Variable("x"))), 2);
+		final ParseResult<Param> param3 = new ParseResult<Param>(new Parameter(new BooleanType(), new VariableExp(new Variable("b"))), 2);
+		params.add(param1.result);
+		params.add(param2.result);
+		params.add(param3.result);
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		final ParseResult<Stmt> stmt1 = new ParseResult<Stmt>(new ExpStmt(new VariableExp(new Variable("y"))), 1);
+		stmts.add(stmt1.result);
+		final ParseResult<Stmt> stmt = new ParseResult<Stmt>(new BlockStmt(stmts), 2);
+		final ParseResult<Methoddef> expected = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), 16);
+		assertEquals(expected, parser.parseMethodDef(0));
+	}
+	
+	
 	// class Dog extends Animal { Dog() 1+2; }
 	@Test
 	public void testParseClassDefWithExtendsNoVardecNoParamsNoMethoddefs() throws ParseException {

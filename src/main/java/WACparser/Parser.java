@@ -483,10 +483,18 @@ public class Parser {
 				params.add(param1.result);
 				int iter = param1.position;
 				nextToken = getToken(iter);
+				if (nextToken instanceof CommaToken) {
+					iter = iter + 1;
+				}
 				while (!(nextToken instanceof CloseparToken)) {
 					ParseResult<Param> param2 = parseParam(iter);
 					params.add(param2.result);
-					iter = iter + 1;
+					Token tryToken = getToken(param2.position);
+					if (tryToken instanceof CommaToken) {
+						iter = param2.position + 1;
+					} else {
+						iter = param2.position;
+					}
 					nextToken = getToken(iter);
 				}
 				assertTokenHereIs(iter, new CloseparToken());
