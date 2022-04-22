@@ -998,9 +998,37 @@ public class ParserTest {
 	// similar to above but diff for sanity check
 	// will clean up later
 	@Test
-	public void testParseMethoddefTest1() throws ParseException {
+	public void testParseMethoddefTestIntType() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("X"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new rightCurlyToken()));
 		final ParseResult<Type> type = new ParseResult<Type>(new IntType(), 1);
+		final ParseResult<Exp> methodname = new ParseResult<Exp>(new VariableExp(new Variable("X")), 1);
+		final List<Param> params = new ArrayList<Param>();
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		final ParseResult<Stmt> stmt = new ParseResult<Stmt>(new BlockStmt(stmts), 2);
+		final ParseResult<Methoddef> expected = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), 6);
+		assertEquals(expected, parser.parseMethodDef(0));
+	}
+	
+	
+	// String X() {}
+	@Test
+	public void testParseMethoddefTestStringType() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new StringToken(), new VariableToken("X"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new rightCurlyToken()));
+		final ParseResult<Type> type = new ParseResult<Type>(new StringType(), 1);
+		final ParseResult<Exp> methodname = new ParseResult<Exp>(new VariableExp(new Variable("X")), 1);
+		final List<Param> params = new ArrayList<Param>();
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		final ParseResult<Stmt> stmt = new ParseResult<Stmt>(new BlockStmt(stmts), 2);
+		final ParseResult<Methoddef> expected = new ParseResult<Methoddef>(new MethodDefinition(type.result, methodname.result, params, stmt.result), 6);
+		assertEquals(expected, parser.parseMethodDef(0));
+	}
+	
+	
+	// Dog X() {}
+	@Test
+	public void testParseMethoddefTestVariableType() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken("Dog"), new VariableToken("X"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new rightCurlyToken()));
+		final ParseResult<Type> type = new ParseResult<Type>(new ClassnameType(new Classname("Dog")), 1);
 		final ParseResult<Exp> methodname = new ParseResult<Exp>(new VariableExp(new Variable("X")), 1);
 		final List<Param> params = new ArrayList<Param>();
 		final List<Stmt> stmts = new ArrayList<Stmt>();
