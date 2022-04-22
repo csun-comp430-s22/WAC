@@ -1089,6 +1089,15 @@ public class ParserTest {
 	}
 	
 	
+	// true
+	//testing to make sure parseMethoddef throws an Exception when expected to
+	@Test(expected = ParseException.class)
+	public void testParseMethoddefUnhappyPath() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new trueToken()));
+		parser.parseMethodDef(0);
+	}
+	
+	
 	// class Dog extends Animal { Dog() 1+2; }
 	@Test
 	public void testParseClassDefWithExtendsNoVardecNoParamsNoMethoddefs() throws ParseException {

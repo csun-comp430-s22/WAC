@@ -503,7 +503,7 @@ public class Parser {
 				return result1;
 			}
 		} else {
-			throw new ParseException("");
+			throw new ParseException("Expected a type but received: " + token.toString());
 		}
 	}
 	
