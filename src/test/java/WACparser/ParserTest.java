@@ -940,17 +940,36 @@ public class ParserTest {
 	}
 	
 	
-/* 	//println("hello", "hi");
+	//println("hello", "hi");
 	@Test
-	public void testPrintlnStmtWithOneExpThruStmt() throws ParseException {
-		final Parser parser = new Parser(Arrays.asList(new PrintlnToken(), new OpenparToken(), new strToken("hello"), new CloseparToken(), new SemicolToken()));
+	public void testPrintlnStmtWithTwoExpsThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new PrintlnToken(), new OpenparToken(), new strToken("hello"), new CommaToken(),
+														new strToken("hi"), new CloseparToken(), new SemicolToken()));
 		final ParseResult<Exp> exp1 = new ParseResult<Exp>(new StrExp("hello"), 1);
+		final ParseResult<Exp> exp2 = new ParseResult<Exp>(new StrExp("hi"), 1);
 		final List<Exp> exps = new ArrayList<Exp>();
 		exps.add(exp1.result);
-		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new PrintlnStmt(exps), 5);
+		exps.add(exp2.result);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new PrintlnStmt(exps), 7);
 		assertEquals(expected, parser.parseStmt(0));
-	} */
+	}
 	
+	
+	//println("hello", "hi", "hola");
+	@Test
+	public void testPrintlnStmtWithThreeExpsThruStmt() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new PrintlnToken(), new OpenparToken(), new strToken("hello"), new CommaToken(),
+														new strToken("hi"), new CommaToken(), new strToken("hola"), new CloseparToken(), new SemicolToken()));
+		final ParseResult<Exp> exp1 = new ParseResult<Exp>(new StrExp("hello"), 1);
+		final ParseResult<Exp> exp2 = new ParseResult<Exp>(new StrExp("hi"), 1);
+		final ParseResult<Exp> exp3 = new ParseResult<Exp>(new StrExp("hola"), 1);
+		final List<Exp> exps = new ArrayList<Exp>();
+		exps.add(exp1.result);
+		exps.add(exp2.result);
+		exps.add(exp3.result);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new PrintlnStmt(exps), 9);
+		assertEquals(expected, parser.parseStmt(0));
+	}
 	
 	// Int x() {}
 	@Test
