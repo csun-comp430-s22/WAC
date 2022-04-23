@@ -533,7 +533,7 @@ public class Parser {
 				Token nextToken = getToken(keepTrack);
 				Token nextNextToken = getToken(keepTrack + 1);
  				while (((nextToken instanceof IntToken) || (nextToken instanceof BooleanToken) || (nextToken instanceof StringToken) ||(nextToken instanceof VariableToken))
-						&& (!(nextNextToken instanceof OpenparToken))) {		//we know we have at least one vardec
+						&& (nextNextToken instanceof VariableToken)) {		//we know we have at least one vardec
 					final ParseResult<Vardec> vardec = parseVardec(keepTrack);
 					vardecs.add(vardec.result);
 					keepTrack = vardec.position;
@@ -568,7 +568,46 @@ public class Parser {
 				assertTokenHereIs(keepTrack, new rightCurlyToken());
 				return new ParseResult<Classdef>(new ClassDefinition(classname.result, extendsClassname.result, vardecs, params, stmt.result, methoddefs), keepTrack + 1);
 			} else if (token2 instanceof leftCurlyToken) {	// case where we don't have an extends and secondary classname
-				throw new ParseException("unfinished code: this should be for having no extends");
+				assertTokenHereIs(classname.position, new leftCurlyToken());
+				final List<Vardec> vardecs1 = new ArrayList<Vardec>();
+				int keepTrack1 = classname.position + 1;
+				Token nextToken1 = getToken(keepTrack1);
+				Token nextNextToken1 = getToken(keepTrack1 + 1);
+ 				while (((nextToken1 instanceof IntToken) || (nextToken1 instanceof BooleanToken) || (nextToken1 instanceof StringToken) ||(nextToken1 instanceof VariableToken))
+						&& (nextNextToken1 instanceof VariableToken)) {		//we know we have at least one vardec
+					final ParseResult<Vardec> vardec1 = parseVardec(keepTrack1);
+					vardecs1.add(vardec1.result);
+					keepTrack1 = vardec1.position;
+					nextToken1 = getToken(keepTrack1);
+					nextNextToken1 = getToken(keepTrack1 + 1);
+				}
+				//we either have no vardecs or have finished reading in all of the vardecs at this point
+				if ((nextToken1 instanceof VariableToken) && (nextNextToken1 instanceof OpenparToken)) {	// we have a constructor (WHICH IS GOOD BCUZ IT'S REQUIRED)
+					assertTokenHereIs(keepTrack1, new VariableToken(name));	//checking to make sure the constructor name is the same as the class name
+					keepTrack1 = keepTrack1 + 2;
+					Token token4v2 = getToken(keepTrack1);
+					while (!(token4v2 instanceof CloseparToken)) {	// we have at least one parameter
+						final ParseResult<Param> param1 = parseParam(keepTrack1);
+						params.add(param1.result);
+						keepTrack1 = param1.position;
+						token4v2 = getToken(keepTrack1);
+					}			
+				} else {
+					throw new ParseException("Expected start of a constructor but received: " + nextToken1.toString() + "," + nextNextToken1.toString());
+				}
+				assertTokenHereIs(keepTrack1, new CloseparToken());
+				final ParseResult<Stmt> stmt1 = parseStmt(keepTrack1 + 1);	// parse in the stmt
+				keepTrack1 = stmt1.position;
+				final List<Methoddef> methoddefs1 = new ArrayList<Methoddef>();
+				Token token5v2 = getToken(keepTrack1);
+				while (!(token5v2 instanceof rightCurlyToken)) {
+					final ParseResult<Methoddef> methoddef1 = parseMethodDef(keepTrack1);
+					methoddefs1.add(methoddef1.result);
+					keepTrack1 = methoddef1.position;
+					token5v2 = getToken(keepTrack1);
+				}
+				assertTokenHereIs(keepTrack1, new rightCurlyToken());
+				return new ParseResult<Classdef>(new ClassDefinition(classname.result, new VariableExp(new Variable("")), vardecs1, params, stmt1.result, methoddefs1), keepTrack1 + 1);	//since no extends it's empty string
 			} else {
 				throw new ParseException("Expecting either extends or a left curly token but recieved: " + token2.toString());
 			}
@@ -611,7 +650,7 @@ public class Parser {
 		final ParseResult<Program> program = parseProgram(0);
 		if (program.position == tokens.size()) {
 			return program.result;
-		} else {
+		} else {	//I don't think this can ever be reachable but Kyle had his like this so I'll leave it
 			throw new ParseException("Remaining tokens at end");
 		}
 	 }

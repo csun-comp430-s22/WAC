@@ -1126,6 +1126,21 @@ public class ParserTest {
 	}
 	
 	
+	// class Dog { Dog() 1+2; }
+	@Test
+	public void testParseClassDefNoExtendsNoVardecNoParamsNoMethoddefs() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new leftCurlyToken(), new VariableToken("Dog"),	new OpenparToken(), new CloseparToken(), 
+														new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final List<Param> params = new ArrayList<Param>();
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, new VariableExp(new Variable("")), vardecs, params, stmt, methoddefs), 11);
+		assertEquals(expected, parser.parseClassdef(0));
+	}
+	
+	
 	// class Dog extends Animal { Dog() 1+2; }
 	@Test
 	public void testParseClassDefWithExtendsNoVardecNoParamsNoMethoddefs() throws ParseException {
@@ -1142,13 +1157,35 @@ public class ParserTest {
 	}
 	
 	
+	//class Dog {
+	//	String name = "Steve";
+	//	Dog()
+	//	1 + 2;
+	//	}
+	@Test
+	public void testParseClassDefNoExtendsOneVardecTypeStringNoParamsNoMethoddefs() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new leftCurlyToken(), new StringToken(),
+														new VariableToken("name"), new EqualToken(), new strToken("Steve"), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
+														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		vardecs.add(vardec);
+		final List<Param> params = new ArrayList<Param>();
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, new VariableExp(new Variable("")), vardecs, params, stmt, methoddefs), 16);
+		assertEquals(expected, parser.parseClassdef(0));
+	}
+	
+	
 	//class Dog extends Animal {
 	//	String name = "Steve";
 	//	Dog()
 	//	1 + 2;
 	//	}
 	@Test
-	public void testParseClassDefWithExtendsOneVardecNoParamsNoMethoddefs() throws ParseException {
+	public void testParseClassDefWithExtendsOneVardecTypeStringNoParamsNoMethoddefs() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new StringToken(),
 														new VariableToken("name"), new EqualToken(), new strToken("Steve"), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
 														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
@@ -1161,6 +1198,121 @@ public class ParserTest {
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
 		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
 		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, extendsClassname, vardecs, params, stmt, methoddefs), 18);
+		assertEquals(expected, parser.parseClassdef(0));
+	}
+	
+	
+	//class Dog {
+	//	Int x = 5;
+	//	Dog()
+	//	1 + 2;
+	//	}
+	@Test
+	public void testParseClassDefNoExtendsOneVardecTypeIntNoParamsNoMethoddefs() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new leftCurlyToken(), new IntToken(),
+														new VariableToken("x"), new EqualToken(), new IntegerToken(5), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
+														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final Vardec vardec = new VariableDeclaration(new IntType(), new VariableExp(new Variable("x")), new IntegerExp(5));
+		vardecs.add(vardec);
+		final List<Param> params = new ArrayList<Param>();
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, new VariableExp(new Variable("")), vardecs, params, stmt, methoddefs), 16);
+		assertEquals(expected, parser.parseClassdef(0));
+	}
+	
+	
+	//class Dog extends Animal {
+	//	Int x = 5;
+	//	Dog()
+	//	1 + 2;
+	//	}
+	@Test
+	public void testParseClassDefWithExtendsOneVardecTypeIntNoParamsNoMethoddefs() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new IntToken(),
+														new VariableToken("x"), new EqualToken(), new IntegerToken(5), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
+														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final Exp extendsClassname = new VariableExp(new Variable("Animal"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final Vardec vardec = new VariableDeclaration(new IntType(), new VariableExp(new Variable("x")), new IntegerExp(5));
+		vardecs.add(vardec);
+		final List<Param> params = new ArrayList<Param>();
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, extendsClassname, vardecs, params, stmt, methoddefs), 18);
+		assertEquals(expected, parser.parseClassdef(0));
+	}
+	
+	
+	//class Dog {
+	//	Boolean x = false;
+	//	Dog()
+	//	1 + 2;
+	//	}
+	@Test
+	public void testParseClassDefNoExtendsOneVardecTypeBooleanNoParamsNoMethoddefs() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new leftCurlyToken(), new BooleanToken(),
+														new VariableToken("x"), new EqualToken(), new falseToken(), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
+														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final Vardec vardec = new VariableDeclaration(new BooleanType(), new VariableExp(new Variable("x")), new FalseExp());
+		vardecs.add(vardec);
+		final List<Param> params = new ArrayList<Param>();
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, new VariableExp(new Variable("")), vardecs, params, stmt, methoddefs), 16);
+		assertEquals(expected, parser.parseClassdef(0));
+	}
+	
+	
+	//class Dog extends Animal {
+	//	Boolean x = false;
+	//	Dog()
+	//	1 + 2;
+	//	}
+	@Test
+	public void testParseClassDefWithExtendsOneVardecTypeBooleanNoParamsNoMethoddefs() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new BooleanToken(),
+														new VariableToken("x"), new EqualToken(), new falseToken(), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
+														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final Exp extendsClassname = new VariableExp(new Variable("Animal"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final Vardec vardec = new VariableDeclaration(new BooleanType(), new VariableExp(new Variable("x")), new FalseExp());
+		vardecs.add(vardec);
+		final List<Param> params = new ArrayList<Param>();
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, extendsClassname, vardecs, params, stmt, methoddefs), 18);
+		assertEquals(expected, parser.parseClassdef(0));
+	}
+	
+	
+	//class Dog {
+	//	String name = "Steve";
+	//	Dog(int x)
+	//	1 + 2;
+	//	}
+	@Test
+	public void testParseClassDefNoExtendsOneVardecOneParamNoMethoddefs() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new leftCurlyToken(), new StringToken(),
+														new VariableToken("name"), new EqualToken(), new strToken("Steve"), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(),
+														new IntToken(), new VariableToken("x"),	new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), 
+														new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		vardecs.add(vardec);
+		final List<Param> params = new ArrayList<Param>();
+		final Param param = new Parameter(new IntType(), new VariableExp(new Variable("x")));
+		params.add(param);
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, new VariableExp(new Variable("")), vardecs, params, stmt, methoddefs), 18);
 		assertEquals(expected, parser.parseClassdef(0));
 	}
 	
@@ -1187,6 +1339,40 @@ public class ParserTest {
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
 		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
 		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, extendsClassname, vardecs, params, stmt, methoddefs), 20);
+		assertEquals(expected, parser.parseClassdef(0));
+	}
+	
+	
+	//class Dog {
+	//	String name = "Steve";
+	//	Dog(int x)
+	//	1 + 2;
+	//  Boolean Cute() {true;}
+	//	}
+	@Test
+	public void testParseClassDefNoExtendsOneVardecOneParamOneMethoddef() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new leftCurlyToken(), new StringToken(),
+														new VariableToken("name"), new EqualToken(), new strToken("Steve"), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(),
+														new IntToken(), new VariableToken("x"),	new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), 
+														new BooleanToken(), new VariableToken("Cute"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new trueToken(), new SemicolToken(),
+														new rightCurlyToken(), new rightCurlyToken()));
+		final Exp classname = new VariableExp(new Variable("Dog"));
+		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		vardecs.add(vardec);
+		final List<Param> params = new ArrayList<Param>();
+		final Param param = new Parameter(new IntType(), new VariableExp(new Variable("x")));
+		params.add(param);
+		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
+		final List<Methoddef> methoddefs = new ArrayList<Methoddef>();
+		final List<Param> methodParams = new ArrayList<Param>();
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		final Stmt methodStmt = new ExpStmt(new TrueExp());
+		stmts.add(methodStmt);
+		final Stmt blockStmt = new BlockStmt(stmts);
+		final Methoddef methoddef = new MethodDefinition(new BooleanType(), new VariableExp(new Variable("Cute")), methodParams, blockStmt);
+		methoddefs.add(methoddef);
+		final ParseResult<Classdef> expected = new ParseResult<Classdef>(new ClassDefinition(classname, new VariableExp(new Variable("")), vardecs, params, stmt, methoddefs), 26);
 		assertEquals(expected, parser.parseClassdef(0));
 	}
 	
@@ -1226,6 +1412,122 @@ public class ParserTest {
 	}
 	
 	
+	// class Dog extends Animal { Dog) 1+2; }
+	// testing to make sure that parseClassdef throws an Exception when we expect it to
+	@Test(expected = ParseException.class)
+	//@Test
+	public void testParseClassDefUnhappyPathConstructorError1() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new VariableToken("Dog"), new CloseparToken(), 
+														new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		parser.parseClassdef(0);
+	}
+	
+	
+	// class Dog { Dog) 1+2; }
+	// testing to make sure that parseClassdef throws an Exception when we expect it to
+	@Test(expected = ParseException.class)
+	//@Test
+	public void testParseClassDefUnhappyPathConstructorNoExtendsError1() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new leftCurlyToken(), new VariableToken("Dog"), new CloseparToken(), 
+														new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		parser.parseClassdef(0);
+	}
+	
+	
+	// class Dog extends Animal { Int() 1+2; }
+	// testing to make sure that parseClassdef throws an Exception when we expect it to
+	@Test(expected = ParseException.class)
+	public void testParseClassDefUnhappyPathConstructorError2() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new IntToken(), new OpenparToken(), new CloseparToken(), 
+														new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		parser.parseClassdef(0);
+	}
+	
+	
+	// class Dog { Int() 1+2; }
+	// testing to make sure that parseClassdef throws an Exception when we expect it to
+	@Test(expected = ParseException.class)
+	public void testParseClassDefUnhappyPathNoExtendsConstructorError2() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new leftCurlyToken(), new IntToken(), new OpenparToken(), new CloseparToken(), 
+														new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		parser.parseClassdef(0);
+	}
+	
+	
+	//class Dog extends Animal {
+	//	Int 2 = 5;
+	//	Dog()
+	//	1 + 2;
+	//	}
+	// testing to make sure that parseClassdef throws an Exception when we expect it to
+	@Test(expected = ParseException.class)
+	public void testParseClassDefUnhappyPathVardecError1() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new IntToken(),
+														new IntegerToken(2), new EqualToken(), new IntegerToken(5), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
+														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		parser.parseClassdef(0);
+	}
+	
+	
+	//class Dog {
+	//	Int 2 = 5;
+	//	Dog()
+	//	1 + 2;
+	//	}
+	// testing to make sure that parseClassdef throws an Exception when we expect it to
+	@Test(expected = ParseException.class)
+	public void testParseClassDefUnhappyPathNoExtendsVardecError1() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new leftCurlyToken(), new IntToken(),
+														new IntegerToken(2), new EqualToken(), new IntegerToken(5), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
+														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		parser.parseClassdef(0);
+	}
+	
+	
+	//class Dog extends Animal {
+	//	2 x = 5;
+	//	Dog()
+	//	1 + 2;
+	//	}
+	// testing to make sure that parseClassdef throws an Exception when we expect it to
+	@Test(expected = ParseException.class)
+	public void testParseClassDefUnhappyPathVardecError2() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new IntegerToken(2),
+														new VariableToken("x"), new EqualToken(), new IntegerToken(5), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
+														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		parser.parseClassdef(0);
+	}
+	
+	
+	//class Dog {
+	//	2 x = 5;
+	//	Dog()
+	//	1 + 2;
+	//	}
+	// testing to make sure that parseClassdef throws an Exception when we expect it to
+	@Test(expected = ParseException.class)
+	public void testParseClassDefUnhappyPathNoExtendsVardecError2() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new leftCurlyToken(), new IntegerToken(2),
+														new VariableToken("x"), new EqualToken(), new IntegerToken(5), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
+														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		parser.parseClassdef(0);
+	}
+	
+	
+	//class Dog
+	//	Int x = 5;
+	//	Dog()
+	//	1 + 2;
+	//	}
+	// testing to make sure that parseClassdef throws an Exception when we expect it to
+	@Test(expected = ParseException.class)
+	public void testParseClassDefUnhappyPathMissingOpenBracket() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new IntToken(), new VariableToken("x"), new EqualToken(), new IntegerToken(5), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
+														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
+		parser.parseClassdef(0);
+	}
+	
+	
 	// Will test the program method which we're going to pass in one classdef and one statment
 	// Expected a ParseResult of type Program which contains a list of classdefs and a list of stmts
 	// class Dog extends Animal { Dog() 1+2; }
@@ -1250,7 +1552,7 @@ public class ParserTest {
 	
 	
 	// class Dog extends Animal { Dog() 1+2; }
-	// println("hello"); 
+	// println(); 
 	@Test
 	public void testParseProgramWithOneClassdefAndOneStmts () throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new VariableToken("Dog"),
@@ -1281,7 +1583,7 @@ public class ParserTest {
 	
 	// same as above but passes through the parseProgram that takes no params
 	// class Dog extends Animal { Dog() 1+2; }
-	// println("hello"); 
+	// println(); 
 	@Test
 	public void testParseProgramWithOneClassdefAndOneStmtThruNoParamsParseProgram () throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new ExtendsToken(), new VariableToken("Animal"), new leftCurlyToken(), new VariableToken("Dog"),
@@ -1307,6 +1609,14 @@ public class ParserTest {
 		StmtList.add(theStmt);
 		final ParseResult<Program> expected = new ParseResult(new Program(CDList, StmtList), 17);
 		assertEquals(expected.result, parser.parseProgram());
+	}
+	
+	
+	// test to make sure that parseProgram throws an Exception when it doesn't read in all the tokens
+	@Test(expected = ParseException.class)
+	public void testParseProgramUnhappyPath () throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new lessThanToken(), new lessThanToken(), new lessThanToken()));
+		parser.parseProgram();
 	}
 	
 	
