@@ -548,7 +548,12 @@ public class Parser {
 					while (!(token4 instanceof CloseparToken)) {	// we have at least one parameter
 						final ParseResult<Param> param = parseParam(keepTrack);
 						params.add(param.result);
-						keepTrack = param.position;
+						Token ughToken0 = getToken(param.position);
+						if (ughToken0 instanceof CommaToken) {
+							keepTrack = param.position + 1;
+						} else {
+							keepTrack = param.position;
+						}
 						token4 = getToken(keepTrack);
 					}			
 				} else {
@@ -589,7 +594,12 @@ public class Parser {
 					while (!(token4v2 instanceof CloseparToken)) {	// we have at least one parameter
 						final ParseResult<Param> param1 = parseParam(keepTrack1);
 						params.add(param1.result);
-						keepTrack1 = param1.position;
+						Token ughToken = getToken(param1.position);
+						if (ughToken instanceof CommaToken) {
+							keepTrack1 = param1.position + 1;
+						} else {
+							keepTrack1 = param1.position;
+						}
 						token4v2 = getToken(keepTrack1);
 					}			
 				} else {
