@@ -186,6 +186,13 @@ public class TokenizerTest {
 	public void testPeriodByItself() throws TokenizerException {
 		assertTokenizes(".", new Token[] { new PeriodToken() });
 	}
+	
+	
+	// ',' token test
+	@Test
+	public void testCommaByItself() throws TokenizerException {
+		assertTokenizes(",", new Token[] { new CommaToken() });
+	}
 
 	// 'new' token test
 	@Test
