@@ -907,7 +907,7 @@ public class ParserTest {
 		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))),6 );
 		assertEquals(expected,parser.parseStmt(0));
 	}
-
+	
 	
 	// y;
 	@Test
@@ -1679,5 +1679,5 @@ public class ParserTest {
 		parser.parseProgram();
 	}
 	
-
+	
 }

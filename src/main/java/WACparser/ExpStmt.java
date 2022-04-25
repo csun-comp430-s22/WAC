@@ -1,13 +1,9 @@
 package WACparser;
 
 public class ExpStmt implements Stmt {
-//	public final Exp exp;
-	public final ParseResult<Exp> exp;
-
-	//	public ExpStmt(final Exp exp) {
-//		this.exp = exp;
-//	}
-	public ExpStmt(final ParseResult<Exp> exp) {
+	public final Exp exp;
+	
+	public ExpStmt(final Exp exp) {
 		this.exp = exp;
 	}
 	
@@ -25,6 +21,6 @@ public class ExpStmt implements Stmt {
 	}
 	
 	public String toString() {
-		return ("ExpStmt(" + exp.toString() + ")");
+		return exp.toString();
 	}
 }

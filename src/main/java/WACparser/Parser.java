@@ -353,7 +353,7 @@ public class Parser {
 
 	 
 	// stmt ::= var = exp; | vardec | while (exp) stmt | break; | if (exp) stmt else stmt | return exp;
-  //			| {stmt*} | println(exp*); | super(var); | this.var = var; | exp;
+	//			| {stmt*} | println(exp*); | super(var); | this.var = var; | exp;
 	public ParseResult<Stmt> parseStmt(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if ((token instanceof VariableToken) && (getToken(position + 1) instanceof EqualToken)) {	// var = exp;
@@ -362,8 +362,7 @@ public class Parser {
 			assertTokenHereIs(exp.position, new SemicolToken());
 			return new ParseResult<Stmt>(new VariableValueChange(variable.result, exp.result), exp.position + 1);
 		} else if( (token instanceof IntToken) || (token instanceof BooleanToken) || (token
-       instanceof StringToken)  || (token instanceof VariableToken)) {		// vardec
-
+				 instanceof StringToken)  || (token instanceof VariableToken)) {		// vardec
 			final Token token2 = getToken(position + 1);
 			if (token2 instanceof VariableToken) {
 				final String token2Name = ((VariableToken)token2).name;
