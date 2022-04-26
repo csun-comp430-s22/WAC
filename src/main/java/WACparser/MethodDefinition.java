@@ -5,7 +5,7 @@ import java.util.List;
 public class MethodDefinition implements Methoddef {
 	public final Type type;
 	public final Exp methodname;
-	public final List<Param> params;	//not gonna work until i get param
+	public final List<Param> params;	
 	public final Stmt stmt;
 	
 	public MethodDefinition(final Type type, final Exp methodname, final List<Param> params, final Stmt stmt) {
