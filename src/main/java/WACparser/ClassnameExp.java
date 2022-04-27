@@ -1,9 +1,11 @@
 package WACparser;
 
 public class ClassnameExp implements Exp {
-	public final Exp classname;
+	//public final Exp classname;
+	public final Classname classname;
 
-	public ClassnameExp(final Exp classname) {
+	//public ClassnameExp(final Exp classname) {
+	public ClassnameExp(final Classname classname) {
 		this.classname = classname;
 	}
 

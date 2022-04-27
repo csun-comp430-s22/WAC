@@ -383,7 +383,7 @@ public class ParserTest {
 		final Parser parser = new Parser(Arrays.asList(new VariableToken("x"), new PeriodToken(),
 				new VariableToken("get"), new OpenparToken(), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 5), parser.parseVarMethodCall(0));
 	}
@@ -396,7 +396,7 @@ public class ParserTest {
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 						new VariableToken("hi"), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
 		inside.add(param.result);
@@ -411,7 +411,7 @@ public class ParserTest {
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 						new IntegerToken(25), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		final ParseResult<Exp> param = new ParseResult<Exp>(new IntegerExp(25), 1);
 		inside.add(param.result);
@@ -426,7 +426,7 @@ public class ParserTest {
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 						new strToken("hi"), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		final ParseResult<Exp> param = new ParseResult<Exp>(new StrExp("hi"), 1);
 		inside.add(param.result);
@@ -441,7 +441,7 @@ public class ParserTest {
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 						new trueToken(), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		final ParseResult<Exp> param = new ParseResult<Exp>(new TrueExp(), 1);
 		inside.add(param.result);
@@ -456,7 +456,7 @@ public class ParserTest {
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 						new falseToken(), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		final ParseResult<Exp> param = new ParseResult<Exp>(new FalseExp(), 1);
 		inside.add(param.result);
@@ -471,7 +471,7 @@ public class ParserTest {
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 						new VariableToken("hi"), new CommaToken(), new IntegerToken(25), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
 		final ParseResult<Exp> param2 = new ParseResult<Exp>(new IntegerExp(25), 1);
@@ -488,7 +488,7 @@ public class ParserTest {
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 						new VariableToken("hi"), new CommaToken(), new strToken("hi"), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
 		final ParseResult<Exp> param2 = new ParseResult<Exp>(new StrExp("hi"), 1);
@@ -505,7 +505,7 @@ public class ParserTest {
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 						new VariableToken("hi"), new CommaToken(), new trueToken(), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
 		final ParseResult<Exp> param2 = new ParseResult<Exp>(new TrueExp(), 1);
@@ -522,7 +522,7 @@ public class ParserTest {
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 						new VariableToken("hi"), new CommaToken(), new falseToken(), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
 		final ParseResult<Exp> param2 = new ParseResult<Exp>(new FalseExp(), 1);
@@ -539,7 +539,7 @@ public class ParserTest {
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 						new VariableToken("hi"), new CommaToken(), new VariableToken("x"), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
 		final ParseResult<Exp> param2 = new ParseResult<Exp>(new VariableExp(new Variable("x")), 1);
@@ -556,7 +556,7 @@ public class ParserTest {
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 						new VariableToken("hi"), new CommaToken(), new VariableToken("x"),  new CommaToken(), new IntegerToken(5), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
 		final ParseResult<Exp> param2 = new ParseResult<Exp>(new VariableExp(new Variable("x")), 1);
@@ -576,7 +576,7 @@ public class ParserTest {
 				Arrays.asList(new VariableToken("x"), new PeriodToken(), new VariableToken("get"), new OpenparToken(),
 						new VariableToken("hi"), new lessThanToken(), new VariableToken("x"), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		final ParseResult<Exp> param = new ParseResult<Exp>(new VariableExp(new Variable("hi")), 1);
 		final ParseResult<Exp> param2 = new ParseResult<Exp>(new VariableExp(new Variable("x")), 1);
@@ -601,7 +601,7 @@ public class ParserTest {
 		final Parser parser = new Parser(Arrays.asList(new VariableToken("x"), new PeriodToken(),
 				new VariableToken("get"), new OpenparToken(), new CloseparToken()));
 		final Exp variable = new VariableExp(new Variable("x"));
-		final Exp name = new VariableExp(new Variable("get"));
+		final MethodNameExp name = new MethodNameExp(new Methodname("get"));
 		final List<Exp> inside = new ArrayList();
 		assertEquals(new ParseResult<Exp>(new VarMethodCall(variable, name, inside), 5), parser.parseExp(0));
 	}

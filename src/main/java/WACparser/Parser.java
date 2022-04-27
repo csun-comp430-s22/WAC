@@ -208,17 +208,30 @@ public class Parser {
 	}
 
 
+	//helper method for parseVarMethodCall
+	public ParseResult<MethodNameExp> parseMethodName(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if (token instanceof VariableToken) {
+			final String name = ((VariableToken) token).name;
+			return new ParseResult<MethodNameExp>(new MethodNameExp(new Methodname(name)), position + 1);
+		} else {
+			throw new ParseException("Expected a VariableToken but recieved: " + token.toString());
+		}
+	}
+
 	// var.methodname(primary_exp*)
 	public ParseResult<Exp> parseVarMethodCall(final int position) throws ParseException {
 		ParseResult<Exp> varName = parsePrimaryExp(position);
 		final Token token = getToken(position + 2);
 		final String name = ((VariableToken) token).name;
 		assertTokenHereIs(position + 2, new VariableToken(name));
-		ParseResult<Exp> methodName = parsePrimaryExp(position + 2);
+		//ParseResult<Exp> methodName = parsePrimaryExp(position + 2);		//parse in methodname
+		ParseResult<MethodNameExp> methodName = parseMethodName(position + 2);
 		assertTokenHereIs(position + 3, new OpenparToken());
 		List<Exp> inside = new ArrayList();
 		Token token2 = getToken(position + 4);
 		if (token2 instanceof CloseparToken) {
+			//return new ParseResult<Exp>(new VarMethodCall(varName.result, methodName.result, inside), position + 5);
 			return new ParseResult<Exp>(new VarMethodCall(varName.result, methodName.result, inside), position + 5);
 		} else if ((token2 instanceof VariableToken) || (token2 instanceof IntegerToken) || (token2 instanceof strToken) 
 					|| (token2 instanceof trueToken) || (token2 instanceof falseToken)) {
