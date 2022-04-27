@@ -908,6 +908,15 @@ public class ParserTest {
 		assertEquals(expected,parser.parseStmt(0));
 	}
 	
+	//println(1 < 2);
+	@Test
+	public void testPrintlnStmtThruStmt() throws ParseException{
+		
+		final Parser parser =  new Parser (Arrays.asList(new PrintlnToken(), new OpenparToken(),new IntegerToken(1), new lessThanToken(), new IntegerToken(2), new CloseparToken(),
+				new SemicolToken() ));
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new PrintlnStmt(new OpExp(new IntegerExp(1), new LessThanOp(), new IntegerExp(2))),7);
+		assertEquals(expected, parser.parseStmt(0));
+	}
 	
 	// y;
 	@Test
@@ -1681,3 +1690,4 @@ public class ParserTest {
 	
 	
 }
+
