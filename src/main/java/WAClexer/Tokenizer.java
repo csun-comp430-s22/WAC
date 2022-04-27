@@ -163,6 +163,9 @@ public class Tokenizer {
 		} else if (input.startsWith(".", offset)) {
 			offset += 1;
 			retval = new PeriodToken();
+		} else if (input.startsWith(",", offset)) {
+			offset += 1;
+			retval = new CommaToken();
 		}
 		return retval;
 	}
