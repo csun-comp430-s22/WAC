@@ -416,6 +416,7 @@ public class Parser {
 				assertTokenHereIs(count, new rightCurlyToken());
 				return new ParseResult<Stmt>(new BlockStmt(stmts), count + 1);
 			}
+
 		} else if (token instanceof PrintlnToken) {			// println(exp*);
 			assertTokenHereIs(position + 1, new OpenparToken());
 			List<Exp> exps = new ArrayList();
@@ -506,7 +507,7 @@ public class Parser {
 			throw new ParseException("Expected a type but received: " + token.toString());
 		}
 	}
-	
+}
 	
 	// classdef ::= class classname extends classname {
 	// vardec*
@@ -666,4 +667,3 @@ public class Parser {
 	 }
 	
 
-}
