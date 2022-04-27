@@ -326,12 +326,19 @@ public class ParserTest {
 	}
 
 
+	//
+	@Test
+	public void testParseClassName() throws ParseException {
+		final Parser parser = new Parser(Arrays.asList(new VariableToken("Dog")));
+		assertEquals(new ParseResult<Exp>(new ClassnameExp(new Classname("Dog")), 1), parser.parseClassName(0));
+	}
+
 	// new Node()
 	@Test
 	public void testParseNewClassExpNoParams() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new NewToken(), new VariableToken("Node"), new OpenparToken(), new CloseparToken()));
 		List<Exp> inside = new ArrayList();
-		final ParseResult<Exp> expected = new ParseResult<Exp>(new NewClassExp(new VariableExp(new Variable("Node")), inside), 4);
+		final ParseResult<Exp> expected = new ParseResult<Exp>(new NewClassExp(new ClassnameExp(new Classname("Node")), inside), 4);
 		assertEquals(expected, parser.parseNewClassExp(0));
 	}
 
@@ -344,7 +351,7 @@ public class ParserTest {
 		List<Exp> inside = new ArrayList();
 		inside.add(new IntegerExp(12));
 		final ParseResult<Exp> expected = new ParseResult<Exp>(
-				new NewClassExp(new VariableExp(new Variable("Dog")), inside), 5);
+				new NewClassExp(new ClassnameExp(new Classname("Dog")), inside), 5);
 		assertEquals(expected, parser.parseNewClassExp(0));
 	}
 	
@@ -358,7 +365,7 @@ public class ParserTest {
 		inside.add(new IntegerExp(12));
 		inside.add(new IntegerExp(5));
 		final ParseResult<Exp> expected = new ParseResult<Exp>(
-				new NewClassExp(new VariableExp(new Variable("Dog")), inside), 7);
+				new NewClassExp(new ClassnameExp(new Classname("Dog")), inside), 7);
 		assertEquals(expected, parser.parseNewClassExp(0));
 	}
 
@@ -372,7 +379,7 @@ public class ParserTest {
 		List<Exp> inside = new ArrayList();
 		inside.add(new IntegerExp(12));
 		final ParseResult<Exp> expected = new ParseResult<Exp>(
-				new NewClassExp(new VariableExp(new Variable("Dog")), inside), 5);
+				new NewClassExp(new ClassnameExp(new Classname("Dog")), inside), 5);
 		assertEquals(expected, parser.parseExp(0));
 	}
 	
@@ -639,7 +646,7 @@ public class ParserTest {
 		final Type type = new ClassnameType(new Classname("Dog"));
 		final Exp variable = new VariableExp(new Variable("x"));
 		final List<Exp> emptyParams = new ArrayList<Exp>();
-		final Exp exp = new NewClassExp(new VariableExp(new Variable("Dog")), emptyParams);
+		final Exp exp = new NewClassExp(new ClassnameExp(new Classname("Dog")), emptyParams);
 		assertEquals(new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 8), parser.parseVardec(0));
 	}
 	

@@ -10,7 +10,7 @@ public class ClassnameExp implements Exp {
 	}
 
 	public boolean equals(final Object other) {
-		return (other instanceof ClassnameType && classname.equals(((ClassnameType) other).classname));
+		return (other instanceof ClassnameExp && classname.equals(((ClassnameExp) other).classname));
 	}
 
 	public int hashCode() {

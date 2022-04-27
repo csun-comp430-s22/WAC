@@ -172,12 +172,26 @@ public class Parser {
 		return current;
 	}
 
+	
+	//helper method for parseNewClassExp
+	public ParseResult<ClassnameExp> parseClassName(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if (token instanceof VariableToken) {
+			final String name = ((VariableToken)token).name;
+			return new ParseResult<ClassnameExp>(new ClassnameExp(new Classname(name)), position + 1);
+		} else {
+			throw new ParseException("Expected a VariableToken but recieved: " + token.toString());
+		}
+	}
+
+
 	// new classname(exp*)
 	public ParseResult<Exp> parseNewClassExp(final int position) throws ParseException {
 		Token token = getToken(position + 1); // should be the classname
 		final String name = ((VariableToken) token).name;
 		assertTokenHereIs(position + 1, new VariableToken(name));
-		final ParseResult<Exp> className = parsePrimaryExp(position + 1);
+		//final ParseResult<Exp> className = parsePrimaryExp(position + 1);
+		final ParseResult<ClassnameExp> className = parseClassName(position + 1);
 		assertTokenHereIs(className.position, new OpenparToken());
 		List<Exp> inParens = new ArrayList();
 		int newPosition = className.position + 1;
@@ -212,7 +226,7 @@ public class Parser {
 	public ParseResult<MethodNameExp> parseMethodName(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof VariableToken) {
-			final String name = ((VariableToken) token).name;
+			final String name = ((VariableToken)token).name;
 			return new ParseResult<MethodNameExp>(new MethodNameExp(new Methodname(name)), position + 1);
 		} else {
 			throw new ParseException("Expected a VariableToken but recieved: " + token.toString());
