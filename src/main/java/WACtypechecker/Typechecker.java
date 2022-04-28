@@ -1,4 +1,4 @@
-package WACtypechecker;
+/* package WACtypechecker;
 
 import WACparser.*;
 
@@ -48,6 +48,26 @@ public class Typechecker {
 		}
 	}
 	
+	// helper method for typeOfMethodCall
+	// this currently doesn't handle inheritance since it was adapted from Kyle's original asynch videos
+	public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName) throws TypeErrorException {
+		for (final Classdef candidateClass : classes) {
+			if (candidateClass.classname
+	}
+	
+	// var.methodname(primary_exp*) in grammar
+	// varName.methodName(inParens) in VarMethodCall.java
+	// 1) varName should be a class
+	// 2) varName needs to have the methodName method
+	// 3) need to know the expected parameter types for the method
+	public Type typeOfMethodCall(final VarMethodCall exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
+		final Type varNameType = typeOf(exp.varName, typeEnvironment, classWeAreIn);
+		if (varName instanceof ClassnameType) {
+			final Classname = className = ((ClassnameType)varNameType).classname;
+		} else {
+			throw new TypeErrorException("Called method on non-class type: " + varNameType);
+		}
+	}
 	
 	//classWeAreIn is null if we are in (one of the entry points?) the entry point.
 	public Type typeOf(final Exp exp, final Map<Variable, Type> typeEnvironment,  final Classname classWeAreIn) throws TypeErrorException {
@@ -59,13 +79,17 @@ public class Typechecker {
 			return new IntType();
 		} else if (exp instanceof StrExp) {
 			return new StringType();
+		} else if (exp instanceof ClassnameExp) {
+			return new ClassnameType(((ClassnameExp)exp).classname);
 		} else if (exp instanceof VariableExp) {
 			return typeOfVariable((VariableExp)exp, typeEnvironment);
 		} else if (exp instanceof OpExp) {
 			return typeofOp((OpExp)exp, typeEnvironment, classWeAreIn);
+		} else if (exp instanceof VarMethodCall) {
+			return typeofMethodCall((VarMethodCall)exp, typeEnvironment, classWeAreIn);
 		}
 		else {
 			throw new TypeErrorException("");
 		}
 	}
-}
+} */

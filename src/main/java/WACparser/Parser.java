@@ -173,7 +173,7 @@ public class Parser {
 	}
 
 	
-	//helper method for parseNewClassExp
+	//helper method to get back the ClassnameExp
 	public ParseResult<ClassnameExp> parseClassName(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof VariableToken) {
@@ -222,7 +222,7 @@ public class Parser {
 	}
 
 
-	//helper method for parseVarMethodCall
+	//helper method to get back the MethodNameExp
 	public ParseResult<MethodNameExp> parseMethodName(final int position) throws ParseException {
 		final Token token = getToken(position);
 		if (token instanceof VariableToken) {
@@ -487,6 +487,17 @@ public class Parser {
 		}
 	}
 	
+	// helper method to parse in a methodname
+	public ParseResult<Methodname> parseMethodname(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if (token instanceof VariableToken) {
+			final String name = ((VariableToken)token).name;
+			return new ParseResult<Methodname>(new Methodname(name), position + 1);
+		} else {
+			throw new ParseException("Expected a VariableToken but recieved: " + token.toString());
+		}
+	}
+	
 	
 	// methoddef ::= type methodname(param*) stmt
 	public ParseResult<Methoddef> parseMethodDef(final int position) throws ParseException {
@@ -496,7 +507,8 @@ public class Parser {
 			final Token token2 = getToken(position + 1);
 			final String nameToken2 = ((VariableToken)token2).name;
 			assertTokenHereIs(position + 1, new VariableToken(nameToken2));
-			final ParseResult<Exp> methodname = parsePrimaryExp(position + 1);
+			//final ParseResult<Exp> methodname = parsePrimaryExp(position + 1);
+			final ParseResult<Methodname> methodname = parseMethodname(position + 1);
 			assertTokenHereIs(position + 2, new OpenparToken());
 			final List<Param> params = new ArrayList<Param>();
 			Token nextToken = getToken(position + 3);
@@ -535,6 +547,17 @@ public class Parser {
 	}
 	
 	
+	// helper method to parse in a classname
+	public ParseResult<Classname> parseClassname(final int position) throws ParseException {
+		final Token token = getToken(position);
+		if (token instanceof VariableToken) {
+			final String name = ((VariableToken)token).name;
+			return new ParseResult<Classname>(new Classname(name), position + 1);
+		} else {
+			throw new ParseException("Expected a VariableToken but recieved: " + token.toString());
+		}
+	}
+	
 	// classdef ::= class classname extends classname {
 	// vardec*
 	// constructor(param*) stmt
@@ -547,13 +570,15 @@ public class Parser {
 			final Token token1 = getToken(position + 1);
 			final String name = ((VariableToken)token1).name;
 			assertTokenHereIs(position + 1, new VariableToken(name));
-			final ParseResult<Exp> classname = parsePrimaryExp(position + 1);	//parse in the classname
+			//final ParseResult<Exp> classname = parsePrimaryExp(position + 1);	//parse in the classname
+			final ParseResult<Classname> classname = parseClassname(position + 1);
 			final Token token2 = getToken(classname.position);
 			if (token2 instanceof ExtendsToken) {		// case where we have an extends and secondary classname
 				final Token token3 = getToken(classname.position + 1);
 				final String name1 = ((VariableToken)token3).name;
 				assertTokenHereIs(classname.position + 1, new VariableToken(name1));
-				final ParseResult<Exp> extendsClassname = parsePrimaryExp(classname.position + 1);	//parse in the secondary classname if it exists
+				//final ParseResult<Exp> extendsClassname = parsePrimaryExp(classname.position + 1);	//parse in the secondary classname if it exists
+				final ParseResult<Classname> extendsClassname = parseClassname(classname.position + 1);
 				assertTokenHereIs(extendsClassname.position, new leftCurlyToken());
 				final List<Vardec> vardecs = new ArrayList<Vardec>();
 				int keepTrack = extendsClassname.position + 1;
@@ -644,7 +669,7 @@ public class Parser {
 					token5v2 = getToken(keepTrack1);
 				}
 				assertTokenHereIs(keepTrack1, new rightCurlyToken());
-				return new ParseResult<Classdef>(new ClassDefinition(classname.result, new VariableExp(new Variable("")), vardecs1, params, stmt1.result, methoddefs1), keepTrack1 + 1);	//since no extends it's empty string
+				return new ParseResult<Classdef>(new ClassDefinition(classname.result, new Classname(""), vardecs1, params, stmt1.result, methoddefs1), keepTrack1 + 1);	//since no extends it's empty string
 			} else {
 				throw new ParseException("Expecting either extends or a left curly token but recieved: " + token2.toString());
 			}
