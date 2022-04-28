@@ -10,23 +10,23 @@ import java.util.HashMap;
 public class Typechecker {
 
     // Helpers
-    public Type typeofVariable(final VariableExp exp,
-                               final Map<Variable, Type> typeEnvironment) throws TypeErrorException {
-        final Type mapType = typeEnvironment.get(exp.variable);
-        if (mapType == null) {
-            throw new TypeErrorException("Used variable not in scope: " + exp.variable.name);
-        } else {
-            return mapType;
-        }
-    }   // typeofVariable
+//    public Type typeofVariable(final VariableExp exp,
+//                               final Map<Variable, Type> typeEnvironment) throws TypeErrorException {
+//        final Type mapType = typeEnvironment.get(exp.variable);
+//        if (mapType == null) {
+//            throw new TypeErrorException("Used variable not in scope: " + exp.variable.name);
+//        } else {
+//            return mapType;
+//        }
+//    }   // typeofVariable
 
-    public Type typeofThis(final Classname classWeAreIn) throws TypeErrorException {
-        if (classWeAreIn == null) {
-            throw new TypeErrorException("this used in the entry point");
-        } else {
-            return new ClassnameType(classWeAreIn);
-        }
-    }   // typeofThis
+//    public Type typeofThis(final ClassName classWeAreIn) throws TypeErrorException {
+//        if (classWeAreIn == null) {
+//            throw new TypeErrorException("this used in the entry point");
+//        } else {
+//            return new ClassNameType(classWeAreIn);
+//        }
+//    }   // typeofThis
 
     public Type typeofOp(final OpExp exp,
                          final Map<Variable, Type> typeEnvironment,
@@ -75,16 +75,15 @@ public class Typechecker {
                        final Classname classWeAreIn) throws TypeErrorException {
         if (exp instanceof IntegerExp) {
             return new IntType();
-        } else if (exp instanceof VariableExp) {
-            return typeofVariable((VariableExp)exp, typeEnvironment);
-        } else if (exp instanceof TrueExp) {
-            return new BooleanType();
-        }else if (exp instanceof FalseExp) {
-            return new BooleanType();
-            // might have to move this to a different sections because 'Stmt'
-        } else if (exp instanceof ThisStmt) {
-            return typeofThis(classWeAreIn);
-        } else if (exp instanceof OpExp) {
+        }
+//        else if (exp instanceof VariableExp) {
+//            return typeofVariable((VariableExp)exp, typeEnvironment);
+//        } else if (exp instanceof BoolLiteralExp) {
+//            return new BoolType();
+//        } else if (exp instanceof ThisExp) {
+//            return typeofThis(classWeAreIn);
+//        }
+        else if (exp instanceof OpExp) {
             return typeofOp((OpExp)exp, typeEnvironment, classWeAreIn);
         }
 //        Commented out to work on Comparison Exp
