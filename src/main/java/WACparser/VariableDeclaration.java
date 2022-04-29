@@ -1,6 +1,6 @@
 package WACparser;
 
-public class VariableDeclaration implements Vardec {
+public class VariableDeclaration {
 	public final Type type;
 	public final Exp variable;
 	public final Exp value;

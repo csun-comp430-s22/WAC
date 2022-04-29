@@ -298,7 +298,7 @@ public class Parser {
 
 
 	// vardec ::= type var = exp;
-	public ParseResult<Vardec> parseVardec(final int position) throws ParseException {
+	public ParseResult<VariableDeclaration> parseVardec(final int position) throws ParseException {
 		final Token token = getToken(position); // get type
 		if ((token instanceof IntToken) || (token instanceof BooleanToken) || (token instanceof StringToken)
 				|| (token instanceof VariableToken)) {
@@ -311,7 +311,7 @@ public class Parser {
 				final ParseResult<Exp> variable = parsePrimaryExp(position + 1);
 				final ParseResult<Exp> exp = parseExp(position + 3);
 				assertTokenHereIs(exp.position, new SemicolToken());
-				return new ParseResult<Vardec>(new VariableDeclaration(type.result, variable.result, exp.result),
+				return new ParseResult<VariableDeclaration>(new VariableDeclaration(type.result, variable.result, exp.result),
 						exp.position + 1);
 			} else {
 				throw new ParseException("Expected an = token but received: " + token3.toString());
@@ -394,7 +394,7 @@ public class Parser {
 			if (token2 instanceof VariableToken) {
 				final String token2Name = ((VariableToken)token2).name;
 				assertTokenHereIs(position + 1, new VariableToken(token2Name));
-				final ParseResult<Vardec> declare = parseVardec(position);
+				final ParseResult<VariableDeclaration> declare = parseVardec(position);
 				return new ParseResult<Stmt>(new VardecStmt(declare), declare.position);
 			} else {
 				//throw new ParseException("");
@@ -580,13 +580,13 @@ public class Parser {
 				//final ParseResult<Exp> extendsClassname = parsePrimaryExp(classname.position + 1);	//parse in the secondary classname if it exists
 				final ParseResult<Classname> extendsClassname = parseClassname(classname.position + 1);
 				assertTokenHereIs(extendsClassname.position, new leftCurlyToken());
-				final List<Vardec> vardecs = new ArrayList<Vardec>();
+				final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
 				int keepTrack = extendsClassname.position + 1;
 				Token nextToken = getToken(keepTrack);
 				Token nextNextToken = getToken(keepTrack + 1);
  				while (((nextToken instanceof IntToken) || (nextToken instanceof BooleanToken) || (nextToken instanceof StringToken) ||(nextToken instanceof VariableToken))
 						&& (nextNextToken instanceof VariableToken)) {		//we know we have at least one vardec
-					final ParseResult<Vardec> vardec = parseVardec(keepTrack);
+					final ParseResult<VariableDeclaration> vardec = parseVardec(keepTrack);
 					vardecs.add(vardec.result);
 					keepTrack = vardec.position;
 					nextToken = getToken(keepTrack);
@@ -626,13 +626,13 @@ public class Parser {
 				return new ParseResult<ClassDefinition>(new ClassDefinition(classname.result, extendsClassname.result, vardecs, params, stmt.result, methoddefs), keepTrack + 1);
 			} else if (token2 instanceof leftCurlyToken) {	// case where we don't have an extends and secondary classname
 				assertTokenHereIs(classname.position, new leftCurlyToken());
-				final List<Vardec> vardecs1 = new ArrayList<Vardec>();
+				final List<VariableDeclaration> vardecs1 = new ArrayList<VariableDeclaration>();
 				int keepTrack1 = classname.position + 1;
 				Token nextToken1 = getToken(keepTrack1);
 				Token nextNextToken1 = getToken(keepTrack1 + 1);
  				while (((nextToken1 instanceof IntToken) || (nextToken1 instanceof BooleanToken) || (nextToken1 instanceof StringToken) ||(nextToken1 instanceof VariableToken))
 						&& (nextNextToken1 instanceof VariableToken)) {		//we know we have at least one vardec
-					final ParseResult<Vardec> vardec1 = parseVardec(keepTrack1);
+					final ParseResult<VariableDeclaration> vardec1 = parseVardec(keepTrack1);
 					vardecs1.add(vardec1.result);
 					keepTrack1 = vardec1.position;
 					nextToken1 = getToken(keepTrack1);

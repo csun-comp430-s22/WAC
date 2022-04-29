@@ -622,7 +622,7 @@ public class ParserTest {
 		final Type type = new IntType();
 		final Exp variable = new VariableExp(new Variable("x"));
 		final Exp exp = new VariableExp(new Variable("3"));
-		assertEquals(new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5), parser.parseVardec(0));
+		assertEquals(new ParseResult<VariableDeclaration>(new VariableDeclaration(type, variable, exp), 5), parser.parseVardec(0));
 	}
 	
 	
@@ -634,7 +634,7 @@ public class ParserTest {
 		final Type type = new BooleanType();
 		final Exp variable = new VariableExp(new Variable("x"));
 		final Exp exp = new TrueExp();
-		assertEquals(new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5), parser.parseVardec(0));
+		assertEquals(new ParseResult<VariableDeclaration>(new VariableDeclaration(type, variable, exp), 5), parser.parseVardec(0));
 	}
 	
 	
@@ -647,7 +647,7 @@ public class ParserTest {
 		final Exp variable = new VariableExp(new Variable("x"));
 		final List<Exp> emptyParams = new ArrayList<Exp>();
 		final Exp exp = new NewClassExp(new ClassnameExp(new Classname("Dog")), emptyParams);
-		assertEquals(new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 8), parser.parseVardec(0));
+		assertEquals(new ParseResult<VariableDeclaration>(new VariableDeclaration(type, variable, exp), 8), parser.parseVardec(0));
 	}
 	
 	
@@ -673,7 +673,7 @@ public class ParserTest {
 	@Test
 	public void testParamIntType() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("x")));
-		final ParseResult<Param> expected = new ParseResult<Param>(
+		final ParseResult<Parameter> expected = new ParseResult<Parameter>(
 				new Parameter(new IntType(), new VariableExp(new Variable("x"))), 2);
 
 		assertEquals(expected, parser.parseParam(0));
@@ -684,7 +684,7 @@ public class ParserTest {
 	@Test
 	public void testParamStringType() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new StringToken(), new VariableToken("x")));
-		final ParseResult<Param> expected = new ParseResult<Param>(
+		final ParseResult<Parameter> expected = new ParseResult<Parameter>(
 				new Parameter(new StringType(), new VariableExp(new Variable("x"))), 2);
 
 		assertEquals(expected, parser.parseParam(0));
@@ -695,7 +695,7 @@ public class ParserTest {
 	@Test
 	public void testParamVariableType() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new VariableToken("Dog"), new VariableToken("x")));
-		final ParseResult<Param> expected = new ParseResult<Param>(
+		final ParseResult<Parameter> expected = new ParseResult<Parameter>(
 				new Parameter(new ClassnameType(new Classname("Dog")), new VariableExp(new Variable("x"))), 2);
 
 		assertEquals(expected, parser.parseParam(0));
@@ -717,7 +717,7 @@ public class ParserTest {
 		final Type type = new IntType();
 		final Exp variable = new VariableExp(new Variable("x"));
 		final Exp exp = new VariableExp(new Variable("3"));
-		final ParseResult<Vardec> variableDec = new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5);
+		final ParseResult<VariableDeclaration> variableDec = new ParseResult<VariableDeclaration>(new VariableDeclaration(type, variable, exp), 5);
 		assertEquals(new ParseResult<Stmt>(new VardecStmt(variableDec), 5), parser.parseStmt(0));
 	}
 	
@@ -729,7 +729,7 @@ public class ParserTest {
 		final Type type = new BooleanType();
 		final Exp variable = new VariableExp(new Variable("x"));
 		final Exp exp = new TrueExp();
-		final ParseResult<Vardec> variableDec = new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5);
+		final ParseResult<VariableDeclaration> variableDec = new ParseResult<VariableDeclaration>(new VariableDeclaration(type, variable, exp), 5);
 		assertEquals(new ParseResult<Stmt>(new VardecStmt(variableDec), 5), parser.parseStmt(0));
 	}
 	
@@ -741,7 +741,7 @@ public class ParserTest {
 		final Type type = new StringType();
 		final Exp variable = new VariableExp(new Variable("x"));
 		final Exp exp = new StrExp("hi");
-		final ParseResult<Vardec> variableDec = new ParseResult<Vardec>(new VariableDeclaration(type, variable, exp), 5);
+		final ParseResult<VariableDeclaration> variableDec = new ParseResult<VariableDeclaration>(new VariableDeclaration(type, variable, exp), 5);
 		assertEquals(new ParseResult<Stmt>(new VardecStmt(variableDec), 5), parser.parseStmt(0));
 	}
 	
@@ -1117,7 +1117,7 @@ public class ParserTest {
 		final Parser parser = new Parser(Arrays.asList(new ClassToken(), new VariableToken("Dog"), new leftCurlyToken(), new VariableToken("Dog"),	new OpenparToken(), new CloseparToken(), 
 														new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
 		final List<MethodDefinition> methoddefs = new ArrayList<MethodDefinition>();
@@ -1133,7 +1133,7 @@ public class ParserTest {
 														new OpenparToken(), new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
 		final Classname extendsClassname = new Classname("Animal");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
 		final List<MethodDefinition> methoddefs = new ArrayList<MethodDefinition>();
@@ -1153,8 +1153,8 @@ public class ParserTest {
 														new VariableToken("name"), new EqualToken(), new strToken("Steve"), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
 														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
-		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final VariableDeclaration vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
 		vardecs.add(vardec);
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
@@ -1176,8 +1176,8 @@ public class ParserTest {
 														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
 		final Classname extendsClassname = new Classname("Animal");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
-		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final VariableDeclaration vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
 		vardecs.add(vardec);
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
@@ -1198,8 +1198,8 @@ public class ParserTest {
 														new VariableToken("x"), new EqualToken(), new IntegerToken(5), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
 														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
-		final Vardec vardec = new VariableDeclaration(new IntType(), new VariableExp(new Variable("x")), new IntegerExp(5));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final VariableDeclaration vardec = new VariableDeclaration(new IntType(), new VariableExp(new Variable("x")), new IntegerExp(5));
 		vardecs.add(vardec);
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
@@ -1221,8 +1221,8 @@ public class ParserTest {
 														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
 		final Classname extendsClassname = new Classname("Animal");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
-		final Vardec vardec = new VariableDeclaration(new IntType(), new VariableExp(new Variable("x")), new IntegerExp(5));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final VariableDeclaration vardec = new VariableDeclaration(new IntType(), new VariableExp(new Variable("x")), new IntegerExp(5));
 		vardecs.add(vardec);
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
@@ -1243,8 +1243,8 @@ public class ParserTest {
 														new VariableToken("x"), new EqualToken(), new falseToken(), new SemicolToken(), new VariableToken("Dog"), new OpenparToken(), 
 														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
-		final Vardec vardec = new VariableDeclaration(new BooleanType(), new VariableExp(new Variable("x")), new FalseExp());
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final VariableDeclaration vardec = new VariableDeclaration(new BooleanType(), new VariableExp(new Variable("x")), new FalseExp());
 		vardecs.add(vardec);
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
@@ -1266,8 +1266,8 @@ public class ParserTest {
 														new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
 		final Classname extendsClassname = new Classname("Animal");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
-		final Vardec vardec = new VariableDeclaration(new BooleanType(), new VariableExp(new Variable("x")), new FalseExp());
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final VariableDeclaration vardec = new VariableDeclaration(new BooleanType(), new VariableExp(new Variable("x")), new FalseExp());
 		vardecs.add(vardec);
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
@@ -1289,8 +1289,8 @@ public class ParserTest {
 														new IntToken(), new VariableToken("x"),	new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), 
 														new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
-		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final VariableDeclaration vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
 		vardecs.add(vardec);
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Parameter param = new Parameter(new IntType(), new VariableExp(new Variable("x")));
@@ -1315,8 +1315,8 @@ public class ParserTest {
 														new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
 		final Classname extendsClassname = new Classname("Animal");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
-		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final VariableDeclaration vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
 		vardecs.add(vardec);
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Parameter param = new Parameter(new IntType(), new VariableExp(new Variable("x")));
@@ -1339,7 +1339,7 @@ public class ParserTest {
 														new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
 		final Classname extendsClassname = new Classname("Animal");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Parameter param = new Parameter(new IntType(), new VariableExp(new Variable("x")));
 		final Parameter param1 = new Parameter(new IntType(), new VariableExp(new Variable("y")));
@@ -1366,8 +1366,8 @@ public class ParserTest {
 														new BooleanToken(), new VariableToken("Cute"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new trueToken(), new SemicolToken(),
 														new rightCurlyToken(), new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
-		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final VariableDeclaration vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
 		vardecs.add(vardec);
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Parameter param = new Parameter(new IntType(), new VariableExp(new Variable("x")));
@@ -1400,8 +1400,8 @@ public class ParserTest {
 														new BooleanToken(), new VariableToken("Cute"), new OpenparToken(), new CloseparToken(), new leftCurlyToken(), new trueToken(), new SemicolToken(),
 														new rightCurlyToken(), new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
-		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final VariableDeclaration vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
 		vardecs.add(vardec);
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Parameter param = new Parameter(new IntType(), new VariableExp(new Variable("x")));
@@ -1437,8 +1437,8 @@ public class ParserTest {
 														new rightCurlyToken(), new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
 		final Classname extendsClassname = new Classname("Animal");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
-		final Vardec vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final VariableDeclaration vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("name")), new StrExp("Steve"));
 		vardecs.add(vardec);
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Parameter param = new Parameter(new IntType(), new VariableExp(new Variable("x")));
@@ -1582,7 +1582,7 @@ public class ParserTest {
 														new OpenparToken(), new CloseparToken(), new IntegerToken(1), new PlusToken(), new IntegerToken(2), new SemicolToken(), new rightCurlyToken()));
 		final Classname classname = new Classname("Dog");
 		final Classname extendsClassname = new Classname("Animal");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
 		final List<MethodDefinition> methoddefs = new ArrayList<MethodDefinition>();
@@ -1606,7 +1606,7 @@ public class ParserTest {
 		// to make the ClassDefintion
 		final Classname classname = new Classname("Dog");
 		final Classname extendsClassname = new Classname("Animal");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
 		final List<MethodDefinition> methoddefs = new ArrayList<MethodDefinition>();
@@ -1637,7 +1637,7 @@ public class ParserTest {
 		// to make the ClassDefintion
 		final Classname classname = new Classname("Dog");
 		final Classname extendsClassname = new Classname("Animal");
-		final List<Vardec> vardecs = new ArrayList<Vardec>();
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
 		final List<Parameter> params = new ArrayList<Parameter>();
 		final Stmt stmt = new ExpStmt(new OpExp(new IntegerExp(1), new PlusOp(), new IntegerExp(2)));
 		final List<MethodDefinition> methoddefs = new ArrayList<MethodDefinition>();
