@@ -673,7 +673,7 @@ public class ParserTest {
 	@Test
 	public void testParamIntType() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new IntToken(), new VariableToken("x")));
-		final ParseResult<Param> expected = new ParseResult<Param>(
+		final ParseResult<Parameter> expected = new ParseResult<Parameter>(
 				new Parameter(new IntType(), new VariableExp(new Variable("x"))), 2);
 
 		assertEquals(expected, parser.parseParam(0));
@@ -684,7 +684,7 @@ public class ParserTest {
 	@Test
 	public void testParamStringType() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new StringToken(), new VariableToken("x")));
-		final ParseResult<Param> expected = new ParseResult<Param>(
+		final ParseResult<Parameter> expected = new ParseResult<Parameter>(
 				new Parameter(new StringType(), new VariableExp(new Variable("x"))), 2);
 
 		assertEquals(expected, parser.parseParam(0));
@@ -695,7 +695,7 @@ public class ParserTest {
 	@Test
 	public void testParamVariableType() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new VariableToken("Dog"), new VariableToken("x")));
-		final ParseResult<Param> expected = new ParseResult<Param>(
+		final ParseResult<Parameter> expected = new ParseResult<Parameter>(
 				new Parameter(new ClassnameType(new Classname("Dog")), new VariableExp(new Variable("x"))), 2);
 
 		assertEquals(expected, parser.parseParam(0));

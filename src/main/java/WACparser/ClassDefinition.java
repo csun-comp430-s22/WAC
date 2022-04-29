@@ -2,7 +2,7 @@ package WACparser;
 
 import java.util.List;
 
-public class ClassDefinition implements Classdef {
+public class ClassDefinition {
 	//public final Exp classname;
 	public final Classname classname;
 	//public final Exp extendsClassname;
