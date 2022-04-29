@@ -1,5 +1,8 @@
 # WAC
+<pre>
 A compiler from a high-level Java like language to C, written in Java.
+Our language supports class based inheritance, subtyping, and method overloading.
+</pre>
 
 # Abstract Syntax:
 <pre>
