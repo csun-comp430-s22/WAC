@@ -1,6 +1,6 @@
 package WACparser;
 
-public class Parameter implements Param {
+public class Parameter {
 	
 	public final Type parameterType;
 	
