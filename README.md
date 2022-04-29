@@ -9,7 +9,7 @@ str is a string \
 methodname is the name of a method \
 classname is the name of the class \
 contructor is the name of the object \
-* represents the traditional Kleene star meaning \ 
+'*' represents the traditional Kleene star meaning \ 
 
 type ::= Int | Boolean | String | classname	// basic types \
 primary_exp ::= var | str | int | true | false			//base case values \
