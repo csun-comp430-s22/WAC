@@ -2,9 +2,9 @@ package WACparser;
 
 public class VardecStmt implements Stmt {
 //    public final Vardec variableDec;
-    public final ParseResult<Vardec> variableDec;
+    public final ParseResult<VariableDeclaration> variableDec;
 
-    public VardecStmt (final ParseResult<Vardec> variableDec) {
+    public VardecStmt (final ParseResult<VariableDeclaration> variableDec) {
         this.variableDec = variableDec;
     }
 
