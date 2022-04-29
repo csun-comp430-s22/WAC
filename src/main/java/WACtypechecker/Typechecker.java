@@ -104,18 +104,38 @@ public class Typechecker {
 		if (varNameType instanceof ClassnameType) {
 			final Classname className = ((ClassnameType)varNameType).classname;
 			final List<Type> expectedTypes = expectedParameterTypesForClassAndMethod(className, exp.methodName.name);
-			if (expectedTypes.size() != exp.inParens.size()) {
-				throw new TypeErrorException("Wrong number of parameters for call: " + exp);
-			}
-			for (int index = 0; index < expectedTypes.size(); index++) {
-				final Type paramType = typeOf(exp.inParens.get(index), typeEnvironment, classWeAreIn);
-				final Type expectedType = expectedTypes.get(index);
-				isEqualOrSubtypeOf(paramType, expectedType);
-			}
+			expressionsOk(expectedTypes, exp.inParens, typeEnvironment, classWeAreIn);
 			return expectedReturnTypeForClassAndMethod(className, exp.methodName.name);
 		} else {
 			throw new TypeErrorException("Called method on non-class type: " + varNameType);
 		}
+	}
+	
+	public void expressionsOk(final List<Type> expectedTypes, final List<Exp> receivedExpressions, final Map<Variable,Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
+		if (expectedTypes.size() != receivedExpressions.size()) {
+			throw new TypeErrorException("Wrong number of parameters for call: ");
+		}
+		for (int index = 0; index < expectedTypes.size(); index++) {
+			final Type paramType = typeOf(receivedExpressions.get(index), typeEnvironment, classWeAreIn);
+			final Type expectedType = expectedTypes.get(index);
+			isEqualOrSubtypeOf(paramType, expectedType);
+		}
+	}
+	
+	// helper method for typeOfNew 
+	public List<Type> expectedConstructorTypesForClass(final Classname className) throws TypeErrorException {
+		// WRONG - needs to grab the expected constructor types for this class
+		// throws an expception if this class doesn't exist
+		return null;
+	}
+	
+	// new classname(exp*) in grammar
+	// new className(inParens) in NewClassExp.java
+	public Type typeOfNew(final NewClassExp exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
+		//need to know what the constructor arguments for this class are
+		final List<Type> expectedTypes = expectedConstructorTypesForClass(exp.className.classname);
+		expressionsOk(expectedTypes, exp.inParens, typeEnvironment, classWeAreIn);
+		return new ClassnameType(exp.className.classname);
 	}
 	
 	//classWeAreIn is null if we are in (one of the entry points?) the entry point.
@@ -136,9 +156,11 @@ public class Typechecker {
 			return typeofOp((OpExp)exp, typeEnvironment, classWeAreIn);
 		} else if (exp instanceof VarMethodCall) {
 			return typeOfMethodCall((VarMethodCall)exp, typeEnvironment, classWeAreIn);
+		} else if (exp instanceof NewClassExp) {
+			return typeOfNew((NewClassExp)exp, typeEnvironment, classWeAreIn);
 		}
 		else {
-			throw new TypeErrorException("");
+			throw new TypeErrorException("Unrecognized expression: " + exp);
 		}
 	}
 }

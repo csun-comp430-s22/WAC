@@ -5,14 +5,8 @@ import java.util.ArrayList;
 
 // made for the 'exp ::= new classname(exp*)' situation
 public class NewClassExp implements Exp {
-    //public final Exp className;
 	public final ClassnameExp className;
 	public final List<Exp> inParens;
-
-/*     public NewClassExp(final Exp className, final List<Exp> inParens) {
-		this.className = className;
-        this.inParens = inParens;
-    } */
 	
 	public NewClassExp(final ClassnameExp className, final List<Exp> inParens) {
 		this.className = className;
