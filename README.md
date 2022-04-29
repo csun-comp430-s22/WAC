@@ -2,7 +2,7 @@
 A compiler from a high-level Java like language to C, written in Java.
 
 # Abstract Syntax:
-
+<pre>
 var is a variable \
 int is an integer \
 str is a string \
@@ -43,7 +43,7 @@ classdef ::= class classname extends classname { \
                     methoddef* \
          }					// creates new class instance (extends classname is optional) \
 program ::== classdef* stmt* \
-
+</pre>
 
 DOUBLE CHECK THIS IS ACCURATE
 Tokens:
