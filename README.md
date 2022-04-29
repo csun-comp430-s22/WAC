@@ -3,7 +3,7 @@ A compiler from a high-level Java like language to C, written in Java.
 
 # Abstract Syntax:
 
-var is a variable 
+var is a variable \
 int is an integer
 str is a string 
 methodname is the name of a method 
