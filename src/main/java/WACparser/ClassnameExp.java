@@ -1,14 +1,16 @@
 package WACparser;
 
 public class ClassnameExp implements Exp {
-	public final Exp classname;
+	//public final Exp classname;
+	public final Classname classname;
 
-	public ClassnameExp(final Exp classname) {
+	//public ClassnameExp(final Exp classname) {
+	public ClassnameExp(final Classname classname) {
 		this.classname = classname;
 	}
 
 	public boolean equals(final Object other) {
-		return (other instanceof ClassnameType && classname.equals(((ClassnameType) other).classname));
+		return (other instanceof ClassnameExp && classname.equals(((ClassnameExp) other).classname));
 	}
 
 	public int hashCode() {

@@ -2,18 +2,22 @@ package WACparser;
 
 import java.util.List;
 
-public class ClassDefinition implements Classdef {
-	public final Exp classname;
-	public final Exp extendsClassname;
-	public final List<Vardec> classVariables;
-	public final List<Param> parameters;
+public class ClassDefinition {
+	//public final Exp classname;
+	public final Classname classname;
+	//public final Exp extendsClassname;
+	public final Classname extendsClassname;
+	public final List<VariableDeclaration> classVariables;
+	public final List<Parameter> parameters;
 	public final Stmt stmt;
-	public final List<Methoddef> methoddefs;
+	public final List<MethodDefinition> methoddefs;
 	
 	
-	//with extends and secondary classname; null will be passed in when there is no secondary classname
-	public ClassDefinition(final Exp classname, final Exp extendsClassname, final List<Vardec> classVariables, final List<Param> parameters,
-							final Stmt stmt, final List<Methoddef> methoddefs) {
+	//with extends and secondary classname; empty string will be passed when there's no extendsClassname
+	//public ClassDefinition(final Exp classname, final Exp extendsClassname, final List<Vardec> classVariables, final List<Param> parameters,
+	//						final Stmt stmt, final List<Methoddef> methoddefs) {
+	public ClassDefinition(final Classname classname, final Classname extendsClassname, final List<VariableDeclaration> classVariables, final List<Parameter> parameters,
+							final Stmt stmt, final List<MethodDefinition> methoddefs) {
 		this.classname = classname;
 		this.extendsClassname = extendsClassname;
 		this.classVariables = classVariables;
