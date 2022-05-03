@@ -163,4 +163,50 @@ public class Typechecker {
 			throw new TypeErrorException("Unrecognized expression: " + exp);
 		}
 	}
+
+	// Add to map helper method method
+	public static Map<Variable, Type> addToMap(final Map<Variable, Type> map,
+											   final Variable variable,
+											   final Type type) {
+		final Map<Variable, Type> result = new HashMap<Variable, Type>();
+		result.putAll(map);
+		result.put(variable, type);
+		return result;
+	}	// addToMap
+
+	public Map<Variable, Type> isWellTypedVar(final VariableDeclaration stmt,
+											  final Map<Variable, Type> typeEnvironment,
+											  final Classname classWeAreIn) throws TypeErrorException {
+		final Type expType = typeOf(stmt.value, typeEnvironment, classWeAreIn);
+		isEqualOrSubtypeOf(expType, stmt.type);
+		return addToMap(typeEnvironment, (Variable)stmt.variable, stmt.type);
+	}	// isWellTypedVar
+
+	// Staments
+	//	vardec |
+	//	var = exp; |
+	//	while (exp)  stmt |
+	//	break; |
+	//	if (exp) stmt else stmt |
+	//	return exp; |
+	//	{stmt*}
+	//	println(exp*); |
+	//	super(var); |
+	//	this.var = var; |
+	//	exp;
+	public Map<Variable, Type> isWellTypedStmt(final Stmt stmt,
+											   final Map<Variable, Type> typeEnvironment,
+											   final Classname classWeAreIn,
+											   final Type functionReturnType) throws TypeErrorException {
+		if (stmt instanceof ExpStmt) {
+//			typeof(((ExpStmt)stmt).exp, typeEnvironment, classWeAreIn, functionReturnType);
+			return typeEnvironment;
+		} else if (stmt instanceof VariableDeclaration) {
+//			return isWellTypedVar((VariableDeclaration)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+			return isWellTypedVar((VariableDeclaration)stmt, typeEnvironment, classWeAreIn);
+		} else {
+			throw new TypeErrorException("Unsupported statement: " + stmt);
+		}
+	}	// isWellTypedStmt
+
 }
