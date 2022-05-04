@@ -194,6 +194,32 @@ public class Typechecker {
 		return typeEnvironment;
 	}	// isWellTypedValueChange
 
+	// while (exp)  stmt
+	public Map<Variable, Type> isWellTypedWhile(final WhileStmt stmt,
+												final Map<Variable, Type> typeEnvironment,
+												final Classname classWeAreIn,
+												final Type functionReturnType) throws TypeErrorException {
+		if (typeOf(stmt.exp, typeEnvironment, classWeAreIn) instanceof BooleanType) {
+			isWellTypedStmt(stmt.stmt, typeEnvironment, classWeAreIn, functionReturnType);
+			return typeEnvironment;
+		} else {
+			throw new TypeErrorException("guard on while is not a boolean: " + stmt);
+		}
+	}	// isWellTypedWhile
+
+	public Map<Variable, Type> isWellTypedIf(final IfStmt stmt,
+											 final Map<Variable, Type> typeEnvironment,
+											 final Classname classWeAreIn,
+											 final Type functionReturnType) throws TypeErrorException {
+		if (typeOf(stmt.guard, typeEnvironment, classWeAreIn) instanceof BooleanType) {
+			isWellTypedStmt(stmt.trueBranch, typeEnvironment, classWeAreIn, functionReturnType);
+			isWellTypedStmt(stmt.falseBranch, typeEnvironment, classWeAreIn, functionReturnType);
+			return typeEnvironment;
+		} else {
+			throw new TypeErrorException("guard of if is not a boolean: " + stmt);
+		}
+	}	// isWellTypedIf
+
 	// Staments
 	//	vardec |
 	//	var = exp; |
@@ -218,6 +244,10 @@ public class Typechecker {
 			return isWellTypedVar((VariableDeclaration)stmt, typeEnvironment, classWeAreIn);
 		} else if (stmt instanceof VariableValueChange) {
 			return isWellTypedValueChange((VariableValueChange)stmt, typeEnvironment, classWeAreIn);
+		} else if (stmt instanceof WhileStmt) {
+			return isWellTypedWhile((WhileStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+		} else if (stmt instanceof IfStmt) {
+			return isWellTypedIf((IfStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
 		} else {
 			throw new TypeErrorException("Unsupported statement: " + stmt);
 		}
