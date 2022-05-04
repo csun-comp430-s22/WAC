@@ -174,6 +174,7 @@ public class Typechecker {
 		return result;
 	}	// addToMap
 
+	// vardec
 	public Map<Variable, Type> isWellTypedVar(final VariableDeclaration stmt,
 											  final Map<Variable, Type> typeEnvironment,
 											  final Classname classWeAreIn) throws TypeErrorException {
@@ -181,6 +182,17 @@ public class Typechecker {
 		isEqualOrSubtypeOf(expType, stmt.type);
 		return addToMap(typeEnvironment, (Variable)stmt.variable, stmt.type);
 	}	// isWellTypedVar
+
+	// var = exp;
+	public Map<Variable, Type> isWellTypedValueChange( final VariableValueChange stmt,
+													   final Map<Variable, Type> typeEnvironment,
+													   final Classname classWeAreIn) throws TypeErrorException {
+		final Type varType = typeOf(stmt.variable, typeEnvironment, classWeAreIn);
+		final Type expType = typeOf(stmt.exp, typeEnvironment, classWeAreIn);
+		isEqualOrSubtypeOf(expType, varType);
+//		return addToMap(typeEnvironment, (Variable)stmt.variable, stmt.)
+		return typeEnvironment;
+	}	// isWellTypedValueChange
 
 	// Staments
 	//	vardec |
@@ -204,6 +216,8 @@ public class Typechecker {
 		} else if (stmt instanceof VariableDeclaration) {
 //			return isWellTypedVar((VariableDeclaration)stmt, typeEnvironment, classWeAreIn, functionReturnType);
 			return isWellTypedVar((VariableDeclaration)stmt, typeEnvironment, classWeAreIn);
+		} else if (stmt instanceof VariableValueChange) {
+			return isWellTypedValueChange((VariableValueChange)stmt, typeEnvironment, classWeAreIn);
 		} else {
 			throw new TypeErrorException("Unsupported statement: " + stmt);
 		}
