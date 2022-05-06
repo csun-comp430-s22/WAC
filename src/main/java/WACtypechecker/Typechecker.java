@@ -13,6 +13,7 @@ public class Typechecker {
 	//public final List<Classdef> classes;
 	public final List<ClassDefinition> classes;
 	
+	
 	// recommended: we should make a map of Classname -> All methods on the class
 	// recommended: Classname -> ParentClass
 	public Typechecker(final Program program) {
@@ -53,11 +54,13 @@ public class Typechecker {
 		}
 	}
 	
+	
 	// helper method for typeOfMethodCall
 	public Type expectedReturnTypeForClassAndMethod(final Classname className, final Methodname methodName) {
 		// WRONG: needs to find the given class and method, and return the expected return type for this
 		return null;
 	}
+	
 	
 	// helper method for typeOfMethodCall
 	// this currently doesn't handle inheritance since it was adapted from Kyle's original asynch videos
@@ -81,11 +84,13 @@ public class Typechecker {
 		throw new TypeErrorException("No method named" + methodName + " on class " + className);
 	}
 	
+	
 	// helper method for isEqualOrSubtypeOf
 	public boolean isSubtypeOf(final Type first, final Type second) throws TypeErrorException {
 		// WRONG: needs to check this
 		return true;
 	}
+	
 	
 	// helper method for typeOfMethodCall
 	public void isEqualOrSubtypeOf(final Type first, final Type second) throws TypeErrorException {
@@ -93,6 +98,7 @@ public class Typechecker {
 			throw new TypeErrorException("types incompatible: " + first + "," + second);
 		}
 	}
+	
 	
 	// var.methodname(primary_exp*) in grammar
 	// varName.methodName(inParens) in VarMethodCall.java
@@ -111,6 +117,7 @@ public class Typechecker {
 		}
 	}
 	
+	
 	public void expressionsOk(final List<Type> expectedTypes, final List<Exp> receivedExpressions, final Map<Variable,Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
 		if (expectedTypes.size() != receivedExpressions.size()) {
 			throw new TypeErrorException("Wrong number of parameters for call: ");
@@ -122,12 +129,14 @@ public class Typechecker {
 		}
 	}
 	
+	
 	// helper method for typeOfNew 
 	public List<Type> expectedConstructorTypesForClass(final Classname className) throws TypeErrorException {
 		// WRONG - needs to grab the expected constructor types for this class
 		// throws an expception if this class doesn't exist
 		return null;
 	}
+	
 	
 	// new classname(exp*) in grammar
 	// new className(inParens) in NewClassExp.java
@@ -137,6 +146,7 @@ public class Typechecker {
 		expressionsOk(expectedTypes, exp.inParens, typeEnvironment, classWeAreIn);
 		return new ClassnameType(exp.className.classname);
 	}
+	
 	
 	//classWeAreIn is null if we are in (one of the entry points?) the entry point.
 	public Type typeOf(final Exp exp, final Map<Variable, Type> typeEnvironment,  final Classname classWeAreIn) throws TypeErrorException {
@@ -164,6 +174,7 @@ public class Typechecker {
 		}
 	}
 
+
 	// Add to map helper method method
 	public static Map<Variable, Type> addToMap(final Map<Variable, Type> map,
 											   final Variable variable,
@@ -174,6 +185,7 @@ public class Typechecker {
 		return result;
 	}	// addToMap
 
+
 	// vardec
 	public Map<Variable, Type> isWellTypedVar(final VariableDeclaration stmt,
 											  final Map<Variable, Type> typeEnvironment,
@@ -181,7 +193,10 @@ public class Typechecker {
 		final Type expType = typeOf(stmt.value, typeEnvironment, classWeAreIn);
 		isEqualOrSubtypeOf(expType, stmt.type);
 		return addToMap(typeEnvironment, (Variable)stmt.variable, stmt.type);
+		// if above doesn't work I think this might work:
+		// return addToMap(typeEnvironment, (((VariableExp)stmt.variable).variable, stmt.type);
 	}	// isWellTypedVar
+
 
 	// var = exp;
 	public Map<Variable, Type> isWellTypedValueChange( final VariableValueChange stmt,
@@ -190,9 +205,9 @@ public class Typechecker {
 		final Type varType = typeOf(stmt.variable, typeEnvironment, classWeAreIn);
 		final Type expType = typeOf(stmt.exp, typeEnvironment, classWeAreIn);
 		isEqualOrSubtypeOf(expType, varType);
-//		return addToMap(typeEnvironment, (Variable)stmt.variable, stmt.)
-		return typeEnvironment;
+		return typeEnvironment;	// correct since we are just changing the value of that variable but the type remains the same
 	}	// isWellTypedValueChange
+
 
 	// while (exp)  stmt
 	public Map<Variable, Type> isWellTypedWhile(final WhileStmt stmt,
@@ -206,8 +221,9 @@ public class Typechecker {
 			throw new TypeErrorException("guard on while is not a boolean: " + stmt);
 		}
 	}	// isWellTypedWhile
-
-	public Map<Variable, Type> isWellTypedIf(final IfStmt stmt,
+	
+	
+ 	public Map<Variable, Type> isWellTypedIf(final IfStmt stmt,
 											 final Map<Variable, Type> typeEnvironment,
 											 final Classname classWeAreIn,
 											 final Type functionReturnType) throws TypeErrorException {
@@ -219,28 +235,66 @@ public class Typechecker {
 			throw new TypeErrorException("guard of if is not a boolean: " + stmt);
 		}
 	}	// isWellTypedIf
+	
+	
+	// helper method for isWellTypedStmt
+	// return exp;
+	public Map<Variable, Type> isWellTypedReturn(final ReturnStmt stmt,
+												 final Map<Variable, Type> typeEnvironment,
+												 final Classname classWeAreIn,
+												 final Type functionReturnType) throws TypeErrorException {
+		if (functionReturnType == null) {
+			throw new TypeErrorException("return in program entry point");
+		} else {
+			final Type receivedType = typeOf(stmt.exp, typeEnvironment, classWeAreIn);
+			isEqualOrSubtypeOf(receivedType, functionReturnType);
+			return typeEnvironment;
+		}
+	}
+	
+	
+	// helper method for isWellTypedStmt
+	// {stmt*}
+	public Map<Variable, Type> isWellTypedBlock(final BlockStmt stmt,
+												Map<Variable, Type> typeEnvironment,
+												final Classname classWeAreIn,
+												final Type functionReturnType) throws TypeErrorException {
+		for (final Stmt bodyStmt : stmt.stmts) {
+			typeEnvironment = isWellTypedStmt(bodyStmt, typeEnvironment, classWeAreIn, functionReturnType);
+		}
+		return typeEnvironment;
+	}
+	
+	
+	// helper method for isWellTypedStmt
+	// println(exp*);
+	public Map<Variable, Type> isWellTypedPrint(final PrintlnStmt stmt,
+												final Map<Variable, Type> typeEnvironment,
+												final Classname classWeAreIn) throws TypeErrorException {
+		for (final Exp printExp : stmt.exps) {
+			typeOf(printExp, typeEnvironment, classWeAreIn);
+		}
+		return typeEnvironment;
+	}
+
 
 	// Staments
 	//	vardec |
 	//	var = exp; |
 	//	while (exp)  stmt |
-	//	break; |
+	//	break; |					//still needs to be done
 	//	if (exp) stmt else stmt |
 	//	return exp; |
 	//	{stmt*}
-	//	println(exp*); |
-	//	super(var); |
-	//	this.var = var; |
+	//	println(exp*); |			//still needs to be done
+	//	super(var); |				//still needs to be done
+	//	this.var = var; |			//still needs to be done
 	//	exp;
 	public Map<Variable, Type> isWellTypedStmt(final Stmt stmt,
 											   final Map<Variable, Type> typeEnvironment,
 											   final Classname classWeAreIn,
 											   final Type functionReturnType) throws TypeErrorException {
-		if (stmt instanceof ExpStmt) {
-//			typeof(((ExpStmt)stmt).exp, typeEnvironment, classWeAreIn, functionReturnType);
-			return typeEnvironment;
-		} else if (stmt instanceof VariableDeclaration) {
-//			return isWellTypedVar((VariableDeclaration)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+		if (stmt instanceof VariableDeclaration) {
 			return isWellTypedVar((VariableDeclaration)stmt, typeEnvironment, classWeAreIn);
 		} else if (stmt instanceof VariableValueChange) {
 			return isWellTypedValueChange((VariableValueChange)stmt, typeEnvironment, classWeAreIn);
@@ -248,6 +302,15 @@ public class Typechecker {
 			return isWellTypedWhile((WhileStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
 		} else if (stmt instanceof IfStmt) {
 			return isWellTypedIf((IfStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+		} else if(stmt instanceof ReturnStmt) {
+			return isWellTypedReturn((ReturnStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+		} else if(stmt instanceof BlockStmt) {
+			return isWellTypedBlock((BlockStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+		} else if(stmt instanceof PrintlnStmt) {
+			return isWellTypedPrint((PrintlnStmt)stmt, typeEnvironment, classWeAreIn);
+		} else if (stmt instanceof ExpStmt) {
+			typeOf(((ExpStmt)stmt).exp, typeEnvironment, classWeAreIn);
+			return typeEnvironment;
 		} else {
 			throw new TypeErrorException("Unsupported statement: " + stmt);
 		}
