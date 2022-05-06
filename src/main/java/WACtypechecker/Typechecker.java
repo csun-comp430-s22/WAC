@@ -285,8 +285,8 @@ public class Typechecker {
 	//	break; |					//still needs to be done
 	//	if (exp) stmt else stmt |
 	//	return exp; |
-	//	{stmt*}
-	//	println(exp*); |			//still needs to be done
+	//	{stmt*} |
+	//	println(exp*); |
 	//	super(var); |				//still needs to be done
 	//	this.var = var; |			//still needs to be done
 	//	exp;
