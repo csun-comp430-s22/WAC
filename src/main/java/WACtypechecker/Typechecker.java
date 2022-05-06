@@ -163,4 +163,94 @@ public class Typechecker {
 			throw new TypeErrorException("Unrecognized expression: " + exp);
 		}
 	}
+
+	// Add to map helper method method
+	public static Map<Variable, Type> addToMap(final Map<Variable, Type> map,
+											   final Variable variable,
+											   final Type type) {
+		final Map<Variable, Type> result = new HashMap<Variable, Type>();
+		result.putAll(map);
+		result.put(variable, type);
+		return result;
+	}	// addToMap
+
+	// vardec
+	public Map<Variable, Type> isWellTypedVar(final VariableDeclaration stmt,
+											  final Map<Variable, Type> typeEnvironment,
+											  final Classname classWeAreIn) throws TypeErrorException {
+		final Type expType = typeOf(stmt.value, typeEnvironment, classWeAreIn);
+		isEqualOrSubtypeOf(expType, stmt.type);
+		return addToMap(typeEnvironment, (Variable)stmt.variable, stmt.type);
+	}	// isWellTypedVar
+
+	// var = exp;
+	public Map<Variable, Type> isWellTypedValueChange( final VariableValueChange stmt,
+													   final Map<Variable, Type> typeEnvironment,
+													   final Classname classWeAreIn) throws TypeErrorException {
+		final Type varType = typeOf(stmt.variable, typeEnvironment, classWeAreIn);
+		final Type expType = typeOf(stmt.exp, typeEnvironment, classWeAreIn);
+		isEqualOrSubtypeOf(expType, varType);
+//		return addToMap(typeEnvironment, (Variable)stmt.variable, stmt.)
+		return typeEnvironment;
+	}	// isWellTypedValueChange
+
+	// while (exp)  stmt
+	public Map<Variable, Type> isWellTypedWhile(final WhileStmt stmt,
+												final Map<Variable, Type> typeEnvironment,
+												final Classname classWeAreIn,
+												final Type functionReturnType) throws TypeErrorException {
+		if (typeOf(stmt.exp, typeEnvironment, classWeAreIn) instanceof BooleanType) {
+			isWellTypedStmt(stmt.stmt, typeEnvironment, classWeAreIn, functionReturnType);
+			return typeEnvironment;
+		} else {
+			throw new TypeErrorException("guard on while is not a boolean: " + stmt);
+		}
+	}	// isWellTypedWhile
+
+	public Map<Variable, Type> isWellTypedIf(final IfStmt stmt,
+											 final Map<Variable, Type> typeEnvironment,
+											 final Classname classWeAreIn,
+											 final Type functionReturnType) throws TypeErrorException {
+		if (typeOf(stmt.guard, typeEnvironment, classWeAreIn) instanceof BooleanType) {
+			isWellTypedStmt(stmt.trueBranch, typeEnvironment, classWeAreIn, functionReturnType);
+			isWellTypedStmt(stmt.falseBranch, typeEnvironment, classWeAreIn, functionReturnType);
+			return typeEnvironment;
+		} else {
+			throw new TypeErrorException("guard of if is not a boolean: " + stmt);
+		}
+	}	// isWellTypedIf
+
+	// Staments
+	//	vardec |
+	//	var = exp; |
+	//	while (exp)  stmt |
+	//	break; |
+	//	if (exp) stmt else stmt |
+	//	return exp; |
+	//	{stmt*}
+	//	println(exp*); |
+	//	super(var); |
+	//	this.var = var; |
+	//	exp;
+	public Map<Variable, Type> isWellTypedStmt(final Stmt stmt,
+											   final Map<Variable, Type> typeEnvironment,
+											   final Classname classWeAreIn,
+											   final Type functionReturnType) throws TypeErrorException {
+		if (stmt instanceof ExpStmt) {
+//			typeof(((ExpStmt)stmt).exp, typeEnvironment, classWeAreIn, functionReturnType);
+			return typeEnvironment;
+		} else if (stmt instanceof VariableDeclaration) {
+//			return isWellTypedVar((VariableDeclaration)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+			return isWellTypedVar((VariableDeclaration)stmt, typeEnvironment, classWeAreIn);
+		} else if (stmt instanceof VariableValueChange) {
+			return isWellTypedValueChange((VariableValueChange)stmt, typeEnvironment, classWeAreIn);
+		} else if (stmt instanceof WhileStmt) {
+			return isWellTypedWhile((WhileStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+		} else if (stmt instanceof IfStmt) {
+			return isWellTypedIf((IfStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+		} else {
+			throw new TypeErrorException("Unsupported statement: " + stmt);
+		}
+	}	// isWellTypedStmt
+
 }
