@@ -163,6 +163,133 @@ public class Typechecker {
 			throw new TypeErrorException("Unrecognized expression: " + exp);
 		}
 	}
+	
+	
+	public static Map<Variable, Type> addToMap(final Map<Variable, Type> map,
+			   final Variable variable,
+			   final Type type) {
+		final Map<Variable, Type> result = new HashMap<Variable, Type>();
+		result.putAll(map);
+		result.put(variable, type);
+		return result;
+	}	// addToMap
+	
+	//cesar's method for return exp;
+	public Map<Variable, Type> isWellTypedReturn(final ReturnStmt stmt,
+            final Map<Variable, Type> typeEnvironment,
+            final Classname classWeAreIn,
+            final Type functionReturnType) throws TypeErrorException {
+		 if (functionReturnType == null) {
+			 throw new TypeErrorException("return in program entry point");
+		 } else {
+			 final Type receivedType = typeOf(stmt.exp, typeEnvironment, classWeAreIn);
+			 isEqualOrSubtypeOf(receivedType, functionReturnType);
+			 return typeEnvironment;
+		 }
+	 }
+	// cesar's method for {stmt*};
+	public Map<Variable, Type> isWellTypedBlock(final BlockStmt stmt,
+            Map<Variable, Type> typeEnvironment,
+            final Classname classWeAreIn,
+            final Type ReturnType) throws TypeErrorException {
+		 for (final Stmt bodyStmt : stmt.stmts) {
+			 typeEnvironment = isWellTypedStmt(bodyStmt, typeEnvironment, classWeAreIn, ReturnType);
+		 }
+		 return typeEnvironment;
+	 }
+	// cesar's method for println(exp*);
+	public Map<Variable,Type> isWellTypedPrintln(final PrintlnStmt exp, final Map<Variable,Type> typeEnvironment, final Classname classWeAreIn , final Type ReturnType ) throws TypeErrorException{
+		for(final Exp printExps : exp.exps) {
+			typeOf(printExps, typeEnvironment, classWeAreIn);
+		}
+		
+		return typeEnvironment;
+	}
+	// cesar's method for this.var=var;
+	public Map<Variable, Type> isWellTypedThisVariable(final ThisStmt var,final Map<Variable,Type> typeEnvironment, final Classname classWeAreIn, final Type ReturnType)throws TypeErrorException{
+		if((typeEnvironment.containsKey(var.ThisVar.variable))&&(typeEnvironment.containsKey(var.Var.variable))) {
+			Type LeftSideType = typeEnvironment.get(var.ThisVar.variable);
+			Type RightSideType = typeEnvironment.get(var.Var.variable);
+			if(LeftSideType.equals(RightSideType)== true) {
+				return typeEnvironment;
+			}
+			else {
+				throw new TypeErrorException("this.variable type does not match other variable type");
+			}
+				
+		}
+		else {
+			throw new TypeErrorException("Variable used with ' this. ' does not exist in class");
+		}
+		
+		
+	}
+	// helper method for super(var):        For super's parameter types and var type  comparison match result.     
+	public boolean isWellTypedSuperPareameterstoVarType(ClassDefinition superclass, Exp variable, Map<Variable,Type> typeEnviornment, Classname classWeAreIn) throws TypeErrorException {
+		Type varType= typeOf(variable,typeEnviornment,classWeAreIn);
+		boolean typeIsAMatch = false;
+		for (Parameter parameterType : superclass.parameters ) {
+			if(parameterType.parameterType.equals(varType)) {
+				typeIsAMatch = true;
+			}
+		}
+			
+		return typeIsAMatch;
+	}
+	// cesar's part: Method for super(var); 
+	public Map<Variable, Type> isWellTypedSuper(final SuperStmt stmt,
+			final Map<Variable, Type> typeEnviornment,
+			final Classname classWeAreIn,
+			final Type functionReturnType)throws TypeErrorException{
+	    	boolean hasSuper = false;
+	    	ClassDefinition superClass= null;
+       		for(final ClassDefinition currentClass: classes) {
+       			if(classWeAreIn.equals(currentClass.extendsClassname)) {
+       				hasSuper = true;
+       				superClass = currentClass;
+       			}
+       		}
+       		if((hasSuper)&&(isWellTypedSuperPareameterstoVarType(superClass,stmt.variable, typeEnviornment, classWeAreIn))) {
+       			return typeEnviornment;
+       		}
+       		else {
+       			throw new TypeErrorException("Class "+ classWeAreIn.name+" does not have a parent class of var does match parameters in Type");
+       		}
+        
+
+	}
+	 // cesar's inputs to isWellTypedStmt
+	public Map<Variable, Type> isWellTypedStmt(final Stmt stmt,
+            final Map<Variable, Type> typeEnvironment,
+            final Classname classWeAreIn,
+            final Type functionReturnType) throws TypeErrorException {
+		 if (stmt instanceof ExpStmt) {
+			 typeOf(((ExpStmt)stmt).exp, typeEnvironment, classWeAreIn);
+			 return typeEnvironment;
+		 } else if (stmt instanceof ReturnStmt) {
+			 return isWellTypedReturn((ReturnStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+		 } else if (stmt instanceof PrintlnStmt) {
+			 isWellTypedPrintln((PrintlnStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+			 return typeEnvironment;
+		 } else if (stmt instanceof BlockStmt) {
+			 return isWellTypedBlock((BlockStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+		 } else if(stmt instanceof ThisStmt) {
+			 
+			 return isWellTypedThisVariable((ThisStmt)stmt,typeEnvironment,classWeAreIn,functionReturnType);
+		 } else if (stmt instanceof SuperStmt) {
+			 
+			 
+			 return isWellTypedSuper((SuperStmt)stmt,typeEnvironment,classWeAreIn,functionReturnType);
+		 }
+		 else {
+			 throw new TypeErrorException("Unsupported statement: " + stmt);
+		 }
+	}
+	
+	 
+	 
+	 
+	 
 }
 
         
