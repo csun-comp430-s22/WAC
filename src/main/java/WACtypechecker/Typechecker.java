@@ -386,18 +386,77 @@ public class Typechecker {
 		}
 		return typeEnvironment;
 	}
+	
+	
+	// helper method for super(var):        For super's parameter types and var type  comparison match result.     
+	public boolean isWellTypedSuperPareameterstoVarType(ClassDefinition superclass, Exp variable, Map<Variable,Type> typeEnviornment, Classname classWeAreIn) throws TypeErrorException {
+		Type varType= typeOf(variable,typeEnviornment,classWeAreIn);
+		boolean typeIsAMatch = false;
+		for (Parameter parameterType : superclass.parameters ) {
+			if(parameterType.parameterType.equals(varType)) {
+				typeIsAMatch = true;
+			}
+		}
+			
+		return typeIsAMatch;
+	}
+	
+	
+	//currently commented because on line 412 it's trying to traverse thru a list but classes is no longer a list
+	//this change was made to support iheritance
+/* 	// cesar's part: Method for super(var); 
+	public Map<Variable, Type> isWellTypedSuper(final SuperStmt stmt,
+			final Map<Variable, Type> typeEnviornment,
+			final Classname classWeAreIn,
+			final Type functionReturnType)throws TypeErrorException {
+	    	boolean hasSuper = false;
+	    	ClassDefinition superClass= null;
+       		for(final ClassDefinition currentClass: classes) {
+       			if(classWeAreIn.equals(currentClass.extendsClassname)) {
+       				hasSuper = true;
+       				superClass = currentClass;
+       			}
+       		}
+       		if((hasSuper)&&(isWellTypedSuperPareameterstoVarType(superClass,stmt.variable, typeEnviornment, classWeAreIn))) {
+       			return typeEnviornment;
+       		}
+       		else {
+       			throw new TypeErrorException("Class "+ classWeAreIn.name+" does not have a parent class of var does match parameters in Type");
+       		}
+	} */
+	
+	
+	// cesar's method for this.var=var;
+	public Map<Variable, Type> isWellTypedThis(final ThisStmt var,final Map<Variable,Type> typeEnvironment, final Classname classWeAreIn, final Type ReturnType)throws TypeErrorException{
+		if((typeEnvironment.containsKey(var.ThisVar.variable))&&(typeEnvironment.containsKey(var.Var.variable))) {
+			Type LeftSideType = typeEnvironment.get(var.ThisVar.variable);
+			Type RightSideType = typeEnvironment.get(var.Var.variable);
+			if(LeftSideType.equals(RightSideType)== true) {
+				return typeEnvironment;
+			}
+			else {
+				throw new TypeErrorException("this.variable type does not match other variable type");
+			}
+				
+		}
+		else {
+			throw new TypeErrorException("Variable used with ' this. ' does not exist in class");
+		}
+		
+		
+	}
 
 
 	//	vardec |
 	//	var = exp; |
 	//	while (exp)  stmt |
-	//	break; |					//still needs to be done ???
+	//	break; |					//still needs to be done ??? I don't think so. Doesn't need to check anything
 	//	if (exp) stmt else stmt |
 	//	return exp; |
 	//	{stmt*} |
 	//	println(exp*); |
-	//	super(var); |				//still needs to be done
-	//	this.var = var; |			//still needs to be done
+	//	super(var); |				//still needs to be fixed
+	//	this.var = var; |
 	//	exp;
 	public Map<Variable, Type> isWellTypedStmt(final Stmt stmt,
 											   final Map<Variable, Type> typeEnvironment,
@@ -420,6 +479,10 @@ public class Typechecker {
 		} else if (stmt instanceof ExpStmt) {
 			typeOf(((ExpStmt)stmt).exp, typeEnvironment, classWeAreIn);
 			return typeEnvironment;
+		} /* else if (stmt instanceof SuperStmt) {
+			return isWellTypedSuper((SuperStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
+		} */ else if (stmt instanceof ThisStmt) {
+			return isWellTypedThis((ThisStmt)stmt, typeEnvironment,classWeAreIn, functionReturnType);
 		} else {
 			throw new TypeErrorException("Unsupported statement: " + stmt);
 		}
