@@ -11,9 +11,6 @@ import java.util.HashSet;
 
 public class Typechecker {
 	
-	//this might be changed later ???
-	//public final List<Classdef> classes;
-	//public final List<ClassDefinition> classes;
 	public static final String BASE_CLASS_NAME = "Object";
 	public final Map<Classname, ClassDefinition> classes;
 	//includes inherited methods
@@ -121,8 +118,6 @@ public class Typechecker {
 	}
 	
 	
-	// recommended: we should make a map of Classname -> All methods on the class
-	// recommended: Classname -> ParentClass
 	public Typechecker(final Program program) throws TypeErrorException {
 		this.program = program;
 		//this.classes = program.classes;
@@ -180,32 +175,12 @@ public class Typechecker {
 	
 	// helper method for typeOfMethodCall
 	public Type expectedReturnTypeForClassAndMethod(final Classname className, final Methodname methodName) throws TypeErrorException {
-		// WRONG: needs to find the given class and method, and return the expected return type for this
-		//return null;
 		return getMethodDef(className, methodName).type;
 	}
 	
 	
 	// helper method for typeOfMethodCall
-	// this currently doesn't handle inheritance since it was adapted from Kyle's original asynch videos
-	// to add inheritance:
-	// - Methods on that class
-	// - Methods on the parent of that class
 	public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName) throws TypeErrorException {
-/* 		for (final ClassDefinition candidateClass : classes) {
-			if (candidateClass.classname.equals(className)) {
-				for (final MethodDefinition candidateMethod : candidateClass.methoddefs) {
-					if (candidateMethod.methodname.equals(methodName)) {
-						final List<Type> expectedTypes = new ArrayList<Type>();
-						for (final Parameter param : candidateMethod.params) {
-							expectedTypes.add(param.parameterType);
-						}
-						return expectedTypes;
-					}
-				}
-			}
-		}
-		throw new TypeErrorException("No method named" + methodName + " on class " + className); */
 		final MethodDefinition methodDef = getMethodDef(className, methodName);
 		final List<Type> retval = new ArrayList<Type>();
 		for (final Parameter param : methodDef.params) {
@@ -217,8 +192,6 @@ public class Typechecker {
 	
 	// helper method for isEqualOrSubtypeOf
 	public void assertEqualOrSubtypeOf(final Type first, final Type second) throws TypeErrorException {
-		// WRONG: needs to check this
-		//return true;
 		if (first.equals(second)) {
 			return;
 		} else if (first instanceof ClassnameType && second instanceof ClassnameType) {
@@ -228,14 +201,6 @@ public class Typechecker {
 			throw new TypeErrorException("incompatible types: " + first + ", " + second);
 		}
 	}
-	
-	
-/* 	// helper method for typeOfMethodCall
-	public void isEqualOrSubtypeOf(final Type first, final Type second) throws TypeErrorException {
-		if (!(first.equals(second) || isSubtypeOf(first, second))) {
-			throw new TypeErrorException("types incompatible: " + first + "," + second);
-		}
-	} */
 	
 	
 	// var.methodname(primary_exp*) in grammar
@@ -270,9 +235,6 @@ public class Typechecker {
 	
 	// helper method for typeOfNew 
 	public List<Type> expectedConstructorTypesForClass(final Classname className) throws TypeErrorException {
-		// WRONG - needs to grab the expected constructor types for this class
-		// throws an expception if this class doesn't exist
-		//return null;
 		final ClassDefinition classDef = getClass(className);
 		final List<Type> retval = new ArrayList<Type>();
 		if (classDef == null) {
@@ -468,12 +430,6 @@ public class Typechecker {
 	public void isWellTypedMethodDef(final MethodDefinition method,
 									 Map<Variable, Type> typeEnvironment,
 									 final Classname classWeAreIn) throws TypeErrorException {
-/* 		for (final Parameter param : method.params) {
-			// adds the parameters from the methods
-			// odd semantics: last variable declaration shadows prior one
-			typeEnvironment = addToMap(typeEnvironment, ((VariableExp)param.variable).variable, param.parameterType);
-			isWellTypedStmt(method.stmt, typeEnvironment, classWeAreIn, method.type);
-		} */
 		final Set<Variable> variablesInMethod = new HashSet<Variable>();
 		for (final Parameter param : method.params) {
 			final VariableExp variableExp = ((VariableExp)param.variable);
@@ -520,18 +476,6 @@ public class Typechecker {
 	// methoddef*
 	// }
 	public void isWellTypedClassDef(final ClassDefinition classDef) throws TypeErrorException {
-/* 		// TODO: add instance variables from parent classes; currently broken
-		// weird behavior again
-		// also has the semantics of: "last one declared wins"
-		Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
-		for (final VariableDeclaration vardec : classDef.classVariables) {
-			typeEnvironment = addToMap(typeEnvironment, ((VariableExp)vardec.variable).variable, vardec.type);
-		}
-		//check constructor
-		Map<Variable, Type> constructorTypeEnvironment = typeEnvironment;
-		for (final Parameter param : classDef.parameters) {
-			constructorTypeEnvironment = addToMap(constructorTypeEnvironment, ((VariableExp)param.variable).variable, param.parameterType);
-		} */
 		final Map<Variable, Type> typeEnvironment = baseTypeEnvironmentForClass(classDef.classname);
 		//check constructor
 		Map<Variable, Type> constructorTypeEnvironment = typeEnvironment;
@@ -549,9 +493,6 @@ public class Typechecker {
 		//check body of constructor
 		isWellTypedStmt(classDef.stmt, constructorTypeEnvironment, classDef.classname, null); //i put null because he used void but we don't have void idk
 		//check methods
-/* 		//also has behavior of last method wins
-		// TODO - this is broken - doesn't check for methods with duplicate names
-		// if you have method overloading you have to also check for params because it's entire signature */
 		for (final MethodDefinition method : classDef.methoddefs) {
 			isWellTypedMethodDef(method, typeEnvironment, classDef.classname);
 		}
