@@ -402,28 +402,28 @@ public class Typechecker {
 	}
 	
 	
-	//currently commented because on line 412 it's trying to traverse thru a list but classes is no longer a list
+	//currently commented because on line 414 it's trying to traverse thru a list but classes is no longer a list
 	//this change was made to support iheritance
-/* 	// cesar's part: Method for super(var); 
+	// cesar's part: Method for super(var); 
 	public Map<Variable, Type> isWellTypedSuper(final SuperStmt stmt,
 			final Map<Variable, Type> typeEnviornment,
 			final Classname classWeAreIn,
 			final Type functionReturnType)throws TypeErrorException {
 	    	boolean hasSuper = false;
 	    	ClassDefinition superClass= null;
-       		for(final ClassDefinition currentClass: classes) {
+/*        		for(final ClassDefinition currentClass: classes) {
        			if(classWeAreIn.equals(currentClass.extendsClassname)) {
        				hasSuper = true;
        				superClass = currentClass;
        			}
-       		}
+       		} */
        		if((hasSuper)&&(isWellTypedSuperPareameterstoVarType(superClass,stmt.variable, typeEnviornment, classWeAreIn))) {
        			return typeEnviornment;
        		}
        		else {
        			throw new TypeErrorException("Class "+ classWeAreIn.name+" does not have a parent class of var does match parameters in Type");
        		}
-	} */
+	}
 	
 	
 	// cesar's method for this.var=var;
@@ -479,9 +479,9 @@ public class Typechecker {
 		} else if (stmt instanceof ExpStmt) {
 			typeOf(((ExpStmt)stmt).exp, typeEnvironment, classWeAreIn);
 			return typeEnvironment;
-		} /* else if (stmt instanceof SuperStmt) {
+		} else if (stmt instanceof SuperStmt) {
 			return isWellTypedSuper((SuperStmt)stmt, typeEnvironment, classWeAreIn, functionReturnType);
-		} */ else if (stmt instanceof ThisStmt) {
+		} else if (stmt instanceof ThisStmt) {
 			return isWellTypedThis((ThisStmt)stmt, typeEnvironment,classWeAreIn, functionReturnType);
 		} else {
 			throw new TypeErrorException("Unsupported statement: " + stmt);
