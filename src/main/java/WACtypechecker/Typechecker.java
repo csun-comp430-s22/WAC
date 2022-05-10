@@ -84,6 +84,10 @@ public class Typechecker {
 			for (final MethodDefinition methodDef : classDef.methoddefs) {
 				final Methodname methodName = methodDef.methodname;
 				if (methodsOnThisClass.contains(methodName)) {
+					// instead of throwing exception we should prob check first the rest of the signature
+					// if it's the same we can throw the exception
+					// if it's different then we can: retval.put and return retval
+					// gonna come back to this go bcuz i want to get testing starting
 					throw new TypeErrorException("duplicate method: " + methodName);
 				}
 				methodsOnThisClass.add(methodName);

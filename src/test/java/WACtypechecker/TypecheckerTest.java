@@ -10,28 +10,26 @@ import java.util.Map;
 import java.util.HashMap;
 
 public class TypecheckerTest {
-	public static final ExpStmt expStmt = new ExpStmt(new IntegerExp(0));
-	public static final List<Stmt> stmts = new ArrayList<Stmt>(expStmt);
-	public static final Typechecker emptyTypechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), stmts));
 	
 	@Test
 	public void testVariableInScope() throws TypeErrorException {
-/* 		final ExpStmt expStmt = new ExpStmt(new IntegerExp(0));
+ 		final ExpStmt expStmt = new ExpStmt(new IntegerExp(0));
 		final List<Stmt> stmts = new ArrayList<Stmt>();
 		stmts.add(expStmt);
-		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), stmts)); */
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), stmts));
 		final Type expectedType = new IntType();
 		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
 		typeEnvironment.put(new Variable("x"), new IntType());
-		final Type receivedType = emptyTypechecker.typeOfVariable(new VariableExp(new Variable("x")), typeEnvironment);
+		final Type receivedType = typechecker.typeOfVariable(new VariableExp(new Variable("x")), typeEnvironment);
 		assertEquals(expectedType, receivedType);
 	}
 	
 	
 	@Test (expected = TypeErrorException.class)
-	public void testVariableOutOfScop() throws TypeErrorException {
+	public void testVariableOutOfScope() throws TypeErrorException {
 		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		// x is not in the typeEnvironment
-		emptyTypechecker.typeOfVariable(new VariableExp(new Variable("x")), typeEnvironment);
+		typechecker.typeOfVariable(new VariableExp(new Variable("x")), typeEnvironment);
 	}
 }
