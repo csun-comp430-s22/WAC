@@ -394,23 +394,14 @@ public class Typechecker {
 		return typeIsAMatch;
 	}
 
-	// currently commented because on line 414 it's trying to traverse thru a list
-	// but classes is no longer a list
-	// this change was made to support iheritance
-	// cesar's part: Method for super(var);
+
+	// super(var);
 	public Map<Variable, Type> isWellTypedSuper(final SuperStmt stmt,
 			final Map<Variable, Type> typeEnviornment,
 			final Classname classWeAreIn,
 			final Type functionReturnType) throws TypeErrorException {
 		boolean hasSuper = false;
 		ClassDefinition superClass = null;
-		/*
-		 * for(final ClassDefinition currentClass : classes) {
-		 * if(classWeAreIn.equals(currentClass.extendsClassname)) {
-		 * hasSuper = true;
-		 * superClass = currentClass;
-		 * }
-		 */
 		// Use the class map to check if the parent of the class exists
 		if (getParent(classWeAreIn, classes) != null) {
 			superClass = getParent(classWeAreIn, classes);
@@ -424,6 +415,7 @@ public class Typechecker {
 					+ " does not have a parent class or var does match parameters in Type");
 		}
 	}
+
 
 	// cesar's method for this.var=var;
 	public Map<Variable, Type> isWellTypedThis(final ThisStmt var, final Map<Variable, Type> typeEnvironment,
