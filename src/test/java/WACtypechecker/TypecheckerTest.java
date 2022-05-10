@@ -11,6 +11,7 @@ import java.util.HashMap;
 
 public class TypecheckerTest {
 	
+	//tests typeOfVariable method
 	@Test
 	public void testVariableInScope() throws TypeErrorException {
  		final ExpStmt expStmt = new ExpStmt(new IntegerExp(0));
@@ -25,6 +26,7 @@ public class TypecheckerTest {
 	}
 	
 	
+	//test typeOfVariable method
 	@Test (expected = TypeErrorException.class)
 	public void testVariableOutOfScope() throws TypeErrorException {
 		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
