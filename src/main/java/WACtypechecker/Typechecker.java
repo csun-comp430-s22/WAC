@@ -47,8 +47,7 @@ public class Typechecker {
 		return getParent(className, classes);
 	}
 
-	public static void assertInheritanceNonCyclicalForClass(final ClassDefinition classDef,
-			final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
+	public static void assertInheritanceNonCyclicalForClass(final ClassDefinition classDef, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
 		final Set<Classname> seenClasses = new HashSet<Classname>();
 		seenClasses.add(classDef.classname);
 		ClassDefinition parentClassDef = getParent(classDef.classname, classes);
@@ -84,6 +83,10 @@ public class Typechecker {
 			for (final MethodDefinition methodDef : classDef.methoddefs) {
 				final Methodname methodName = methodDef.methodname;
 				if (methodsOnThisClass.contains(methodName)) {
+					// instead of throwing exception we should prob check first the rest of the signature
+					// if it's the same we can throw the exception
+					// if it's different then we can: retval.put and return retval
+					// gonna come back to this go bcuz i want to get testing starting
 					throw new TypeErrorException("duplicate method: " + methodName);
 				}
 				methodsOnThisClass.add(methodName);
@@ -103,13 +106,14 @@ public class Typechecker {
 	}
 
 	// also makes sure inheritance hierarchies aren't cyclical
-	public static Map<Classname, ClassDefinition> makeClassMap(final List<ClassDefinition> classes)
-			throws TypeErrorException {
+	public static Map<Classname, ClassDefinition> makeClassMap(final List<ClassDefinition> classes) throws TypeErrorException {
 		final Map<Classname, ClassDefinition> retval = new HashMap<Classname, ClassDefinition>();
 		for (final ClassDefinition classDef : classes) {
 			final Classname className = classDef.classname;
 			if (retval.containsKey(classDef.classname)) {
 				throw new TypeErrorException("Duplicate class name: " + className);
+			} else {
+				retval.put(className, classDef);
 			}
 		}
 		assertInheritanceNonCyclical(retval);
