@@ -46,23 +46,6 @@ public class TypecheckerTest {
 		final ClassDefinition received = typechecker.getClass(classname, map);
 	}
 	
-	//need to test makeClassMap method before I can continue on to testGetClass1Param
-	
-	//tests makeClassMap method for normal circumstance
-	@Test
-	public void testMakeClassMap() throws TypeErrorException {
-		//takes a List<ClassDefinition>, returns a Map<Classname, ClassDefinition>
-		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
-		final List<ClassDefinition> classDefs = new ArrayList<ClassDefinition>();
-		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
-		classDefs.add(classDef);
-		final Classname classname = new Classname("Dog");
-		final Map<Classname, ClassDefinition> expected = new HashMap<Classname, ClassDefinition>();
-		expected.put(classname, classDef);
-		final Map<Classname, ClassDefinition> received = typechecker.makeClassMap(classDefs);
-		assertEquals(expected, received);
-	}
-	
 	//tests getClass(1 param) method
 	@Test
 	public void testGetClass1Param() throws TypeErrorException {
@@ -90,10 +73,10 @@ public class TypecheckerTest {
 		assertEquals(parentClassDef, received);
 	}
 	
-	//tests assertInheritanceNonCyclical(2 params) method for one level inheritance
-	//doesn't have an assert because we are just testing that it doesn't throw excpetions
+	//tests assertInheritanceNonCyclicalForClass method for one level inheritance
+	//doesn't have an assert because we are just testing that it doesn't throw an exception
 	@Test
-	public void testAssertInheritanceNonCyclicalOneLevelInheritance() throws TypeErrorException {
+	public void testAssertInheritanceNonCyclicalForClassOneLevelInheritance() throws TypeErrorException {
 		//takes in a ClassDefinition, Map<Classname, ClassDefinition>
 		//returns nothing
 		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
@@ -107,6 +90,38 @@ public class TypecheckerTest {
 		typechecker.classes.put(parentClassname, parentClassDef);
 		map.put(parentClassname, parentClassDef);
 		typechecker.assertInheritanceNonCyclicalForClass(classDef, map);
+	}
+	
+	//tests assertInheritanceNonCyclicalForClass for cyclical inheritance
+	//expects an exception to be thrown
+	@Test (expected = TypeErrorException.class)
+	public void testAssertInheritanceNonCyclicalForClassCyclicalCase() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Classname, ClassDefinition> map = new HashMap<Classname, ClassDefinition>();
+		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Animal"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		final Classname classname = new Classname("Dog");
+		typechecker.classes.put(classname, classDef);
+		map.put(classname, classDef);
+		final Classname parentClassname = new Classname("Animal");
+		final ClassDefinition parentClassDef = new ClassDefinition(new Classname("Animal"), new Classname("Dog"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(parentClassname, parentClassDef);
+		map.put(parentClassname, parentClassDef);
+		typechecker.assertInheritanceNonCyclicalForClass(classDef, map);
+	}
+	
+	//tests makeClassMap method for normal circumstance
+	@Test
+	public void testMakeClassMap() throws TypeErrorException {
+		//takes a List<ClassDefinition>, returns a Map<Classname, ClassDefinition>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<ClassDefinition> classDefs = new ArrayList<ClassDefinition>();
+		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		classDefs.add(classDef);
+		final Classname classname = new Classname("Dog");
+		final Map<Classname, ClassDefinition> expected = new HashMap<Classname, ClassDefinition>();
+		expected.put(classname, classDef);
+		final Map<Classname, ClassDefinition> received = typechecker.makeClassMap(classDefs);
+		assertEquals(expected, received);
 	}
 	
 	//tests typeOfVariable method

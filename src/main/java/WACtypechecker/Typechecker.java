@@ -72,8 +72,7 @@ public class Typechecker {
 	// duplicated are not permitted within the same class, but it's ok to override a
 	// superclass' method
 	// we will prob need to change this for our specific language
-	public static Map<Methodname, MethodDefinition> methodsForClass(final Classname className,
-			final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
+	public static Map<Methodname, MethodDefinition> methodsForClass(final Classname className, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
 		final ClassDefinition classDef = getClass(className, classes);
 		if (classDef == null) {
 			return new HashMap<Methodname, MethodDefinition>();
