@@ -46,6 +46,36 @@ public class TypecheckerTest {
 		final ClassDefinition received = typechecker.getClass(classname, map);
 	}
 	
+	//need to test makeClassMap method before I can continue on to testGetClass1Param
+	
+	//tests makeClassMap method for normal circumstance
+	@Test
+	public void testMakeClassMap() throws TypeErrorException {
+		//takes a List<ClassDefinition>, returns a Map<Classname, ClassDefinition>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<ClassDefinition> classDefs = new ArrayList<ClassDefinition>();
+		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		classDefs.add(classDef);
+		final Classname classname = new Classname("Dog");
+		final Map<Classname, ClassDefinition> expected = new HashMap<Classname, ClassDefinition>();
+		expected.put(classname, classDef);
+		final Map<Classname, ClassDefinition> received = typechecker.makeClassMap(classDefs);
+		assertEquals(expected, received);
+	}
+	
+	//tests getClass(1 param) method
+	@Test
+	public void testGetClass1Param() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(new Classname("Dog"), classDef);
+		final Classname classname = new Classname("Dog");
+		final Map<Classname, ClassDefinition> map = new HashMap<Classname, ClassDefinition>();
+		map.put(classname, classDef);
+		final ClassDefinition received = typechecker.getClass(classname);
+		assertEquals(classDef, received);
+	}
+	
 	//tests typeOfVariable method
 	@Test
 	public void testVariableInScope() throws TypeErrorException {

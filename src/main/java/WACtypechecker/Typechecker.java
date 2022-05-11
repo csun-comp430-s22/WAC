@@ -107,13 +107,14 @@ public class Typechecker {
 	}
 
 	// also makes sure inheritance hierarchies aren't cyclical
-	public static Map<Classname, ClassDefinition> makeClassMap(final List<ClassDefinition> classes)
-			throws TypeErrorException {
+	public static Map<Classname, ClassDefinition> makeClassMap(final List<ClassDefinition> classes) throws TypeErrorException {
 		final Map<Classname, ClassDefinition> retval = new HashMap<Classname, ClassDefinition>();
 		for (final ClassDefinition classDef : classes) {
 			final Classname className = classDef.classname;
 			if (retval.containsKey(classDef.classname)) {
 				throw new TypeErrorException("Duplicate class name: " + className);
+			} else {
+				retval.put(className, classDef);
 			}
 		}
 		assertInheritanceNonCyclical(retval);
