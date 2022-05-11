@@ -47,8 +47,7 @@ public class Typechecker {
 		return getParent(className, classes);
 	}
 
-	public static void assertInheritanceNonCyclicalForClass(final ClassDefinition classDef,
-			final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
+	public static void assertInheritanceNonCyclicalForClass(final ClassDefinition classDef, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
 		final Set<Classname> seenClasses = new HashSet<Classname>();
 		seenClasses.add(classDef.classname);
 		ClassDefinition parentClassDef = getParent(classDef.classname, classes);
