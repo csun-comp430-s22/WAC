@@ -33,7 +33,7 @@ stmt ::= vardec | 	// variable declaration
          if (exp) stmt else stmt | 	// if/else
          return exp; | 		// return an expression
          { stmt* } 			// block
-         println(exp*); |		// printing expression
+         println(primary_exp*); |	// printing expression
 				        // exps are comma seperated
          super(var); | 		// Invoke parent constructor
          this.var = var; | 		// refers to the current instance
