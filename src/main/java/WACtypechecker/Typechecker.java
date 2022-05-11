@@ -66,37 +66,35 @@ public class Typechecker {
 		for (final ClassDefinition classDef : classes.values()) {
 			assertInheritanceNonCyclicalForClass(classDef, classes);
 		}
-	}
+	}	
 
 	// includes inherited methods
 	// duplicated are not permitted within the same class, but it's ok to override a
 	// superclass' method
 	// we will prob need to change this for our specific language
+	//after my addition: it should allow method overloading with diff # of params
+	//but currently not same # of params with diff types
 	public static Map<Methodname, MethodDefinition> methodsForClass(final Classname className, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
 		final ClassDefinition classDef = getClass(className, classes);
 		if (classDef == null) {
 			return new HashMap<Methodname, MethodDefinition>();
 		} else {
 			final Map<Methodname, MethodDefinition> retval = methodsForClass(classDef.extendsClassname, classes);
-			final Set<Methodname> methodsOnThisClass = new HashSet<Methodname>();
+			//final Set<Methodname> methodsOnThisClass = new HashSet<Methodname>();
+			final Map<Methodname, Integer> methodsOnThisClass = new HashMap<Methodname, Integer>();
 			for (final MethodDefinition methodDef : classDef.methoddefs) {
 				final Methodname methodName = methodDef.methodname;
-				if (methodsOnThisClass.contains(methodName)) {
-					// instead of throwing exception we should prob check first the rest of the signature
-					// if it's the same we can throw the exception
-					// if it's different then we can: retval.put and return retval
-					// gonna come back to this go bcuz i want to get testing starting
+				if (methodsOnThisClass.containsKey(methodName) && methodsOnThisClass.containsValue(methodDef.params.size())) {
 					throw new TypeErrorException("duplicate method: " + methodName);
 				}
-				methodsOnThisClass.add(methodName);
+				methodsOnThisClass.put(methodName, methodDef.params.size());
 				retval.put(methodName, methodDef);
 			}
 			return retval;
 		}
 	}
 
-	public static Map<Classname, Map<Methodname, MethodDefinition>> makeMethodMap(
-			final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
+	public static Map<Classname, Map<Methodname, MethodDefinition>> makeMethodMap(final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
 		final Map<Classname, Map<Methodname, MethodDefinition>> retval = new HashMap<Classname, Map<Methodname, MethodDefinition>>();
 		for (final Classname className : classes.keySet()) {
 			retval.put(className, methodsForClass(className, classes));
@@ -161,8 +159,7 @@ public class Typechecker {
 		}
 	}
 
-	public MethodDefinition getMethodDef(final Classname className, final Methodname methodName)
-			throws TypeErrorException {
+	public MethodDefinition getMethodDef(final Classname className, final Methodname methodName) throws TypeErrorException {
 		final Map<Methodname, MethodDefinition> methodMap = methods.get(className);
 		if (methodMap == null) {
 			throw new TypeErrorException("Unknown class name: " + className);
@@ -183,8 +180,7 @@ public class Typechecker {
 	}
 
 	// helper method for typeOfMethodCall
-	public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName)
-			throws TypeErrorException {
+	public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName) throws TypeErrorException {
 		final MethodDefinition methodDef = getMethodDef(className, methodName);
 		final List<Type> retval = new ArrayList<Type>();
 		for (final Parameter param : methodDef.params) {

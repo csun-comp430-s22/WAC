@@ -109,6 +109,84 @@ public class TypecheckerTest {
 		typechecker.assertInheritanceNonCyclicalForClass(classDef, map);
 	}
 	
+	//tests methodsForClass method for class with one method
+	@Test
+	public void testMethodsForClassWithOneMethod() throws TypeErrorException {
+		//takes in Classname and Map<Classname, ClassDefinition>
+		//returns Map<Methodname, MethodDefinition>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("Dog");
+		final Map<Classname, ClassDefinition> map = new HashMap<Classname, ClassDefinition>();
+		final List<Parameter> methodParams = new ArrayList<Parameter>();
+		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams, new ExpStmt(new IntegerExp(0)));
+		final List<MethodDefinition> methodDefs = new ArrayList<MethodDefinition>();
+		methodDefs.add(methodDef);
+		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), methodDefs);
+		map.put(className, classDef);
+		//now to make expected output:
+		final Map<Methodname, MethodDefinition> expected = new HashMap<Methodname, MethodDefinition>();
+		expected.put(methodDef.methodname, methodDef);
+		//now to actually test
+		final Map<Methodname, MethodDefinition> received = typechecker.methodsForClass(className, map);
+		assertEquals(expected, received);
+	}
+	
+	//tests methodsForClass method for class with two methods that have same name but diff num of params
+	@Test
+	public void testMethodsForClassWithTwoMethodsSameNameDiffNumOfParams() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("Dog");
+		final Map<Classname, ClassDefinition> map = new HashMap<Classname, ClassDefinition>();
+		final List<Parameter> methodParams = new ArrayList<Parameter>();
+		final List<Parameter> methodParams2 = new ArrayList<Parameter>();
+		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		methodParams2.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		methodParams2.add(new Parameter(new IntType(), new VariableExp(new Variable("y"))));
+		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams, new ExpStmt(new IntegerExp(0)));
+		final MethodDefinition methodDef2 = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams2, new ExpStmt(new IntegerExp(0)));
+		final List<MethodDefinition> methodDefs = new ArrayList<MethodDefinition>();
+		methodDefs.add(methodDef);
+		methodDefs.add(methodDef2);
+		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), methodDefs);
+		map.put(className, classDef);
+		//now to make expected output:
+		final Map<Methodname, MethodDefinition> expected = new HashMap<Methodname, MethodDefinition>();
+		expected.put(methodDef.methodname, methodDef);
+		expected.put(methodDef2.methodname, methodDef2);
+		//now to actually test
+		final Map<Methodname, MethodDefinition> received = typechecker.methodsForClass(className, map);
+		assertEquals(expected, received);
+	}
+	
+	//tests methodsForClass method for class with two methods that have same name and same num of params
+	//expecting an exception
+	@Test (expected = TypeErrorException.class)
+	public void testMethodsForClassWithTwoMethodsSameNameAndSameNumOfParams() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("Dog");
+		final Map<Classname, ClassDefinition> map = new HashMap<Classname, ClassDefinition>();
+		final List<Parameter> methodParams = new ArrayList<Parameter>();
+		final List<Parameter> methodParams2 = new ArrayList<Parameter>();
+		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		methodParams2.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams, new ExpStmt(new IntegerExp(0)));
+		final MethodDefinition methodDef2 = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams2, new ExpStmt(new IntegerExp(0)));
+		final List<MethodDefinition> methodDefs = new ArrayList<MethodDefinition>();
+		methodDefs.add(methodDef);
+		methodDefs.add(methodDef2);
+		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), methodDefs);
+		map.put(className, classDef);
+		typechecker.methodsForClass(className, map);
+		/* //now to make expected output:
+		final Map<Methodname, MethodDefinition> expected = new HashMap<Methodname, MethodDefinition>();
+		expected.put(methodDef.methodname, methodDef);
+		expected.put(methodDef2.methodname, methodDef2);
+		//now to actually test
+		final Map<Methodname, MethodDefinition> received = typechecker.methodsForClass(className, map);
+		assertEquals(expected, received); */
+	}
+	
 	//tests makeClassMap method for normal circumstance
 	@Test
 	public void testMakeClassMap() throws TypeErrorException {
