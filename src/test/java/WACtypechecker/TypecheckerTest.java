@@ -68,12 +68,25 @@ public class TypecheckerTest {
 	public void testGetClass1Param() throws TypeErrorException {
 		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
-		typechecker.classes.put(new Classname("Dog"), classDef);
 		final Classname classname = new Classname("Dog");
+		typechecker.classes.put(classname, classDef);
 		final Map<Classname, ClassDefinition> map = new HashMap<Classname, ClassDefinition>();
 		map.put(classname, classDef);
 		final ClassDefinition received = typechecker.getClass(classname);
 		assertEquals(classDef, received);
+	}
+	
+	//tests getParent(1 param) method
+	@Test
+	public void testGetParent1Param() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Animal"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		final Classname classname = new Classname("Dog");
+		typechecker.classes.put(classname, classDef);
+		final Classname parentClassname = new Classname("Animal");
+		final ClassDefinition parentClassDef = new ClassDefinition(new Classname("Animal"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(parentClassname, parentClassDef);
+		final ClassDefinition received = typechecker.getParent(classname);
 	}
 	
 	//tests typeOfVariable method
