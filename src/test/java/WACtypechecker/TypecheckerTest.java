@@ -12,9 +12,9 @@ import java.util.HashMap;
 public class TypecheckerTest {
 	
 	
-	//tests getClass method
+	//tests getClass(2 params) method for normal circumstance
 	@Test
-	public void testGetClass2Params() throws TypeErrorException {
+	public void testGetClass2ParamsNormal() throws TypeErrorException {
 		//takes a Classname and a Map<Classname, ClassDefinition>
 		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final ClassDefinition expected = new ClassDefinition(new Classname("Dog"), new Classname("Animal"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
@@ -23,6 +23,27 @@ public class TypecheckerTest {
 		map.put(classname, expected);
 		final ClassDefinition received = typechecker.getClass(classname, map);
 		assertEquals(expected, received);
+	}
+	
+	//tests getClass(2 params) method for base class
+	@Test
+	public void testGetClass2ParamsBaseClass() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final ClassDefinition expected = new ClassDefinition(new Classname("Object"), new Classname(""), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		final Classname classname = new Classname("Object");
+		final Map<Classname, ClassDefinition> map = new HashMap<Classname, ClassDefinition>();
+		map.put(classname, expected);
+		final ClassDefinition received = typechecker.getClass(classname, map);
+		assertEquals(null, received);
+	}
+	
+	//tests getClass(2 params) method for class not in map
+	@Test (expected = TypeErrorException.class)
+	public void testGetClass2ParamsClassNotInMap() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname classname = new Classname("Dog");
+		final Map<Classname, ClassDefinition> map = new HashMap<Classname, ClassDefinition>();
+		final ClassDefinition received = typechecker.getClass(classname, map);
 	}
 	
 	//tests typeOfVariable method
