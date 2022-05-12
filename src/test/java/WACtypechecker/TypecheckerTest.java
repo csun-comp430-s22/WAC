@@ -256,4 +256,62 @@ public class TypecheckerTest {
 		// x is not in the typeEnvironment
 		typechecker.typeOfVariable(new VariableExp(new Variable("x")), typeEnvironment);
 	}
+	
+	//test typeOf method for a True expression
+	@Test
+	public void testTypeOfForTrueExp() throws TypeErrorException {
+		//takes in: Exp, Map<Variable, Type>, Classname
+		//returns: Type
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Type expected = new BooleanType();
+		final Type received = typechecker.typeOf(new TrueExp(), null, null);
+		assertEquals(expected, received);
+	}
+	
+	//test typeOf method for a False expression
+	@Test
+	public void testTypeOfForFalseExp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Type expected = new BooleanType();
+		final Type received = typechecker.typeOf(new FalseExp(), null, null);
+		assertEquals(expected, received);
+	}
+	
+	//test typeOf method for an Integer expression
+	@Test
+	public void testTypeOfForIntegerExp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Type expected = new IntType();
+		final Type received = typechecker.typeOf(new IntegerExp(0), null, null);
+		assertEquals(expected, received);
+	}
+	
+	//test typeOf method for a String expression
+	@Test
+	public void testTypeOfForStrExp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Type expected = new StringType();
+		final Type received = typechecker.typeOf(new StrExp("hi"), null, null);
+		assertEquals(expected, received);
+	}
+	
+	//test typeOf method for a Classname expression
+	@Test
+	public void testTypeOfForClassnameExp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Type expected = new ClassnameType(new Classname("Dog"));
+		final Type received = typechecker.typeOf(new ClassnameExp(new Classname("Dog")), null, null);
+		assertEquals(expected, received);
+	}
+	
+	//test typeOf method for a Variable expression
+	@Test
+	public void testTypeOfForVariableExp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		final Type expected = new IntType();
+		final Type received = typechecker.typeOf(new VariableExp(new Variable("x")), typeEnvironment, null);
+		assertEquals(expected, received);
+	}
 }

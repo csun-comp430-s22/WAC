@@ -121,8 +121,7 @@ public class Typechecker {
 		methods = makeMethodMap(classes);
 	}
 
-	public static Type typeOfVariable(final VariableExp exp, final Map<Variable, Type> typeEnvironment)
-			throws TypeErrorException {
+	public static Type typeOfVariable(final VariableExp exp, final Map<Variable, Type> typeEnvironment) throws TypeErrorException {
 		final Type mapType = typeEnvironment.get(exp.variable);
 		if (mapType == null) {
 			throw new TypeErrorException("Used variable note in scope: " + exp.variable.name);
@@ -131,20 +130,17 @@ public class Typechecker {
 		}
 	}
 
-	public Type typeofOp(final OpExp exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn)
-			throws TypeErrorException {
+	public Type typeofOp(final OpExp exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
 		final Type leftType = typeOf(exp.left, typeEnvironment, classWeAreIn);
 		final Type rightType = typeOf(exp.right, typeEnvironment, classWeAreIn);
-		if ((exp.op instanceof MultiplicationOp) || (exp.op instanceof DivisionOp) || (exp.op instanceof PlusOp)
-				|| (exp.op instanceof MinusOp)) {
+		if ((exp.op instanceof MultiplicationOp) || (exp.op instanceof DivisionOp) || (exp.op instanceof PlusOp) || (exp.op instanceof MinusOp)) {
 			if (leftType instanceof IntType && rightType instanceof IntType) {
 				return new IntType();
 			} else {
 				throw new TypeErrorException("Only integer operands allowed for arithmetic operations. Given: "
 						+ leftType + " and " + rightType);
 			}
-		} else if ((exp.op instanceof LessThanOp) || (exp.op instanceof GreaterThanOp)
-				|| (exp.op instanceof EqualEqualsOp) || (exp.op instanceof NotEqualsOp)) {
+		} else if ((exp.op instanceof LessThanOp) || (exp.op instanceof GreaterThanOp) || (exp.op instanceof EqualEqualsOp) || (exp.op instanceof NotEqualsOp)) {
 			if (leftType instanceof IntType && rightType instanceof IntType) {
 				return new BooleanType();
 			} else {
