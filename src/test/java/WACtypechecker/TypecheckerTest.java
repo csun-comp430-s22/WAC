@@ -233,7 +233,7 @@ public class TypecheckerTest {
 		typechecker.makeClassMap(classDefs);
 	}
 	
-	//tests typeOfVariable method
+	//tests typeOfVariable method for variable in scope
 	@Test
 	public void testVariableInScope() throws TypeErrorException {
  		final ExpStmt expStmt = new ExpStmt(new IntegerExp(0));
@@ -248,13 +248,46 @@ public class TypecheckerTest {
 	}
 	
 	
-	//test typeOfVariable method
+	//test typeOfVariable method for variable out of scope
+	//expecting an exception
 	@Test (expected = TypeErrorException.class)
 	public void testVariableOutOfScope() throws TypeErrorException {
 		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
 		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		// x is not in the typeEnvironment
 		typechecker.typeOfVariable(new VariableExp(new Variable("x")), typeEnvironment);
+	}
+	
+	//test typeOfOp method for MultiplicationOp
+	@Test
+	public void testTypeOfOpForMultiplicationOp() throws TypeErrorException {
+		//takes in: OpExp, Map<Variable, Type>, Classname
+		//returns: Type
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final OpExp exp = new OpExp(new IntegerExp(0), new MultiplicationOp(), new IntegerExp(1));
+		final Type expected = new IntType();
+		final Type received = typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+		assertEquals(expected, received);
+	}
+	
+	//test typeOfOp method for DivisionOp
+	@Test
+	public void testTypeOfOpForDivisionOp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final OpExp exp = new OpExp(new IntegerExp(2), new DivisionOp(), new IntegerExp(1));
+		final Type expected = new IntType();
+		final Type received = typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+		assertEquals(expected, received);
+	}
+	
+	//test typeOfOp method for PlusOp
+	@Test
+	public void testTypeOfOpForPlusOp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final OpExp exp = new OpExp(new IntegerExp(2), new PlusOp(), new IntegerExp(1));
+		final Type expected = new IntType();
+		final Type received = typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+		assertEquals(expected, received);
 	}
 	
 	//test typeOf method for a True expression

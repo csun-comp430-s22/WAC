@@ -130,7 +130,7 @@ public class Typechecker {
 		}
 	}
 
-	public Type typeofOp(final OpExp exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
+	public Type typeOfOp(final OpExp exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
 		final Type leftType = typeOf(exp.left, typeEnvironment, classWeAreIn);
 		final Type rightType = typeOf(exp.right, typeEnvironment, classWeAreIn);
 		if ((exp.op instanceof MultiplicationOp) || (exp.op instanceof DivisionOp) || (exp.op instanceof PlusOp) || (exp.op instanceof MinusOp)) {
@@ -264,7 +264,7 @@ public class Typechecker {
 		} else if (exp instanceof VariableExp) {
 			return typeOfVariable((VariableExp) exp, typeEnvironment);
 		} else if (exp instanceof OpExp) {
-			return typeofOp((OpExp) exp, typeEnvironment, classWeAreIn);
+			return typeOfOp((OpExp) exp, typeEnvironment, classWeAreIn);
 		} else if (exp instanceof VarMethodCall) {
 			return typeOfMethodCall((VarMethodCall) exp, typeEnvironment, classWeAreIn);
 		} else if (exp instanceof NewClassExp) {
