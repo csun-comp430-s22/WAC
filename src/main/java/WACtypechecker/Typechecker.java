@@ -211,8 +211,7 @@ public class Typechecker {
 		}
 	}
 
-	public void expressionsOk(final List<Type> expectedTypes, final List<Exp> receivedExpressions,
-			final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
+	public void expressionsOk(final List<Type> expectedTypes, final List<Exp> receivedExpressions, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
 		if (expectedTypes.size() != receivedExpressions.size()) {
 			throw new TypeErrorException("Wrong number of parameters for call: ");
 		}

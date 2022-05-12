@@ -416,19 +416,70 @@ public class TypecheckerTest {
 		typechecker.assertEqualOrSubtypeOf(new IntType(), new StringType());
 	}
 	
-	//tests typeOfMethodCall
+/* 	//tests typeOfMethodCall
 	@Test
 	public void testTypeOfMethodCall() throws TypeErrorException {
 		//takes in: VarMethodCall, Map<Variable, Type>, Classname
 		//returns: Type
 		final VarMethodCall exp = new VarMethodCall(new ClassnameExp(new Classname("Dog")), new MethodNameExp(new Methodname("find")), new ArrayList<Exp>());
-		//come back to this because I need to test expressionsOk first 
+		//come back to this becasue need to test expectedReturnTypeForClassAndMethod first
+	} */
+	
+	//tests expressionsOk for an unequal length of lists of params
+	//expecting an exception
+	@Test (expected = TypeErrorException.class)
+	public void testExpressionsOkUnEqualLengthOfParams() throws TypeErrorException {
+		//takes in: List<Type>, List<Exp>, Map<Variable, Type>, Classname
+		//returns: nothing
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<Type> expectedTypes = new ArrayList<Type>();
+		final List<Exp> receivedExps = new ArrayList<Exp>();
+		expectedTypes.add(new IntType());
+		receivedExps.add(new IntegerExp(0));
+		receivedExps.add(new TrueExp());
+		typechecker.expressionsOk(expectedTypes, receivedExps, null, null);
 	}
 	
-	//tests expressionsOk
+	//tests expressionsOk for one param of the same type
+	//void method; not using assert; just making sure it doesn't throw any exceptions
 	@Test
-	public void testExpressionsOk() throws TypeErrorException {
-		//come back to this because we need to test assertEqualOrSubtypeOf first
+	public void testExpressionsOkOneParamSameType() throws TypeErrorException {
+		//takes in: List<Type>, List<Exp>, Map<Variable, Type>, Classname
+		//returns: nothing
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<Type> expectedTypes = new ArrayList<Type>();
+		final List<Exp> receivedExps = new ArrayList<Exp>();
+		expectedTypes.add(new IntType());
+		receivedExps.add(new IntegerExp(0));
+		typechecker.expressionsOk(expectedTypes, receivedExps, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+	}
+	
+	//tests expectedConstructorTypesForClass method for base class
+	//should return an empty list
+	@Test
+	public void testExpectedConstructorTypesForClassForBaseClass() throws TypeErrorException {
+		//takes in: Classname
+		//returns: List<Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("Object");
+		final List<Type> expected = new ArrayList<Type>();
+		final List<Type> received = typechecker.expectedConstructorTypesForClass(className);
+		assertEquals(expected, received);
+	}
+	
+	//tests expectedConstructorTypesForClass method for arbitrary class with one constructor param
+	@Test
+	public void testExpectedConstructorTypesForClassForArbitraryClassWithOneConstructorParam() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new StringType(), new VariableExp(new Variable("name"))));
+		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(className, classDef);
+		final List<Type> expected = new ArrayList<Type>();
+		expected.add(new StringType());
+		final List<Type> received = typechecker.expectedConstructorTypesForClass(className);
+		assertEquals(expected, received);
 	}
 	
 	//test typeOf method for a True expression
