@@ -178,18 +178,36 @@ public class TypecheckerTest {
 		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), methodDefs);
 		map.put(className, classDef);
 		typechecker.methodsForClass(className, map);
-		/* //now to make expected output:
-		final Map<Methodname, MethodDefinition> expected = new HashMap<Methodname, MethodDefinition>();
-		expected.put(methodDef.methodname, methodDef);
-		expected.put(methodDef2.methodname, methodDef2);
+	}
+	
+	//tests makeMethodMap method for class with one method
+	@Test
+	public void testMakeMethodMapOneClassWithOneMethod() throws TypeErrorException {
+	//takes in Map<Classname, ClassDefinition>
+	//returns Map<Classname, Map<Methodname, MethodDefinition>>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("Dog");
+		final Map<Classname, ClassDefinition> map = new HashMap<Classname, ClassDefinition>();
+		final List<Parameter> methodParams = new ArrayList<Parameter>();
+		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams, new ExpStmt(new IntegerExp(0)));
+		final List<MethodDefinition> methodDefs = new ArrayList<MethodDefinition>();
+		methodDefs.add(methodDef);
+		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), methodDefs);
+		map.put(className, classDef);
+		//now to make the expected value
+		final Map<Classname, Map<Methodname, MethodDefinition>> expected = new HashMap<Classname, Map<Methodname, MethodDefinition>>();
+		final Map<Methodname, MethodDefinition> map2 = new HashMap<Methodname, MethodDefinition>();
+		map2.put(new Methodname("findNum"), methodDef);
+		expected.put(className, map2);
 		//now to actually test
-		final Map<Methodname, MethodDefinition> received = typechecker.methodsForClass(className, map);
-		assertEquals(expected, received); */
+		final Map<Classname, Map<Methodname, MethodDefinition>> received = typechecker.makeMethodMap(map);
+		assertEquals(expected, received);
 	}
 	
 	//tests makeClassMap method for normal circumstance
 	@Test
-	public void testMakeClassMap() throws TypeErrorException {
+	public void testMakeClassMapNormal() throws TypeErrorException {
 		//takes a List<ClassDefinition>, returns a Map<Classname, ClassDefinition>
 		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final List<ClassDefinition> classDefs = new ArrayList<ClassDefinition>();
@@ -200,6 +218,19 @@ public class TypecheckerTest {
 		expected.put(classname, classDef);
 		final Map<Classname, ClassDefinition> received = typechecker.makeClassMap(classDefs);
 		assertEquals(expected, received);
+	}
+	
+	//tests makeClassMap method for duplicate class names
+	//expecting an exception
+	@Test (expected = TypeErrorException.class)
+	public void testMakeClassMapForDuplicateClassNames() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<ClassDefinition> classDefs = new ArrayList<ClassDefinition>();
+		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		final ClassDefinition classDef2 = new ClassDefinition(new Classname("Dog"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		classDefs.add(classDef);
+		classDefs.add(classDef2);
+		typechecker.makeClassMap(classDefs);
 	}
 	
 	//tests typeOfVariable method
