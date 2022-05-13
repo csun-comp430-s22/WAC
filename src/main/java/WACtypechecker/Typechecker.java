@@ -452,6 +452,7 @@ public class Typechecker {
 
 
 	// cesar's method for this.var=var;
+	//helper method for isWellTypedStmt
 	public Map<Variable, Type> isWellTypedThis(final ThisStmt var, final Map<Variable, Type> typeEnvironment,
 			final Classname classWeAreIn, final Type ReturnType) throws TypeErrorException {
 		if ((typeEnvironment.containsKey(var.ThisVar.variable)) && (typeEnvironment.containsKey(var.Var.variable))) {

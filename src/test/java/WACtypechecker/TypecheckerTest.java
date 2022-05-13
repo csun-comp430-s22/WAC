@@ -685,4 +685,29 @@ public class TypecheckerTest {
 		final Type received = typechecker.typeOf(new OpExp(new IntegerExp(0), new PlusOp(), new IntegerExp(1)), typeEnvironment, classname);
 		assertEquals(expected, received);
 	}
+	
+	//test isWellTypedThis method for statement this.var = var
+	@Test
+	public void testStatementThis() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		final Classname classname = new Classname("doesn't matter");
+		final Map<Variable, Type> expected = typeEnvironment;
+		final Map<Variable, Type> received = typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("x"))) , typeEnvironment, classname, null);
+		assertEquals(expected, received);
+	}
+	
+	//test isWellTypedThis method for statement this.var = var . Statement also has different variable names . This.var is x . var is y  
+	@Test
+	public void testStatementThisDifferentVar() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		typeEnvironment.put(new Variable("y"), new IntType());
+		final Classname classname = new Classname("doesn't matter");
+		final Map<Variable, Type> expected = typeEnvironment;
+		final Map<Variable, Type> received = typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))) , typeEnvironment, classname, null);
+		assertEquals(expected, received);
+	}
 }
