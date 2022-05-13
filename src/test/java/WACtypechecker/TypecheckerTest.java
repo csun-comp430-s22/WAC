@@ -643,25 +643,21 @@ public class TypecheckerTest {
 	
 	// test of typeOfNew()
 	// creating new object with incorrect parameters
-	// fails test
-//	@Test
-//	public void testTypeOfNewWithWrongConstructorParameter() throws TypeErrorException {
-//		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
-//		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
-//		final Classname className = new Classname("Dog");
-//		final List<Parameter> params = new ArrayList<Parameter>();
-//		params.add(new Parameter(new StringType(), new VariableExp(new Variable("name"))));
-//		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
-//		typechecker.classes.put(className, classDef);
-//		final List<Type> expected = new ArrayList<Type>();
-//		expected.add(new ClassnameType(className));
-//		final List<Exp> newClassParams = new ArrayList<Exp>();
-//		newClassParams.add(new IntegerExp(0));
-//		final NewClassExp newClassExp = new NewClassExp(new ClassnameExp(className), newClassParams);
-//		final List<Type> received = new ArrayList<Type>();
-//		received.add(typechecker.typeOfNew(newClassExp, typeEnvironment, null));
-//		assertEquals(expected, received);
-//	}
+	// expecting and exception
+	@Test(expected = TypeErrorException.class)
+	public void testTypeOfNewWithWrongConstructorParameter() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final Classname className = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new StringType(), new VariableExp(new Variable("name"))));
+		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(className, classDef);
+		final List<Exp> newClassParams = new ArrayList<Exp>();
+		newClassParams.add(new IntegerExp(0));
+		final NewClassExp newClassExp = new NewClassExp(new ClassnameExp(className), newClassParams);
+		typechecker.typeOfNew(newClassExp, typeEnvironment, className);
+	}
 
 	//test typeOf method for a True expression
 	@Test
