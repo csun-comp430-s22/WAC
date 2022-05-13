@@ -135,72 +135,6 @@ public class TypecheckerTest {
 		typechecker.assertInheritanceNonCyclicalForClass(classDef, map);
 	}
 
-	@Test
-	public void testGetMethodDef() throws TypeErrorException {
-		// Takes in Classname and Methodname
-		// returns MethodDefinition
-		final Typechecker typechecker = new Typechecker(
-				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
-		final Classname className = new Classname("dog");
-		final Methodname methodName = new Methodname("findNum");
-		final List<Parameter> methodParams = new ArrayList<Parameter>();
-		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
-		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams,
-				new ExpStmt(new IntegerExp(0)));
-		final Map<Methodname, MethodDefinition> methodsForClass = new HashMap<Methodname, MethodDefinition>();
-		methodsForClass.put(methodName, methodDef);
-		typechecker.methods.put(className, methodsForClass);
-		// Now we make the expected output
-		final MethodDefinition expected = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams,
-				new ExpStmt(new IntegerExp(0)));
-
-		final MethodDefinition received = typechecker.getMethodDef(className, methodName);
-		assertEquals(expected, received);
-
-	}
-
-	@Test
-	public void testExpectedReturnTypeForClassAndMethod() throws TypeErrorException {
-		// calls getDefMethod and returns type
-		final Typechecker typechecker = new Typechecker(
-				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
-		final Classname className = new Classname("dog");
-		final Methodname methodName = new Methodname("findNum");
-		final List<Parameter> methodParams = new ArrayList<Parameter>();
-		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
-		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams,
-				new ExpStmt(new IntegerExp(0)));
-		final Map<Methodname, MethodDefinition> methodsForClass = new HashMap<Methodname, MethodDefinition>();
-		methodsForClass.put(methodName, methodDef);
-		typechecker.methods.put(className, methodsForClass);
-		final Type expected = methodDef.type;
-		final Type received = typechecker.expectedReturnTypeForClassAndMethod(className, methodName);
-		assertEquals(expected, received);
-	}
-
-	@Test
-	public void testExpectedParameterTypesForClassAndMethod() throws TypeErrorException {
-		// calls getDefMethod and returns type
-		final Typechecker typechecker = new Typechecker(
-				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
-		final Classname className = new Classname("dog");
-		final Methodname methodName = new Methodname("findNum");
-		final List<Parameter> methodParams = new ArrayList<Parameter>();
-		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
-		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams,
-				new ExpStmt(new IntegerExp(0)));
-		final Map<Methodname, MethodDefinition> methodsForClass = new HashMap<Methodname, MethodDefinition>();
-		methodsForClass.put(methodName, methodDef);
-		typechecker.methods.put(className, methodsForClass);
-		// Here we create our expected
-		final List<Type> expected = new ArrayList<Type>();
-		expected.add(methodParams.get(0).parameterType);
-
-		final List<Type> received = typechecker.expectedParameterTypesForClassAndMethod(className, methodName);
-		assertEquals(expected, received);
-
-	}
-
 	// tests methodsForClass method for class with one method
 	@Test
 	public void testMethodsForClassWithOneMethod() throws TypeErrorException {
@@ -497,6 +431,77 @@ public class TypecheckerTest {
 		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final OpExp exp = new OpExp(new StrExp("hi"), new NotEqualsOp(), new TrueExp());
 		typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+	}
+	
+	//tests getMethodDef for normal circumstances
+	@Test
+	public void testGetMethodDef() throws TypeErrorException {
+		// Takes in Classname and Methodname and Int(num of params)
+		// returns MethodDefinition
+		final Typechecker typechecker = new Typechecker(
+				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("dog");
+		final Methodname methodName = new Methodname("findNum");
+		final List<Parameter> methodParams = new ArrayList<Parameter>();
+		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams,
+				new ExpStmt(new IntegerExp(0)));
+		final Map<Methodname, MethodDefinition> methodsForClass = new HashMap<Methodname, MethodDefinition>();
+		methodsForClass.put(methodName, methodDef);
+		typechecker.methods.put(className, methodsForClass);
+		// Now we make the expected output
+		final MethodDefinition expected = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams,
+				new ExpStmt(new IntegerExp(0)));
+		// Now we actually test
+		final MethodDefinition received = typechecker.getMethodDef(className, methodName, methodParams.size());
+		assertEquals(expected, received);
+	}
+
+	//tests expectedReturnTypeForClassAndMethod for int type method
+	@Test
+	public void testExpectedReturnTypeForClassAndMethod() throws TypeErrorException {
+		// calls getDefMethod
+		// takes in: Clasname, Methodname, int(num of params)
+		// returns: Type
+		final Typechecker typechecker = new Typechecker(
+				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("dog");
+		final Methodname methodName = new Methodname("findNum");
+		final List<Parameter> methodParams = new ArrayList<Parameter>();
+		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams,
+				new ExpStmt(new IntegerExp(0)));
+		final Map<Methodname, MethodDefinition> methodsForClass = new HashMap<Methodname, MethodDefinition>();
+		methodsForClass.put(methodName, methodDef);
+		typechecker.methods.put(className, methodsForClass);
+		final Type expected = methodDef.type;
+		final Type received = typechecker.expectedReturnTypeForClassAndMethod(className, methodName, methodParams.size());
+		assertEquals(expected, received);
+	}
+
+	//tests expectedParameterTypesForClassAndMethod for class with one method of that name
+	@Test
+	public void testExpectedParameterTypesForClassAndMethod() throws TypeErrorException {
+		// calls getDefMethod 
+		// takes in: Classname, Methodname, int(num of params)
+		// returns: List<Type>
+		final Typechecker typechecker = new Typechecker(
+				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("dog");
+		final Methodname methodName = new Methodname("findNum");
+		final List<Parameter> methodParams = new ArrayList<Parameter>();
+		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams,
+				new ExpStmt(new IntegerExp(0)));
+		final Map<Methodname, MethodDefinition> methodsForClass = new HashMap<Methodname, MethodDefinition>();
+		methodsForClass.put(methodName, methodDef);
+		typechecker.methods.put(className, methodsForClass);
+		// Here we create our expected
+		final List<Type> expected = new ArrayList<Type>();
+		expected.add(methodParams.get(0).parameterType);
+
+		final List<Type> received = typechecker.expectedParameterTypesForClassAndMethod(className, methodName, methodParams.size());
+		assertEquals(expected, received);
 	}
 	
 	//tests assertEqualOrSubtypeOf method for the same two types
