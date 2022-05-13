@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Collection;
 
 public class Typechecker {
 
@@ -153,8 +154,23 @@ public class Typechecker {
 		}
 	}
 
-	public MethodDefinition getMethodDef(final Classname className, final Methodname methodName) throws TypeErrorException {
+	public MethodDefinition getMethodDef(final Classname className, final Methodname methodName, final int numOfParams) throws TypeErrorException {
 		final Map<Methodname, MethodDefinition> methodMap = methods.get(className);
+		if (methodMap == null) {
+			throw new TypeErrorException("Unknown class name: " + className);
+		} else {
+			Collection<MethodDefinition> defs = methodMap.values();
+			for (final MethodDefinition def : defs) {
+				if (def.methodname.equals(methodName) && def.params.size() == numOfParams) {
+					//final MethodDefinition retVal = def;
+					return def;
+				}
+			}
+			throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className + " with " + numOfParams + " params");
+		}
+		
+		//old getMethodDef from before I fixed the issue with method overloading will delete later
+/* 		final Map<Methodname, MethodDefinition> methodMap = methods.get(className);
 		if (methodMap == null) {
 			throw new TypeErrorException("Unknown class name: " + className);
 		} else {
@@ -164,18 +180,45 @@ public class Typechecker {
 			} else {
 				return methodDef;
 			}
-		}
+		} */
 	}
 
 	// helper method for typeOfMethodCall
-	public Type expectedReturnTypeForClassAndMethod(final Classname className, final Methodname methodName)
+	public Type expectedReturnTypeForClassAndMethod(final Classname className, final Methodname methodName, final int numOfParams)
 			throws TypeErrorException {
-		return getMethodDef(className, methodName).type;
+		//return getMethodDef(className, methodName).type;
+		return getMethodDef(className, methodName, numOfParams).type;
 	}
 
+/* 	// includes inherited methods
+	// allows method overloading with diff # of params
+	// but currently not same # of params with diff types
+	public static Map<Methodname, MethodDefinition> methodsForClass(final Classname className, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
+		final ClassDefinition classDef = getClass(className, classes);
+		if (classDef == null) {
+			return new HashMap<Methodname, MethodDefinition>();
+		} else {
+			final Map<Methodname, MethodDefinition> retval = methodsForClass(classDef.extendsClassname, classes);
+			//final Set<Methodname> methodsOnThisClass = new HashSet<Methodname>();
+			final Map<Methodname, Integer> methodsOnThisClass = new HashMap<Methodname, Integer>();
+			for (final MethodDefinition methodDef : classDef.methoddefs) {
+				final Methodname methodName = methodDef.methodname;
+				if (methodsOnThisClass.containsKey(methodName) && methodsOnThisClass.containsValue(methodDef.params.size())) {
+					throw new TypeErrorException("duplicate method: " + methodName);
+				}
+				methodsOnThisClass.put(methodName, methodDef.params.size());
+				retval.put(methodName, methodDef);
+			}
+			return retval;
+		}
+	} */
+
+
 	// helper method for typeOfMethodCall
-	public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName) throws TypeErrorException {
-		final MethodDefinition methodDef = getMethodDef(className, methodName);
+	//public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName) throws TypeErrorException {
+	public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName, final int numOfParams) throws TypeErrorException {
+		//final MethodDefinition methodDef = getMethodDef(className, methodName);
+		final MethodDefinition methodDef = getMethodDef(className, methodName, numOfParams);
 		final List<Type> retval = new ArrayList<Type>();
 		for (final Parameter param : methodDef.params) {
 			retval.add(param.parameterType);
@@ -203,9 +246,10 @@ public class Typechecker {
 		final Type varNameType = typeOf(exp.varName, typeEnvironment, classWeAreIn);
 		if (varNameType instanceof ClassnameType) {
 			final Classname className = ((ClassnameType) varNameType).classname;
-			final List<Type> expectedTypes = expectedParameterTypesForClassAndMethod(className, exp.methodName.name);
+			//final List<Type> expectedTypes = expectedParameterTypesForClassAndMethod(className, exp.methodName.name);
+			final List<Type> expectedTypes = expectedParameterTypesForClassAndMethod(className, exp.methodName.name, exp.inParens.size());
 			expressionsOk(expectedTypes, exp.inParens, typeEnvironment, classWeAreIn);
-			return expectedReturnTypeForClassAndMethod(className, exp.methodName.name);
+			return expectedReturnTypeForClassAndMethod(className, exp.methodName.name, exp.inParens.size());
 		} else {
 			throw new TypeErrorException("Called method on non-class type: " + varNameType);
 		}
