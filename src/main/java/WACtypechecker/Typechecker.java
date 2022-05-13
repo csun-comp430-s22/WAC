@@ -148,7 +148,8 @@ public class Typechecker {
 						+ leftType + " and " + rightType);
 			}
 		} else {
-			throw new TypeErrorException("Unsupported operator: " + exp.op);
+			throw new TypeErrorException("Since this already exhaustively checks for every single Op we have in our language this code is UNREACHABLE, therefore UNTESTABLE."
+											+ "but Java doesn't understand this and thinks we still need an else. Ruining my code coverage >:(");
 		}
 	}
 
@@ -182,7 +183,6 @@ public class Typechecker {
 		return retval;
 	}
 
-	// helper method for isEqualOrSubtypeOf
 	public void assertEqualOrSubtypeOf(final Type first, final Type second) throws TypeErrorException {
 		if (first.equals(second)) {
 			return;
@@ -199,8 +199,7 @@ public class Typechecker {
 	// 1) varName should be a class
 	// 2) varName needs to have the methodName method
 	// 3) need to know the expected parameter types for the method
-	public Type typeOfMethodCall(final VarMethodCall exp, final Map<Variable, Type> typeEnvironment,
-			final Classname classWeAreIn) throws TypeErrorException {
+	public Type typeOfMethodCall(final VarMethodCall exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
 		final Type varNameType = typeOf(exp.varName, typeEnvironment, classWeAreIn);
 		if (varNameType instanceof ClassnameType) {
 			final Classname className = ((ClassnameType) varNameType).classname;
@@ -212,8 +211,7 @@ public class Typechecker {
 		}
 	}
 
-	public void expressionsOk(final List<Type> expectedTypes, final List<Exp> receivedExpressions,
-			final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
+	public void expressionsOk(final List<Type> expectedTypes, final List<Exp> receivedExpressions, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
 		if (expectedTypes.size() != receivedExpressions.size()) {
 			throw new TypeErrorException("Wrong number of parameters for call: ");
 		}
