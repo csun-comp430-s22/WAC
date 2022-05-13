@@ -551,4 +551,38 @@ public class TypecheckerTest {
 		final Type received = typechecker.typeOf(new OpExp(new IntegerExp(0), new PlusOp(), new IntegerExp(1)), typeEnvironment, classname);
 		assertEquals(expected, received);
 	}
+
+	@Test
+	public void testTypeOfNewForClassWithOneConstructorParameter() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final Classname className = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new StringType(), new VariableExp(new Variable("name"))));
+		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(className, classDef);
+		final List<Type> expected = new ArrayList<Type>();
+		expected.add(new StringType());
+		final List<Exp> newClassParams = new ArrayList<Exp>();
+		newClassParams.add(new StrExp("Orange"));
+		final NewClassExp newClassExp = new NewClassExp(new ClassnameExp(className), newClassParams);
+		final List<Type> received = new ArrayList<Type>();
+		received.add(typechecker.typeOfNew(newClassExp, typeEnvironment, null));
+		assertEquals(expected, received);
+	}
+//	@Test
+//	public void testTypeOfNewForClassWithEmptyConstructorParameter() throws TypeErrorException {
+//		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+//		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+//		final Classname className = new Classname("Dog");
+//		final List<Parameter> params = new ArrayList<Parameter>();
+//		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+//		typechecker.classes.put(className, classDef);
+//		final List<Type> expected = new ArrayList<Type>();
+//		final List<Exp> newClassParams = new ArrayList<Exp>();
+//		final NewClassExp newClassExp = new NewClassExp(new ClassnameExp(className), newClassParams);
+//		final List<Type> received = new ArrayList<Type>();
+//		received.add(typechecker.typeOfNew(newClassExp, typeEnvironment, null));
+//		assertEquals(expected, received);
+//	}
 }
