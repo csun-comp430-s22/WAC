@@ -139,7 +139,7 @@ public class TypecheckerTest {
 	@Test
 	public void testMethodsForClassWithOneMethod() throws TypeErrorException {
 		// takes in Classname and Map<Classname, ClassDefinition>
-		// returns Map<Methodname, MethodDefinition>
+		// returns DuplicateMap<Methodname, MethodDefinition>
 		final Typechecker typechecker = new Typechecker(
 				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final Classname className = new Classname("Dog");
@@ -155,10 +155,10 @@ public class TypecheckerTest {
 				methodDefs);
 		map.put(className, classDef);
 		// now to make expected output:
-		final Map<Methodname, MethodDefinition> expected = new HashMap<Methodname, MethodDefinition>();
+		final DuplicateMap<Methodname, MethodDefinition> expected = new DuplicateMap<Methodname, MethodDefinition>();
 		expected.put(methodDef.methodname, methodDef);
 		// now to actually test
-		final Map<Methodname, MethodDefinition> received = typechecker.methodsForClass(className, map);
+		final DuplicateMap<Methodname, MethodDefinition> received = typechecker.methodsForClass(className, map);
 		assertEquals(expected, received);
 	}
 
@@ -187,11 +187,11 @@ public class TypecheckerTest {
 				methodDefs);
 		map.put(className, classDef);
 		// now to make expected output:
-		final Map<Methodname, MethodDefinition> expected = new HashMap<Methodname, MethodDefinition>();
+		final DuplicateMap<Methodname, MethodDefinition> expected = new DuplicateMap<Methodname, MethodDefinition>();
 		expected.put(methodDef.methodname, methodDef);
 		expected.put(methodDef2.methodname, methodDef2);
 		// now to actually test
-		final Map<Methodname, MethodDefinition> received = typechecker.methodsForClass(className, map);
+		final DuplicateMap<Methodname, MethodDefinition> received = typechecker.methodsForClass(className, map);
 		assertEquals(expected, received);
 	}
 
@@ -226,7 +226,7 @@ public class TypecheckerTest {
 	@Test
 	public void testMakeMethodMapOneClassWithOneMethod() throws TypeErrorException {
 		// takes in Map<Classname, ClassDefinition>
-		// returns Map<Classname, Map<Methodname, MethodDefinition>>
+		// returns Map<Classname, DuplicateMap<Methodname, MethodDefinition>>
 		final Typechecker typechecker = new Typechecker(
 				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final Classname className = new Classname("Dog");
@@ -242,12 +242,12 @@ public class TypecheckerTest {
 				methodDefs);
 		map.put(className, classDef);
 		// now to make the expected value
-		final Map<Classname, Map<Methodname, MethodDefinition>> expected = new HashMap<Classname, Map<Methodname, MethodDefinition>>();
-		final Map<Methodname, MethodDefinition> map2 = new HashMap<Methodname, MethodDefinition>();
+		final Map<Classname, DuplicateMap<Methodname, MethodDefinition>> expected = new HashMap<Classname, DuplicateMap<Methodname, MethodDefinition>>();
+		final DuplicateMap<Methodname, MethodDefinition> map2 = new DuplicateMap<Methodname, MethodDefinition>();
 		map2.put(new Methodname("findNum"), methodDef);
 		expected.put(className, map2);
 		// now to actually test
-		final Map<Classname, Map<Methodname, MethodDefinition>> received = typechecker.makeMethodMap(map);
+		final Map<Classname, DuplicateMap<Methodname, MethodDefinition>> received = typechecker.makeMethodMap(map);
 		assertEquals(expected, received);
 	}
 
@@ -433,20 +433,19 @@ public class TypecheckerTest {
 		typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
 	}
 	
-	//tests getMethodDef for normal circumstances
+	//tests getMethodDef for class with one method that matches the specified methodname and num of params
 	@Test
-	public void testGetMethodDef() throws TypeErrorException {
+	public void testGetMethodDefNormal() throws TypeErrorException {
 		// Takes in Classname and Methodname and Int(num of params)
 		// returns MethodDefinition
-		final Typechecker typechecker = new Typechecker(
-				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final Classname className = new Classname("dog");
 		final Methodname methodName = new Methodname("findNum");
 		final List<Parameter> methodParams = new ArrayList<Parameter>();
 		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
 		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams,
 				new ExpStmt(new IntegerExp(0)));
-		final Map<Methodname, MethodDefinition> methodsForClass = new HashMap<Methodname, MethodDefinition>();
+		final DuplicateMap<Methodname, MethodDefinition> methodsForClass = new DuplicateMap<Methodname, MethodDefinition>();
 		methodsForClass.put(methodName, methodDef);
 		typechecker.methods.put(className, methodsForClass);
 		// Now we make the expected output
@@ -456,6 +455,72 @@ public class TypecheckerTest {
 		final MethodDefinition received = typechecker.getMethodDef(className, methodName, methodParams.size());
 		assertEquals(expected, received);
 	}
+	
+	//tests getMethodDef for class that doesn't exist
+	//expecting an exception
+	@Test (expected = TypeErrorException.class)
+	public void testGetMethodDefForClassDoesNotExist() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		typechecker.getMethodDef(new Classname("iDontExist"), null, 0);
+	}
+	
+	//tests getMethodDef for class with two methods with the same name but diff num of params
+	//should receive the second method with the specified name
+	@Test
+	public void testGetMethodDefMethodOverloading() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("dog");
+		final Methodname methodName = new Methodname("findNum");
+		final List<Parameter> methodParams = new ArrayList<Parameter>();
+		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new IntType(), methodName, methodParams, new ExpStmt(new IntegerExp(0)));
+		final DuplicateMap<Methodname, MethodDefinition> methodsForClass = new DuplicateMap<Methodname, MethodDefinition>();
+		methodsForClass.put(methodName, methodDef);
+		final List<Parameter> method2Params = new ArrayList<Parameter>();
+		method2Params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		method2Params.add(new Parameter(new BooleanType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef2 = new MethodDefinition(new IntType(), methodName, method2Params, new ExpStmt(new IntegerExp(0)));
+		methodsForClass.put(methodName, methodDef2);
+		typechecker.methods.put(className, methodsForClass);
+		// Now we make the expected output
+		final MethodDefinition expected = methodDef;
+		// Now we actually test
+		final MethodDefinition received = typechecker.getMethodDef(className, methodName, methodParams.size());
+		assertEquals(expected, received);
+	}
+	
+	//tests getMethodDef for class with one method that matches the numOfParams but not the name
+	//expecting an exception
+	@Test (expected = TypeErrorException.class)
+	public void testGetMethodDefOneMethodWithSameNameButDiffNumOfParams() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("dog");
+		final Methodname methodName = new Methodname("findNum");
+		final List<Parameter> methodParams = new ArrayList<Parameter>();
+		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new IntType(), methodName, methodParams, new ExpStmt(new IntegerExp(0)));
+		final DuplicateMap<Methodname, MethodDefinition> methodsForClass = new DuplicateMap<Methodname, MethodDefinition>();
+		methodsForClass.put(methodName, methodDef);
+		typechecker.methods.put(className, methodsForClass);
+		typechecker.getMethodDef(className, new Methodname("imDifferent"), 1);
+	}
+	
+	//tests getMethodDef for class with one method that doesn't match either the name nor the numOfParams
+	@Test (expected = TypeErrorException.class)
+	public void testGetMethodDefOneMethodWithDiffNameAndDiffNumOfParams() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("dog");
+		final Methodname methodName = new Methodname("findNum");
+		final List<Parameter> methodParams = new ArrayList<Parameter>();
+		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new IntType(), methodName, methodParams, new ExpStmt(new IntegerExp(0)));
+		final DuplicateMap<Methodname, MethodDefinition> methodsForClass = new DuplicateMap<Methodname, MethodDefinition>();
+		methodsForClass.put(methodName, methodDef);
+		typechecker.methods.put(className, methodsForClass);
+		typechecker.getMethodDef(className, new Methodname("imDifferent"), 0);
+	}
+	
+	//tests getMethodDef for class with one method that 
 
 	//tests expectedReturnTypeForClassAndMethod for int type method
 	@Test
@@ -471,7 +536,7 @@ public class TypecheckerTest {
 		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
 		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams,
 				new ExpStmt(new IntegerExp(0)));
-		final Map<Methodname, MethodDefinition> methodsForClass = new HashMap<Methodname, MethodDefinition>();
+		final DuplicateMap<Methodname, MethodDefinition> methodsForClass = new DuplicateMap<Methodname, MethodDefinition>();
 		methodsForClass.put(methodName, methodDef);
 		typechecker.methods.put(className, methodsForClass);
 		final Type expected = methodDef.type;
@@ -493,7 +558,7 @@ public class TypecheckerTest {
 		methodParams.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
 		final MethodDefinition methodDef = new MethodDefinition(new IntType(), new Methodname("findNum"), methodParams,
 				new ExpStmt(new IntegerExp(0)));
-		final Map<Methodname, MethodDefinition> methodsForClass = new HashMap<Methodname, MethodDefinition>();
+		final DuplicateMap<Methodname, MethodDefinition> methodsForClass = new DuplicateMap<Methodname, MethodDefinition>();
 		methodsForClass.put(methodName, methodDef);
 		typechecker.methods.put(className, methodsForClass);
 		// Here we create our expected
