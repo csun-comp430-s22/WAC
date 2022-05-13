@@ -546,7 +546,7 @@ public class Parser {
 			throw new ParseException("Expected a type but received: " + token.toString());
 		}
 	}
-}
+
 	
 	// helper method to parse in a classname
 	public ParseResult<Classname> parseClassname(final int position) throws ParseException {
@@ -716,6 +716,7 @@ public class Parser {
 		} else {	//I don't think this can ever be reachable but Kyle had his like this so I'll leave it
 			throw new ParseException("Remaining tokens at end");
 		}
-	 }
+	}
+}
 	
 
