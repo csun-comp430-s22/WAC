@@ -564,4 +564,16 @@ public class TypecheckerTest {
 				assertEquals(expected, received);
 			}
 	
+			//test isWellTypedThis method for statement this.var = var . Statement also has different variable names . This.var is x . var is y  
+			@Test
+			public void testStatementThisDifferentVar() throws TypeErrorException {
+				final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+				final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+				typeEnvironment.put(new Variable("x"), new IntType());
+				typeEnvironment.put(new Variable("y"), new IntType());
+				final Classname classname = new Classname("doesn't matter");
+				final Map<Variable, Type> expected = typeEnvironment;
+				final Map<Variable, Type> received = typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))) , typeEnvironment, classname, null);
+				assertEquals(expected, received);
+			}
 }
