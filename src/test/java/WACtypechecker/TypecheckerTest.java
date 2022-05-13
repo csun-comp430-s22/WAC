@@ -544,14 +544,7 @@ public class TypecheckerTest {
 		typechecker.assertEqualOrSubtypeOf(new IntType(), new StringType());
 	}
 	
-/* 	//tests typeOfMethodCall
-	@Test
-	public void testTypeOfMethodCall() throws TypeErrorException {
-		//takes in: VarMethodCall, Map<Variable, Type>, Classname
-		//returns: Type
-		final VarMethodCall exp = new VarMethodCall(new ClassnameExp(new Classname("Dog")), new MethodNameExp(new Methodname("find")), new ArrayList<Exp>());
-		//come back to this becasue need to test expectedReturnTypeForClassAndMethod first
-	} */
+
 	
 	//tests expressionsOk for an unequal length of lists of params
 	//expecting an exception
@@ -610,6 +603,62 @@ public class TypecheckerTest {
 		assertEquals(expected, received);
 	}
 	
+	// test of typeOfNew()
+	// using class that has one parameter
+	@Test
+	public void testTypeOfNewForClassWithOneConstructorParameter() throws TypeErrorException {
+		//takes in: NewClassExp, Map<Variable, Type>, Classname
+		//returns: Type
+ 		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final Classname className = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new StringType(), new VariableExp(new Variable("name"))));
+		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(className, classDef);
+		final Type expected = new ClassnameType(className);
+		final List<Exp> newClassParams = new ArrayList<Exp>();
+		newClassParams.add(new StrExp("Orange"));
+		final NewClassExp newClassExp = new NewClassExp(new ClassnameExp(className), newClassParams);
+		final Type received = typechecker.typeOfNew(newClassExp, typeEnvironment, className);
+		assertEquals(expected, received);
+	}
+	
+	// test of typeOfNew()
+	// using class that has no parameters
+	@Test
+	public void testTypeOfNewForClassWithEmptyConstructorParameter() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final Classname className = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(className, classDef);
+		final Type expected = new ClassnameType(className);
+		final List<Exp> newClassParams = new ArrayList<Exp>();
+		final NewClassExp newClassExp = new NewClassExp(new ClassnameExp(className), newClassParams);
+		final Type received = typechecker.typeOfNew(newClassExp, typeEnvironment, className);
+		assertEquals(expected, received);
+	}
+	
+	// test of typeOfNew()
+	// creating new object with incorrect parameters
+	// expecting and exception
+	@Test(expected = TypeErrorException.class)
+	public void testTypeOfNewWithWrongConstructorParameter() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final Classname className = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new StringType(), new VariableExp(new Variable("name"))));
+		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(className, classDef);
+		final List<Exp> newClassParams = new ArrayList<Exp>();
+		newClassParams.add(new IntegerExp(0));
+		final NewClassExp newClassExp = new NewClassExp(new ClassnameExp(className), newClassParams);
+		typechecker.typeOfNew(newClassExp, typeEnvironment, className);
+	}
+
 	//test typeOf method for a True expression
 	@Test
 	public void testTypeOfForTrueExp() throws TypeErrorException {
@@ -683,6 +732,31 @@ public class TypecheckerTest {
 		final Classname classname = new Classname("doesn't matter");
 		final Type expected = new IntType();
 		final Type received = typechecker.typeOf(new OpExp(new IntegerExp(0), new PlusOp(), new IntegerExp(1)), typeEnvironment, classname);
+		assertEquals(expected, received);
+	}
+	
+	//test isWellTypedThis method for statement this.var = var
+	@Test
+	public void testStatementThis() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		final Classname classname = new Classname("doesn't matter");
+		final Map<Variable, Type> expected = typeEnvironment;
+		final Map<Variable, Type> received = typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("x"))) , typeEnvironment, classname, null);
+		assertEquals(expected, received);
+	}
+	
+	//test isWellTypedThis method for statement this.var = var . Statement also has different variable names . This.var is x . var is y  
+	@Test
+	public void testStatementThisDifferentVar() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		typeEnvironment.put(new Variable("y"), new IntType());
+		final Classname classname = new Classname("doesn't matter");
+		final Map<Variable, Type> expected = typeEnvironment;
+		final Map<Variable, Type> received = typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))) , typeEnvironment, classname, null);
 		assertEquals(expected, received);
 	}
 }

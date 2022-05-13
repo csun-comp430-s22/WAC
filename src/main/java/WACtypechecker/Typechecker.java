@@ -190,30 +190,6 @@ public class Typechecker {
 		return getMethodDef(className, methodName, numOfParams).type;
 	}
 
-/* 	// includes inherited methods
-	// allows method overloading with diff # of params
-	// but currently not same # of params with diff types
-	public static Map<Methodname, MethodDefinition> methodsForClass(final Classname className, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
-		final ClassDefinition classDef = getClass(className, classes);
-		if (classDef == null) {
-			return new HashMap<Methodname, MethodDefinition>();
-		} else {
-			final Map<Methodname, MethodDefinition> retval = methodsForClass(classDef.extendsClassname, classes);
-			//final Set<Methodname> methodsOnThisClass = new HashSet<Methodname>();
-			final Map<Methodname, Integer> methodsOnThisClass = new HashMap<Methodname, Integer>();
-			for (final MethodDefinition methodDef : classDef.methoddefs) {
-				final Methodname methodName = methodDef.methodname;
-				if (methodsOnThisClass.containsKey(methodName) && methodsOnThisClass.containsValue(methodDef.params.size())) {
-					throw new TypeErrorException("duplicate method: " + methodName);
-				}
-				methodsOnThisClass.put(methodName, methodDef.params.size());
-				retval.put(methodName, methodDef);
-			}
-			return retval;
-		}
-	} */
-
-
 	// helper method for typeOfMethodCall
 	//public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName) throws TypeErrorException {
 	public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName, final int numOfParams) throws TypeErrorException {
@@ -282,8 +258,7 @@ public class Typechecker {
 
 	// new classname(exp*) in grammar
 	// new className(inParens) in NewClassExp.java
-	public Type typeOfNew(final NewClassExp exp, final Map<Variable, Type> typeEnvironment,
-			final Classname classWeAreIn) throws TypeErrorException {
+	public Type typeOfNew(final NewClassExp exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
 		// need to know what the constructor arguments for this class are
 		final List<Type> expectedTypes = expectedConstructorTypesForClass(exp.className.classname);
 		expressionsOk(expectedTypes, exp.inParens, typeEnvironment, classWeAreIn);
@@ -452,6 +427,7 @@ public class Typechecker {
 
 
 	// cesar's method for this.var=var;
+	//helper method for isWellTypedStmt
 	public Map<Variable, Type> isWellTypedThis(final ThisStmt var, final Map<Variable, Type> typeEnvironment,
 			final Classname classWeAreIn, final Type ReturnType) throws TypeErrorException {
 		if ((typeEnvironment.containsKey(var.ThisVar.variable)) && (typeEnvironment.containsKey(var.Var.variable))) {
