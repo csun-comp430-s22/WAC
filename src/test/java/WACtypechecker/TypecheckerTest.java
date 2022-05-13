@@ -290,6 +290,198 @@ public class TypecheckerTest {
 		assertEquals(expected, received);
 	}
 	
+	//test typeOfOp method for MinusOp
+	@Test
+	public void testTypeOfOpForMinusOp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final OpExp exp = new OpExp(new IntegerExp(2), new MinusOp(), new IntegerExp(1));
+		final Type expected = new IntType();
+		final Type received = typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+		assertEquals(expected, received);
+	}
+	
+	//test typeOfOp method for Incorrect Types for IntType operation
+	//expecting an exception
+	@Test (expected = TypeErrorException.class)
+	public void testTypeOfOpForMinusOpWithIncorrectTypesTwoNonInts() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final OpExp exp = new OpExp(new StrExp("boo"), new MinusOp(), new TrueExp());
+		typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+	}
+	
+	//test typeOfOp method for one incorrect type for IntType operation
+	//expecting an exception
+	@Test (expected = TypeErrorException.class)
+	public void testTypeOfOpForMinusOpWithIncorrectTypeOneNonInt() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final OpExp exp = new OpExp(new IntegerExp(1), new MinusOp(), new TrueExp());
+		typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+	}
+	
+	//test typeOfOp method for LessThanOp
+	@Test
+	public void testTypeOfOpForLessThanOp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final OpExp exp = new OpExp(new IntegerExp(1), new LessThanOp(), new IntegerExp(1));
+		final Type expected = new BooleanType();
+		final Type received = typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+		assertEquals(expected, received);
+	}
+	
+	//test typeOfOp method for GreaterThanOp
+	@Test
+	public void testTypeOfOpForGreaterThanOp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final OpExp exp = new OpExp(new IntegerExp(1), new GreaterThanOp(), new IntegerExp(1));
+		final Type expected = new BooleanType();
+		final Type received = typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+		assertEquals(expected, received);
+	}
+	
+	//test typeOfOp method for EqualEqualsOp
+	@Test
+	public void testTypeOfOpForEqualEqualsOp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final OpExp exp = new OpExp(new IntegerExp(1), new EqualEqualsOp(), new IntegerExp(1));
+		final Type expected = new BooleanType();
+		final Type received = typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+		assertEquals(expected, received);
+	}
+	
+	//test typeOfOp method for NotEqualsOp
+	@Test
+	public void testTypeOfOpForNotEqualsOp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final OpExp exp = new OpExp(new IntegerExp(1), new NotEqualsOp(), new IntegerExp(1));
+		final Type expected = new BooleanType();
+		final Type received = typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+		assertEquals(expected, received);
+	}
+	
+	//test typeOfOp method for one incorrect type for BooleanType operation
+	//expecting an exception
+	@Test (expected = TypeErrorException.class)
+	public void testTypeOfOpForNotEqualsOpWithIncorrectTypeOneNonInt() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final OpExp exp = new OpExp(new IntegerExp(1), new NotEqualsOp(), new TrueExp());
+		typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+	}
+	
+	//test typeOfOp method for incorrect types for BooleanType operation both non int
+	//expecting an exception
+	@Test (expected = TypeErrorException.class)
+	public void testTypeOfOpForNotEqualsOpWithIncorrectTypesTwoNonInts() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final OpExp exp = new OpExp(new StrExp("hi"), new NotEqualsOp(), new TrueExp());
+		typechecker.typeOfOp(exp, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+	}
+	
+	//tests assertEqualOrSubtypeOf method for the same two types
+	//void method so we are just making sure no exception is thrown
+	@Test
+	public void testAssertEqualsOrSubtypeOfTwoSameTypes() throws TypeErrorException {
+		//takes in: Type, Type
+		//returns: nothing
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		typechecker.assertEqualOrSubtypeOf(new IntType(), new IntType());
+	}
+	
+	//tests assertEqualOrSubtypeOf method for first is subtype of second
+	//void method so we are just making sure no exception is thrown
+	@Test
+	public void testAssertEqualsOrSubtypeOfWhereFirstIsSubtypeOfSecond() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final ClassDefinition classDef = new ClassDefinition(new Classname("Dog"), new Classname("Animal"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		final Classname classname = new Classname("Dog");
+		typechecker.classes.put(classname, classDef);
+		final Classname parentClassname = new Classname("Animal");
+		final ClassDefinition parentClassDef = new ClassDefinition(new Classname("Animal"), new Classname("Object"), new ArrayList<VariableDeclaration>(), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(parentClassname, parentClassDef);
+		typechecker.assertEqualOrSubtypeOf(new ClassnameType(classname), new ClassnameType(parentClassname));
+	}
+	
+	//tests assertEqualOrSubtypeOf method for incompatible types: one ClassnameType, one not
+	//expecting an exception
+	@Test (expected = TypeErrorException.class)
+	public void testAssertEqualsOrSubtypeOfIncompatibleTypesOneClassnameTypeOneNot() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		typechecker.assertEqualOrSubtypeOf(new ClassnameType(new Classname("doesn't matter")), new IntType());
+	}
+	
+	//tests assertEqualOrSubtypeOf method for incompatible types: neither are ClassnameTypes
+	//expecting an exception
+	@Test (expected = TypeErrorException.class)
+	public void testAssertEqualsOrSubtypeOfIncompatibleTypesNeitherClassnameTypes() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		typechecker.assertEqualOrSubtypeOf(new IntType(), new StringType());
+	}
+	
+/* 	//tests typeOfMethodCall
+	@Test
+	public void testTypeOfMethodCall() throws TypeErrorException {
+		//takes in: VarMethodCall, Map<Variable, Type>, Classname
+		//returns: Type
+		final VarMethodCall exp = new VarMethodCall(new ClassnameExp(new Classname("Dog")), new MethodNameExp(new Methodname("find")), new ArrayList<Exp>());
+		//come back to this becasue need to test expectedReturnTypeForClassAndMethod first
+	} */
+	
+	//tests expressionsOk for an unequal length of lists of params
+	//expecting an exception
+	@Test (expected = TypeErrorException.class)
+	public void testExpressionsOkUnEqualLengthOfParams() throws TypeErrorException {
+		//takes in: List<Type>, List<Exp>, Map<Variable, Type>, Classname
+		//returns: nothing
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<Type> expectedTypes = new ArrayList<Type>();
+		final List<Exp> receivedExps = new ArrayList<Exp>();
+		expectedTypes.add(new IntType());
+		receivedExps.add(new IntegerExp(0));
+		receivedExps.add(new TrueExp());
+		typechecker.expressionsOk(expectedTypes, receivedExps, null, null);
+	}
+	
+	//tests expressionsOk for one param of the same type
+	//void method; not using assert; just making sure it doesn't throw any exceptions
+	@Test
+	public void testExpressionsOkOneParamSameType() throws TypeErrorException {
+		//takes in: List<Type>, List<Exp>, Map<Variable, Type>, Classname
+		//returns: nothing
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<Type> expectedTypes = new ArrayList<Type>();
+		final List<Exp> receivedExps = new ArrayList<Exp>();
+		expectedTypes.add(new IntType());
+		receivedExps.add(new IntegerExp(0));
+		typechecker.expressionsOk(expectedTypes, receivedExps, new HashMap<Variable, Type>(), new Classname("doesn't matter"));
+	}
+	
+	//tests expectedConstructorTypesForClass method for base class
+	//should return an empty list
+	@Test
+	public void testExpectedConstructorTypesForClassForBaseClass() throws TypeErrorException {
+		//takes in: Classname
+		//returns: List<Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("Object");
+		final List<Type> expected = new ArrayList<Type>();
+		final List<Type> received = typechecker.expectedConstructorTypesForClass(className);
+		assertEquals(expected, received);
+	}
+	
+	//tests expectedConstructorTypesForClass method for arbitrary class with one constructor param
+	@Test
+	public void testExpectedConstructorTypesForClassForArbitraryClassWithOneConstructorParam() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Classname className = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new StringType(), new VariableExp(new Variable("name"))));
+		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(className, classDef);
+		final List<Type> expected = new ArrayList<Type>();
+		expected.add(new StringType());
+		final List<Type> received = typechecker.expectedConstructorTypesForClass(className);
+		assertEquals(expected, received);
+	}
+	
 	//test typeOf method for a True expression
 	@Test
 	public void testTypeOfForTrueExp() throws TypeErrorException {
@@ -345,6 +537,18 @@ public class TypecheckerTest {
 		typeEnvironment.put(new Variable("x"), new IntType());
 		final Type expected = new IntType();
 		final Type received = typechecker.typeOf(new VariableExp(new Variable("x")), typeEnvironment, null);
+		assertEquals(expected, received);
+	}
+	
+	//test typeOf method for a OpExp expression
+	@Test
+	public void testTypeOfForOpExp() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		final Classname classname = new Classname("doesn't matter");
+		final Type expected = new IntType();
+		final Type received = typechecker.typeOf(new OpExp(new IntegerExp(0), new PlusOp(), new IntegerExp(1)), typeEnvironment, classname);
 		assertEquals(expected, received);
 	}
 }
