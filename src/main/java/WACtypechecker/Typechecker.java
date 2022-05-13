@@ -16,8 +16,6 @@ public class Typechecker {
 	public static final String BASE_CLASS_NAME = "Object";
 	public final Map<Classname, ClassDefinition> classes;
 	// includes inherited methods
-	//public final Map<Classname, Map<Methodname, MethodDefinition>> methods;
-	//public final Map<Classname, Map<Methodname, List<MethodDefinition>>> methods;
 	public final Map<Classname, DuplicateMap<Methodname, MethodDefinition>> methods;
 	public final Program program;
 
@@ -75,20 +73,12 @@ public class Typechecker {
 	// includes inherited methods
 	// allows method overloading with diff # of params
 	// but currently not same # of params with diff types
-	//public static Map<Methodname, MethodDefinition> methodsForClass(final Classname className, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
-	//public static Map<Methodname, List<MethodDefinition>> methodsForClass(final Classname className, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
 		public static DuplicateMap<Methodname, MethodDefinition> methodsForClass(final Classname className, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
 		final ClassDefinition classDef = getClass(className, classes);
 		if (classDef == null) {
-			//return new HashMap<Methodname, MethodDefinition>();
-			//return new HashMap<Methodname, List<MethodDefinition>>();
 			return new DuplicateMap<Methodname, MethodDefinition>();
 		} else {
-			//final Map<Methodname, MethodDefinition> retval = methodsForClass(classDef.extendsClassname, classes);
-			//final Map<Methodname, List<MethodDefinition>> retval = methodsForClass(classDef.extendsClassname, classes);
 			final DuplicateMap<Methodname, MethodDefinition> retval = methodsForClass(classDef.extendsClassname, classes);
-			//final List<MethodDefinition> listOfMethods = new ArrayList<MethodDefinition>();
-			//final Set<Methodname> methodsOnThisClass = new HashSet<Methodname>();
 			final Map<Methodname, Integer> methodsOnThisClass = new HashMap<Methodname, Integer>();
 			for (final MethodDefinition methodDef : classDef.methoddefs) {
 				final Methodname methodName = methodDef.methodname;
@@ -96,22 +86,15 @@ public class Typechecker {
 					throw new TypeErrorException("duplicate method: " + methodName);
 				}
 				methodsOnThisClass.put(methodName, methodDef.params.size());
-				//listOfMethods.add(methodDef);
-				//retval.put(methodName, methodDef);
 				retval.put(methodName, methodDef);
 			}
 			return retval;
 		}
 	}
 
-	//public static Map<Classname, Map<Methodname, MethodDefinition>> makeMethodMap(final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
-	//public static Map<Classname, Map<Methodname, List<MethodDefinition>>> makeMethodMap(final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
 	public static Map<Classname, DuplicateMap<Methodname, MethodDefinition>> makeMethodMap(final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
-		//final Map<Classname, Map<Methodname, MethodDefinition>> retval = new HashMap<Classname, Map<Methodname, MethodDefinition>>();
-		//final Map<Classname, Map<Methodname, List<MethodDefinition>>> retval = new HashMap<Classname, Map<Methodname, List<MethodDefinition>>>();
 		final Map<Classname, DuplicateMap<Methodname, MethodDefinition>> retval = new HashMap<Classname, DuplicateMap<Methodname, MethodDefinition>>();
 		for (final Classname className : classes.keySet()) {
-			//methodList.add(methodsForClass(className, classes));
 			retval.put(className, methodsForClass(className, classes));
 		}
 		return retval;
@@ -134,7 +117,6 @@ public class Typechecker {
 
 	public Typechecker(final Program program) throws TypeErrorException {
 		this.program = program;
-		// this.classes = program.classes;
 		classes = makeClassMap(program.classes);
 		methods = makeMethodMap(classes);
 	}
@@ -172,37 +154,20 @@ public class Typechecker {
 	}
 
 	public MethodDefinition getMethodDef(final Classname className, final Methodname methodName, final int numOfParams) throws TypeErrorException {
-		//final Map<Methodname, MethodDefinition> methodMap = methods.get(className);
-		//final Map<Methodname, List<MethodDefinition>> methodMap = methods.get(className);
 		final DuplicateMap<Methodname, MethodDefinition> methodMap = methods.get(className);
 		if (methodMap == null) {
 			throw new TypeErrorException("Unknown class name: " + className);
 		} else {
-			//Collection<MethodDefinition> defs = methodMap.values();
 			List<MethodDefinition> defs = methodMap.get(methodName);
 			if (defs != null) {
 				for (final MethodDefinition def : defs) {
 					if (def.methodname.equals(methodName) && def.params.size() == numOfParams) {
-						//final MethodDefinition retVal = def;
 						return def;
 					}
 				}
 			}
 			throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className + " with " + numOfParams + " params");
 		}
-		
-		//old getMethodDef from before I fixed the issue with method overloading will delete later
-/* 		final Map<Methodname, MethodDefinition> methodMap = methods.get(className);
-		if (methodMap == null) {
-			throw new TypeErrorException("Unknown class name: " + className);
-		} else {
-			final MethodDefinition methodDef = methodMap.get(methodName);
-			if (methodDef == null) {
-				throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className);
-			} else {
-				return methodDef;
-			}
-		} */
 	}
 
 	// helper method for typeOfMethodCall
@@ -213,9 +178,7 @@ public class Typechecker {
 	}
 
 	// helper method for typeOfMethodCall
-	//public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName) throws TypeErrorException {
 	public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName, final int numOfParams) throws TypeErrorException {
-		//final MethodDefinition methodDef = getMethodDef(className, methodName);
 		final MethodDefinition methodDef = getMethodDef(className, methodName, numOfParams);
 		final List<Type> retval = new ArrayList<Type>();
 		for (final Parameter param : methodDef.params) {
