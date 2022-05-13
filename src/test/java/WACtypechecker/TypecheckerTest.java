@@ -562,7 +562,7 @@ public class TypecheckerTest {
 		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
 		typechecker.classes.put(className, classDef);
 		final List<Type> expected = new ArrayList<Type>();
-		expected.add(new StringType());
+		expected.add(new ClassnameType(className));
 		final List<Exp> newClassParams = new ArrayList<Exp>();
 		newClassParams.add(new StrExp("Orange"));
 		final NewClassExp newClassExp = new NewClassExp(new ClassnameExp(className), newClassParams);
