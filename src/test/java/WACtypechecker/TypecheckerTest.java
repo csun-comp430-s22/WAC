@@ -979,4 +979,39 @@ public class TypecheckerTest {
 		typechecker.classes.put(classname, classDef);
 		typechecker.baseTypeEnvironmentForClass(classname);
 	}
+	
+	//tests isWellTypedClassDef for normal class definition
+	//void method so we aren't using assert, just making sure it doesn't throw any exceptions
+	@Test
+	public void testIsWellTypedClassDefNormal() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final Classname classname = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final List<MethodDefinition> methodDefs = new ArrayList<MethodDefinition>();
+		final MethodDefinition methodDef = new MethodDefinition(new StringType(), new Methodname("find"), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)));
+		methodDefs.add(methodDef);
+		final ClassDefinition classDef = new ClassDefinition(classname, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), methodDefs);
+		typechecker.classes.put(classname, classDef);
+		typechecker.isWellTypedClassDef(classDef);
+	}
+	
+	//tests isWellTypedClassDef for unhappy path where there are duplicate variables in the constructor
+	//expecting an exception
+	@Test(expected = TypeErrorException.class)
+	public void testIsWellTypedClassDefUnhappyPathDuplicateVariableInConstructor() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final Classname classname = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final List<MethodDefinition> methodDefs = new ArrayList<MethodDefinition>();
+		final MethodDefinition methodDef = new MethodDefinition(new StringType(), new Methodname("find"), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)));
+		methodDefs.add(methodDef);
+		final ClassDefinition classDef = new ClassDefinition(classname, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), methodDefs);
+		typechecker.classes.put(classname, classDef);
+		typechecker.isWellTypedClassDef(classDef);
+	}
 }
