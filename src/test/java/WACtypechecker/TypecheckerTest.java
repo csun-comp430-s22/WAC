@@ -1288,4 +1288,23 @@ public class TypecheckerTest {
 		typechecker.classes.put(classname, classDef);
 		typechecker.isWellTypedClassDef(classDef);
 	}
+	
+	//tests isWellTypedProgram
+	@Test
+	public void testIsWellTypedProgram() throws TypeErrorException {
+		final Classname classname = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final List<MethodDefinition> methodDefs = new ArrayList<MethodDefinition>();
+		final MethodDefinition methodDef = new MethodDefinition(new StringType(), new Methodname("find"), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)));
+		methodDefs.add(methodDef);
+		final ClassDefinition classDef = new ClassDefinition(classname, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), methodDefs);
+		List<ClassDefinition> classDefs = new ArrayList<ClassDefinition>();
+		classDefs.add(classDef);
+		final Stmt stmt = new ExpStmt(new IntegerExp(0));
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		stmts.add(stmt);
+		final Typechecker typechecker = new Typechecker(new Program(classDefs, stmts));
+		typechecker.isWellTypedProgram();
+	}
 }
