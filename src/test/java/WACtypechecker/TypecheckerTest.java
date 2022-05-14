@@ -892,6 +892,55 @@ public class TypecheckerTest {
 		assertEquals(expected, received);
 	}
 	
+	// test isWellTypedVar
+	// int X = 0;
+	@Test
+	public void testIsWellTypedVarIntegerDeclaration() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final VariableDeclaration vardec = new VariableDeclaration(new IntType(), new VariableExp(new Variable("X")), new IntegerExp(0));
+		final Map<Variable, Type> expected = new HashMap<Variable, Type>();
+		expected.put(new Variable("X"), new IntType());
+		final Map<Variable, Type> received = typechecker.isWellTypedVar(vardec, typeEnvironment, new Classname("DeweyIsCool"));
+		assertEquals(received, expected);
+	}
+
+	// test isWellTypedVar
+	// String X = "dog"
+	@Test
+	public void testIsWellTypedVarStringDeclaration() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final VariableDeclaration vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("X")), new StrExp("dog"));
+		final Map<Variable, Type> expected = new HashMap<Variable, Type>();
+		expected.put(new Variable("X"), new StringType());
+		final Map<Variable, Type> received = typechecker.isWellTypedVar(vardec, typeEnvironment, new Classname("DeweyIsCool"));
+		assertEquals(received, expected);
+	}
+
+	// test for isWellTypedValueChange
+	@Test
+	public void testIsWellTypedValueChange() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final VariableValueChange valChange = new VariableValueChange(new VariableExp(new Variable("X")), new IntegerExp(0));
+		typeEnvironment.put(new Variable("X"), new IntType());
+		final Map<Variable, Type> received = typechecker.isWellTypedValueChange(valChange, typeEnvironment, new Classname("DogClass"));
+		assertEquals(received, typeEnvironment);
+	}
+
+	// test for isWellTypedValueChange
+	// incorrect type
+	@Test(expected = TypeErrorException.class)
+	public void testIsWellTypedValueChangeWrongType() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final VariableValueChange valChange = new VariableValueChange(new VariableExp(new Variable("X")), new StrExp("cat"));
+		typeEnvironment.put(new Variable("X"), new IntType());
+		final Map<Variable, Type> expected = typeEnvironment;
+		typechecker.isWellTypedValueChange(valChange, expected, new Classname("DogClass"));
+	}
+	
 	//tests isWellTypedWhile for normal circumstance
 	@Test
 	public void testIsWellTypedWhileNormal() throws TypeErrorException {
@@ -1046,55 +1095,6 @@ public class TypecheckerTest {
 		final Map<Variable, Type> received = typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))) , typeEnvironment, classname, null);
 		assertEquals(expected, received);
 	}
-
-	// test isWellTypedVar
-	// int X = 0;
-	@Test
-	public void testIsWellTypedVarIntegerDeclaration() throws TypeErrorException {
-		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
-		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
-		final VariableDeclaration vardec = new VariableDeclaration(new IntType(), new VariableExp(new Variable("X")), new IntegerExp(0));
-		final Map<Variable, Type> expected = new HashMap<Variable, Type>();
-		expected.put(new Variable("X"), new IntType());
-		final Map<Variable, Type> received = typechecker.isWellTypedVar(vardec, typeEnvironment, new Classname("DeweyIsCool"));
-		assertEquals(received, expected);
-	}
-
-	// test isWellTypedVar
-	// String X = "dog"
-	@Test
-	public void testIsWellTypedVarStringDeclaration() throws TypeErrorException {
-		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
-		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
-		final VariableDeclaration vardec = new VariableDeclaration(new StringType(), new VariableExp(new Variable("X")), new StrExp("dog"));
-		final Map<Variable, Type> expected = new HashMap<Variable, Type>();
-		expected.put(new Variable("X"), new StringType());
-		final Map<Variable, Type> received = typechecker.isWellTypedVar(vardec, typeEnvironment, new Classname("DeweyIsCool"));
-		assertEquals(received, expected);
-	}
-
-	// test for isWellTypedValueChange
-	@Test
-	public void testIsWellTypedValueChange() throws TypeErrorException {
-		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
-		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
-		final VariableValueChange valChange = new VariableValueChange(new VariableExp(new Variable("X")), new IntegerExp(0));
-		typeEnvironment.put(new Variable("X"), new IntType());
-		final Map<Variable, Type> received = typechecker.isWellTypedValueChange(valChange, typeEnvironment, new Classname("DogClass"));
-		assertEquals(received, typeEnvironment);
-	}
-
-	// test for isWellTypedValueChange
-	// incorrect type
-	@Test(expected = TypeErrorException.class)
-	public void testIsWellTypedValueChangeWrongType() throws TypeErrorException {
-		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
-		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
-		final VariableValueChange valChange = new VariableValueChange(new VariableExp(new Variable("X")), new StrExp("cat"));
-		typeEnvironment.put(new Variable("X"), new IntType());
-		final Map<Variable, Type> expected = typeEnvironment;
-		typechecker.isWellTypedValueChange(valChange, expected, new Classname("DogClass"));
-
 	
 	//test isWellTypedThis method for statement this.var = var . Statement also has different variable names . This.var is x . var is y . Should fail at first if branch second condition 
 		@Test(expected = TypeErrorException.class)
