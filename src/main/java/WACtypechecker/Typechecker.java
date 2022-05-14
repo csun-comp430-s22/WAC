@@ -159,11 +159,13 @@ public class Typechecker {
 			throw new TypeErrorException("Unknown class name: " + className);
 		} else {
 			List<MethodDefinition> defs = methodMap.get(methodName);
-			if (defs != null) {
-				for (final MethodDefinition def : defs) {
-					if (def.methodname.equals(methodName) && def.params.size() == numOfParams) {
-						return def;
-					}
+			if (defs == null) {
+				throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className + " with " + numOfParams + " params");
+			}
+			for (final MethodDefinition def : defs) {
+				//if (def.methodname.equals(methodName) && def.params.size() == numOfParams) {
+				if (def.params.size() == numOfParams) {
+					return def;
 				}
 			}
 			throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className + " with " + numOfParams + " params");
