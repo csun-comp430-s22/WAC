@@ -941,4 +941,42 @@ public class TypecheckerTest {
 		final MethodDefinition methodDef = new MethodDefinition(new StringType(), new Methodname("find"), params, new ExpStmt(new IntegerExp(0)));
 		typechecker.isWellTypedMethodDef(methodDef, new HashMap<Variable, Type>(), new Classname("idk"));
 	}
+	
+	//tests baseTypeEnvironmentForClass for base class ("Object")
+	//void method so we aren't using assert, just making sure it doesn't throw any exceptions
+	@Test
+	public void testBaseTypeEnvironmentForClassBaseClassObject() throws TypeErrorException {
+		//takes in: Classname
+		//returns: Map<Variable, Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		typechecker.baseTypeEnvironmentForClass(new Classname("Object"));
+	}
+	
+	//tests baseTypeEnvironmentForClass for some arbitrary class
+	//void method so we aren't using assert, just making sure it doesn't throw any exceptions
+	@Test
+	public void testBaseTypeEnvironmentForClassArbitraryClass() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		vardecs.add(new VariableDeclaration(new IntType(), new VariableExp(new Variable("x")), new IntegerExp(0)));
+		final Classname classname = new Classname("Dog");
+		final ClassDefinition classDef = new ClassDefinition(classname, new Classname("Object"), vardecs, new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(classname, classDef);
+		typechecker.baseTypeEnvironmentForClass(classname);
+	}
+	
+	//tests baseTypeEnvironmentForClass for a class with a duplicate instance variable
+	//void method so we aren't using assert, just making sure it doesn't throw any exceptions
+	//expecting and exception
+	@Test(expected = TypeErrorException.class)
+	public void testBaseTypeEnvironmentForClassUnhappyPathDuplicateInstanceVariable() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		vardecs.add(new VariableDeclaration(new IntType(), new VariableExp(new Variable("x")), new IntegerExp(0)));
+		vardecs.add(new VariableDeclaration(new IntType(), new VariableExp(new Variable("x")), new IntegerExp(0)));
+		final Classname classname = new Classname("Dog");
+		final ClassDefinition classDef = new ClassDefinition(classname, new Classname("Object"), vardecs, new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(classname, classDef);
+		typechecker.baseTypeEnvironmentForClass(classname);
+	}
 }
