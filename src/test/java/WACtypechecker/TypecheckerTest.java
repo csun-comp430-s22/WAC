@@ -970,6 +970,36 @@ public class TypecheckerTest {
 		assertEquals(expected, received);
 	}
 	
+	//tests isWellTypedSuperParametersToVarType should return true
+	@Test
+	public void testIsWellTypedSuperParametersToVarTypeReturnTrue() throws TypeErrorException {
+		//takes in: ClassDefinition, Exp, Map<Variable, Type>, Classname
+		//returns: boolean
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("hi"), new StringType());
+		final Classname className = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new StringType(), new StrExp("hi")));
+		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		final boolean received = typechecker.isWellTypedSuperParametersToVarType(classDef, new VariableExp(new Variable("hi")), typeEnvironment, new Classname("idk"));
+		assertEquals(true, received);
+	}
+	
+	//tests isWellTypedSuperParametersToVarType should return false
+	@Test
+	public void testIsWellTypedSuperParametersToVarTypeShouldReturnFalse() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("hi"), new StringType());
+		final Classname className = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new IntegerExp(0)));
+		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		final boolean received = typechecker.isWellTypedSuperParametersToVarType(classDef, new VariableExp(new Variable("hi")), typeEnvironment, new Classname("idk"));
+		assertEquals(false, received);
+	}
+	
 	//test isWellTypedThis method for statement this.var = var
 	@Test
 	public void testStatementThis() throws TypeErrorException {
