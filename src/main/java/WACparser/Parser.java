@@ -359,7 +359,7 @@ public class Parser {
 		assertTokenHereIs(position+2, new VariableToken(var) );
 		assertTokenHereIs(position+3, new CloseparToken());
 		assertTokenHereIs(position+4, new SemicolToken());
-		return new ParseResult<Stmt>(new SuperStmt(((SuperToken)token).toString(),new VariableExp(new Variable(var))),position+5);
+		return new ParseResult<Stmt>(new SuperStmt(new VariableExp(new Variable(var))), position+5);
 	}
 	
 	

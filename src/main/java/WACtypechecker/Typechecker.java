@@ -124,7 +124,7 @@ public class Typechecker {
 	public static Type typeOfVariable(final VariableExp exp, final Map<Variable, Type> typeEnvironment) throws TypeErrorException {
 		final Type mapType = typeEnvironment.get(exp.variable);
 		if (mapType == null) {
-			throw new TypeErrorException("Used variable note in scope: " + exp.variable.name);
+			throw new TypeErrorException("Used variable not in scope: " + exp.variable.name);
 		} else {
 			return mapType;
 		}
@@ -375,7 +375,7 @@ public class Typechecker {
 
 	// helper method for super(var): For super's parameter types and var type
 	// comparison match result.
-	public boolean isWellTypedSuperParameterstoVarType(ClassDefinition superclass, Exp variable,
+	public boolean isWellTypedSuperParametersToVarType(ClassDefinition superclass, Exp variable,
 			Map<Variable, Type> typeEnviornment, Classname classWeAreIn) throws TypeErrorException {
 		Type varType = typeOf(variable, typeEnviornment, classWeAreIn);
 		boolean typeIsAMatch = false;
@@ -402,7 +402,7 @@ public class Typechecker {
 			hasSuper = true;
 		}
 		if ((hasSuper)
-				&& (isWellTypedSuperParameterstoVarType(superClass, stmt.variable, typeEnviornment, classWeAreIn))) {
+				&& (isWellTypedSuperParametersToVarType(superClass, stmt.variable, typeEnviornment, classWeAreIn))) {
 			return typeEnviornment;
 		} else {
 			throw new TypeErrorException("Class " + classWeAreIn.name

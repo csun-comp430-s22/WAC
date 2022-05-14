@@ -955,6 +955,73 @@ public class TypecheckerTest {
 		assertEquals(expected, received);
 	}
 	
+	//tests isWellTypedPrint
+	@Test
+	public void testIsWellTypedPrint() throws TypeErrorException {
+		//takes in: PrintlnStmt, Map<Variable, Type>, Classname
+		//returns: Map<Variable, Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final Classname classname = new Classname("doesn't matter");
+		final Map<Variable, Type> expected = typeEnvironment;
+		final List<Exp> printExps = new ArrayList<Exp>();
+		printExps.add(new IntegerExp(1));
+		final Map<Variable, Type> received = typechecker.isWellTypedPrint(new PrintlnStmt(printExps), typeEnvironment, classname);
+		assertEquals(expected, received);
+	}
+	
+	//tests isWellTypedSuperParametersToVarType should return true
+	@Test
+	public void testIsWellTypedSuperParametersToVarTypeReturnTrue() throws TypeErrorException {
+		//takes in: ClassDefinition, Exp, Map<Variable, Type>, Classname
+		//returns: boolean
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("hi"), new StringType());
+		final Classname className = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new StringType(), new StrExp("hi")));
+		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		final boolean received = typechecker.isWellTypedSuperParametersToVarType(classDef, new VariableExp(new Variable("hi")), typeEnvironment, new Classname("idk"));
+		assertEquals(true, received);
+	}
+	
+	//tests isWellTypedSuperParametersToVarType should return false
+	@Test
+	public void testIsWellTypedSuperParametersToVarTypeShouldReturnFalse() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("hi"), new StringType());
+		final Classname className = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new IntegerExp(0)));
+		final ClassDefinition classDef = new ClassDefinition(className, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		final boolean received = typechecker.isWellTypedSuperParametersToVarType(classDef, new VariableExp(new Variable("hi")), typeEnvironment, new Classname("idk"));
+		assertEquals(false, received);
+	}
+	
+	//tests isWellTypedSuper
+	@Test
+	public void testIsWellTypedSuper() throws TypeErrorException {
+		//takes in: SuperStmt, Map<Variable, Type>, Classname, Type
+		//returns: Map<Variable, Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		final Classname classname = new Classname("Dog");
+		final Classname parentClassname = new Classname("Animal");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final ClassDefinition classDef = new ClassDefinition(classname, new Classname("Animal"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		final ClassDefinition parentClassDef = new ClassDefinition(parentClassname, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(classname, classDef);
+		typechecker.classes.put(parentClassname, parentClassDef);
+		final Type funcReturnType = new BooleanType();
+		final Map<Variable, Type> expected = typeEnvironment;
+		final Map<Variable, Type> received = typechecker.isWellTypedSuper(new SuperStmt(new VariableExp(new Variable("x"))), typeEnvironment, classname, funcReturnType);
+		assertEquals(expected, received);
+	}
+	
 	//test isWellTypedThis method for statement this.var = var
 	@Test
 	public void testStatementThis() throws TypeErrorException {
@@ -978,6 +1045,41 @@ public class TypecheckerTest {
 		final Map<Variable, Type> expected = typeEnvironment;
 		final Map<Variable, Type> received = typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))) , typeEnvironment, classname, null);
 		assertEquals(expected, received);
+	}
+	
+	//test isWellTypedThis method for statement this.var = var . Statement also has different variable names . This.var is x . var is y . Should fail at first if branch second condition 
+		@Test(expected = TypeErrorException.class)
+		public void testStatementThis_Different_Var_Fail_1_A() throws TypeErrorException {
+			final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+			final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+			typeEnvironment.put(new Variable("x"), new IntType());
+			typeEnvironment.put(new Variable("y"), new IntType());
+			final Classname classname = new Classname("doesn't matter");
+			final Map<Variable, Type> expected = typeEnvironment;
+			final Map<Variable, Type> received = typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("z"))) , typeEnvironment, classname, null);
+			
+		}
+		
+	//test isWellTypedThis method for statement this.var = var . Statement also has different variable names . This.var is x . var is y . Should fail at first if branch  first condition 
+	@Test(expected = TypeErrorException.class)
+	public void testStatementThis_Different_Var_Fail_1_B() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		typeEnvironment.put(new Variable("y"), new IntType());
+		final Classname classname = new Classname("doesn't matter");
+		typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("z")), new VariableExp(new Variable("y"))) , typeEnvironment, classname, null);		
+		}
+	
+	//test isWellTypedThis method for statement this.var = var . Statement also has different variable names . This.var is x . var is y . Should fail at second if branch  
+	@Test(expected = TypeErrorException.class)
+	public void testStatementThis_Different_Var_Fail_2() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		typeEnvironment.put(new Variable("y"), new BooleanType());
+		final Classname classname = new Classname("doesn't matter");
+		typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))) , typeEnvironment, classname, null);		
 	}
 	
 	//tests isWellTypedMethodDef normal circumstance
