@@ -49,7 +49,8 @@ public class Typechecker {
 		return getParent(className, classes);
 	}
 
-	public static void assertInheritanceNonCyclicalForClass(final ClassDefinition classDef, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
+	public static void assertInheritanceNonCyclicalForClass(final ClassDefinition classDef,
+			final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
 		final Set<Classname> seenClasses = new HashSet<Classname>();
 		seenClasses.add(classDef.classname);
 		ClassDefinition parentClassDef = getParent(classDef.classname, classes);
@@ -68,21 +69,24 @@ public class Typechecker {
 		for (final ClassDefinition classDef : classes.values()) {
 			assertInheritanceNonCyclicalForClass(classDef, classes);
 		}
-	}	
+	}
 
 	// includes inherited methods
 	// allows method overloading with diff # of params
 	// but currently not same # of params with diff types
-		public static DuplicateMap<Methodname, MethodDefinition> methodsForClass(final Classname className, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
+	public static DuplicateMap<Methodname, MethodDefinition> methodsForClass(final Classname className,
+			final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
 		final ClassDefinition classDef = getClass(className, classes);
 		if (classDef == null) {
 			return new DuplicateMap<Methodname, MethodDefinition>();
 		} else {
-			final DuplicateMap<Methodname, MethodDefinition> retval = methodsForClass(classDef.extendsClassname, classes);
+			final DuplicateMap<Methodname, MethodDefinition> retval = methodsForClass(classDef.extendsClassname,
+					classes);
 			final Map<Methodname, Integer> methodsOnThisClass = new HashMap<Methodname, Integer>();
 			for (final MethodDefinition methodDef : classDef.methoddefs) {
 				final Methodname methodName = methodDef.methodname;
-				if (methodsOnThisClass.containsKey(methodName) && methodsOnThisClass.containsValue(methodDef.params.size())) {
+				if (methodsOnThisClass.containsKey(methodName)
+						&& methodsOnThisClass.containsValue(methodDef.params.size())) {
 					throw new TypeErrorException("duplicate method: " + methodName);
 				}
 				methodsOnThisClass.put(methodName, methodDef.params.size());
@@ -92,7 +96,8 @@ public class Typechecker {
 		}
 	}
 
-	public static Map<Classname, DuplicateMap<Methodname, MethodDefinition>> makeMethodMap(final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
+	public static Map<Classname, DuplicateMap<Methodname, MethodDefinition>> makeMethodMap(
+			final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
 		final Map<Classname, DuplicateMap<Methodname, MethodDefinition>> retval = new HashMap<Classname, DuplicateMap<Methodname, MethodDefinition>>();
 		for (final Classname className : classes.keySet()) {
 			retval.put(className, methodsForClass(className, classes));
@@ -101,7 +106,8 @@ public class Typechecker {
 	}
 
 	// also makes sure inheritance hierarchies aren't cyclical
-	public static Map<Classname, ClassDefinition> makeClassMap(final List<ClassDefinition> classes) throws TypeErrorException {
+	public static Map<Classname, ClassDefinition> makeClassMap(final List<ClassDefinition> classes)
+			throws TypeErrorException {
 		final Map<Classname, ClassDefinition> retval = new HashMap<Classname, ClassDefinition>();
 		for (final ClassDefinition classDef : classes) {
 			final Classname className = classDef.classname;
@@ -121,7 +127,8 @@ public class Typechecker {
 		methods = makeMethodMap(classes);
 	}
 
-	public static Type typeOfVariable(final VariableExp exp, final Map<Variable, Type> typeEnvironment) throws TypeErrorException {
+	public static Type typeOfVariable(final VariableExp exp, final Map<Variable, Type> typeEnvironment)
+			throws TypeErrorException {
 		final Type mapType = typeEnvironment.get(exp.variable);
 		if (mapType == null) {
 			throw new TypeErrorException("Used variable not in scope: " + exp.variable.name);
@@ -130,17 +137,20 @@ public class Typechecker {
 		}
 	}
 
-	public Type typeOfOp(final OpExp exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
+	public Type typeOfOp(final OpExp exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn)
+			throws TypeErrorException {
 		final Type leftType = typeOf(exp.left, typeEnvironment, classWeAreIn);
 		final Type rightType = typeOf(exp.right, typeEnvironment, classWeAreIn);
-		if ((exp.op instanceof MultiplicationOp) || (exp.op instanceof DivisionOp) || (exp.op instanceof PlusOp) || (exp.op instanceof MinusOp)) {
+		if ((exp.op instanceof MultiplicationOp) || (exp.op instanceof DivisionOp) || (exp.op instanceof PlusOp)
+				|| (exp.op instanceof MinusOp)) {
 			if (leftType instanceof IntType && rightType instanceof IntType) {
 				return new IntType();
 			} else {
 				throw new TypeErrorException("Only integer operands allowed for arithmetic operations. Given: "
 						+ leftType + " and " + rightType);
 			}
-		} else if ((exp.op instanceof LessThanOp) || (exp.op instanceof GreaterThanOp) || (exp.op instanceof EqualEqualsOp) || (exp.op instanceof NotEqualsOp)) {
+		} else if ((exp.op instanceof LessThanOp) || (exp.op instanceof GreaterThanOp)
+				|| (exp.op instanceof EqualEqualsOp) || (exp.op instanceof NotEqualsOp)) {
 			if (leftType instanceof IntType && rightType instanceof IntType) {
 				return new BooleanType();
 			} else {
@@ -148,37 +158,43 @@ public class Typechecker {
 						+ leftType + " and " + rightType);
 			}
 		} else {
-			throw new TypeErrorException("Since this already exhaustively checks for every single Op we have in our language this code is UNREACHABLE, therefore UNTESTABLE."
-											+ "but Java doesn't understand this and thinks we still need an else. Ruining my code coverage >:(");
+			throw new TypeErrorException(
+					"Since this already exhaustively checks for every single Op we have in our language this code is UNREACHABLE, therefore UNTESTABLE."
+							+ "but Java doesn't understand this and thinks we still need an else. Ruining my code coverage >:(");
 		}
 	}
 
-	public MethodDefinition getMethodDef(final Classname className, final Methodname methodName, final int numOfParams) throws TypeErrorException {
+	public MethodDefinition getMethodDef(final Classname className, final Methodname methodName, final int numOfParams)
+			throws TypeErrorException {
 		final DuplicateMap<Methodname, MethodDefinition> methodMap = methods.get(className);
 		if (methodMap == null) {
 			throw new TypeErrorException("Unknown class name: " + className);
 		} else {
 			List<MethodDefinition> defs = methodMap.get(methodName);
 			if (defs == null) {
-				throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className + " with " + numOfParams + " params");
+				throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className + " with "
+						+ numOfParams + " params");
 			}
 			for (final MethodDefinition def : defs) {
 				if (def.params.size() == numOfParams) {
 					return def;
 				}
 			}
-			throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className + " with " + numOfParams + " params");
+			throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className + " with "
+					+ numOfParams + " params");
 		}
 	}
 
 	// helper method for typeOfMethodCall
-	public Type expectedReturnTypeForClassAndMethod(final Classname className, final Methodname methodName, final int numOfParams)
+	public Type expectedReturnTypeForClassAndMethod(final Classname className, final Methodname methodName,
+			final int numOfParams)
 			throws TypeErrorException {
 		return getMethodDef(className, methodName, numOfParams).type;
 	}
 
 	// helper method for typeOfMethodCall
-	public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName, final int numOfParams) throws TypeErrorException {
+	public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName,
+			final int numOfParams) throws TypeErrorException {
 		final MethodDefinition methodDef = getMethodDef(className, methodName, numOfParams);
 		final List<Type> retval = new ArrayList<Type>();
 		for (final Parameter param : methodDef.params) {
@@ -203,12 +219,15 @@ public class Typechecker {
 	// 1) varName should be a class
 	// 2) varName needs to have the methodName method
 	// 3) need to know the expected parameter types for the method
-	public Type typeOfMethodCall(final VarMethodCall exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
+	public Type typeOfMethodCall(final VarMethodCall exp, final Map<Variable, Type> typeEnvironment,
+			final Classname classWeAreIn) throws TypeErrorException {
 		final Type varNameType = typeOf(exp.varName, typeEnvironment, classWeAreIn);
 		if (varNameType instanceof ClassnameType) {
 			final Classname className = ((ClassnameType) varNameType).classname;
-			//final List<Type> expectedTypes = expectedParameterTypesForClassAndMethod(className, exp.methodName.name);
-			final List<Type> expectedTypes = expectedParameterTypesForClassAndMethod(className, exp.methodName.name, exp.inParens.size());
+			// final List<Type> expectedTypes =
+			// expectedParameterTypesForClassAndMethod(className, exp.methodName.name);
+			final List<Type> expectedTypes = expectedParameterTypesForClassAndMethod(className, exp.methodName.name,
+					exp.inParens.size());
 			expressionsOk(expectedTypes, exp.inParens, typeEnvironment, classWeAreIn);
 			return expectedReturnTypeForClassAndMethod(className, exp.methodName.name, exp.inParens.size());
 		} else {
@@ -216,7 +235,8 @@ public class Typechecker {
 		}
 	}
 
-	public void expressionsOk(final List<Type> expectedTypes, final List<Exp> receivedExpressions, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
+	public void expressionsOk(final List<Type> expectedTypes, final List<Exp> receivedExpressions,
+			final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
 		if (expectedTypes.size() != receivedExpressions.size()) {
 			throw new TypeErrorException("Wrong number of parameters for call: ");
 		}
@@ -243,7 +263,8 @@ public class Typechecker {
 
 	// new classname(exp*) in grammar
 	// new className(inParens) in NewClassExp.java
-	public Type typeOfNew(final NewClassExp exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
+	public Type typeOfNew(final NewClassExp exp, final Map<Variable, Type> typeEnvironment,
+			final Classname classWeAreIn) throws TypeErrorException {
 		// need to know what the constructor arguments for this class are
 		final List<Type> expectedTypes = expectedConstructorTypesForClass(exp.className.classname);
 		expressionsOk(expectedTypes, exp.inParens, typeEnvironment, classWeAreIn);
@@ -292,9 +313,9 @@ public class Typechecker {
 			final Classname classWeAreIn) throws TypeErrorException {
 		final Type expType = typeOf(stmt.value, typeEnvironment, classWeAreIn);
 		assertEqualOrSubtypeOf(expType, stmt.type);
-//		return addToMap(typeEnvironment, (Variable) stmt.variable, stmt.type);
+		// return addToMap(typeEnvironment, (Variable) stmt.variable, stmt.type);
 		// if above doesn't work I think this might work:
-		return addToMap(typeEnvironment, ((VariableExp)stmt.variable).variable, stmt.type);
+		return addToMap(typeEnvironment, ((VariableExp) stmt.variable).variable, stmt.type);
 	} // isWellTypedVar
 
 	// var = exp;
@@ -387,7 +408,6 @@ public class Typechecker {
 		return typeIsAMatch;
 	}
 
-
 	// super(var);
 	public Map<Variable, Type> isWellTypedSuper(final SuperStmt stmt,
 			final Map<Variable, Type> typeEnviornment,
@@ -409,9 +429,8 @@ public class Typechecker {
 		}
 	}
 
-
 	// cesar's method for this.var=var;
-	//helper method for isWellTypedStmt
+	// helper method for isWellTypedStmt
 	public Map<Variable, Type> isWellTypedThis(final ThisStmt var, final Map<Variable, Type> typeEnvironment,
 			final Classname classWeAreIn, final Type ReturnType) throws TypeErrorException {
 		if ((typeEnvironment.containsKey(var.ThisVar.variable)) && (typeEnvironment.containsKey(var.Var.variable))) {
@@ -445,8 +464,10 @@ public class Typechecker {
 			final Map<Variable, Type> typeEnvironment,
 			final Classname classWeAreIn,
 			final Type functionReturnType) throws TypeErrorException {
-		if (stmt instanceof VariableDeclaration) {
-			return isWellTypedVar((VariableDeclaration) stmt, typeEnvironment, classWeAreIn);
+		if (stmt instanceof VardecStmt) {
+			final VardecStmt tempStmt = (VardecStmt) (stmt);
+			final VariableDeclaration vDeclaration = tempStmt.variableDec.result;
+			return isWellTypedVar(vDeclaration, typeEnvironment, classWeAreIn);
 		} else if (stmt instanceof VariableValueChange) {
 			return isWellTypedValueChange((VariableValueChange) stmt, typeEnvironment, classWeAreIn);
 		} else if (stmt instanceof WhileStmt) {
