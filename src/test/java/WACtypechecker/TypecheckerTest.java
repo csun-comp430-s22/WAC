@@ -907,12 +907,35 @@ public class TypecheckerTest {
 		assertEquals(expected, received);
 	}
 	
-	//tets isWellTypedWhile for unhappy path: not a boolean guard
+	//tests isWellTypedWhile for unhappy path: not a boolean guard
 	//expecting an exception
 	@Test(expected = TypeErrorException.class)
 	public void testIsWellTypedWhileUnhappyPathNotBooleanGuard() throws TypeErrorException {
 		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		typechecker.isWellTypedWhile(new WhileStmt(new IntegerExp(0), new ExpStmt(new IntegerExp(0))), null, null, null);
+	}
+	
+	//tests isWellTypedIf for normal circumstance
+	@Test
+	public void testIsWellTypedIfNormal() throws TypeErrorException {
+		//takes in: IfStmt, Map<Variable, Type>, Classname, Type
+		//returns: Map<Variable, Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		final Classname classname = new Classname("doesn't matter");
+		final Type funcReturnType = new BooleanType();
+		final Map<Variable, Type> expected = typeEnvironment;
+		final Map<Variable, Type> received = typechecker.isWellTypedIf(new IfStmt(new FalseExp(), new ExpStmt(new IntegerExp(0)), new ExpStmt(new IntegerExp(0))), typeEnvironment, classname, funcReturnType);
+		assertEquals(expected, received);
+	}
+	
+	//tests isWellTypedIf for unhappy path: not a boolean guard
+	//expecting an exception
+	@Test(expected = TypeErrorException.class)
+	public void testIsWellTypedIfUnhappyPathNotBooleanGuard() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		typechecker.isWellTypedIf(new IfStmt(new StrExp("boo"), new ExpStmt(new IntegerExp(0)), new ExpStmt(new IntegerExp(0))), null, null, null);
 	}
 	
 	//test isWellTypedThis method for statement this.var = var
