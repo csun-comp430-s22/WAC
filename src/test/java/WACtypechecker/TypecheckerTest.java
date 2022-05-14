@@ -950,7 +950,19 @@ public class TypecheckerTest {
 		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
 		final VariableValueChange valChange = new VariableValueChange(new VariableExp(new Variable("X")), new IntegerExp(0));
 		typeEnvironment.put(new Variable("X"), new IntType());
-		final Map<Variable, Type> received = typechecker.isWellTypedValueChange(valChange, typeEnvironment, new Classname("DogClass")); //(valChange, typeEnvironment, new Classname("DeweyIsCool"));
+		final Map<Variable, Type> received = typechecker.isWellTypedValueChange(valChange, typeEnvironment, new Classname("DogClass"));
 		assertEquals(received, typeEnvironment);
+	}
+
+	// test for isWellTypedValueChange
+	// incorrect type
+	@Test(expected = TypeErrorException.class)
+	public void testIsWellTypedValueChangeWrongType() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final VariableValueChange valChange = new VariableValueChange(new VariableExp(new Variable("X")), new StrExp("cat"));
+		typeEnvironment.put(new Variable("X"), new IntType());
+		final Map<Variable, Type> expected = typeEnvironment;
+		typechecker.isWellTypedValueChange(valChange, expected, new Classname("DogClass"));
 	}
 }
