@@ -292,10 +292,9 @@ public class Typechecker {
 			final Classname classWeAreIn) throws TypeErrorException {
 		final Type expType = typeOf(stmt.value, typeEnvironment, classWeAreIn);
 		assertEqualOrSubtypeOf(expType, stmt.type);
-		return addToMap(typeEnvironment, (Variable) stmt.variable, stmt.type);
+//		return addToMap(typeEnvironment, (Variable) stmt.variable, stmt.type);
 		// if above doesn't work I think this might work:
-		// return addToMap(typeEnvironment, (((VariableExp)stmt.variable).variable,
-		// stmt.type);
+		return addToMap(typeEnvironment, ((VariableExp)stmt.variable).variable, stmt.type);
 	} // isWellTypedVar
 
 	// var = exp;
