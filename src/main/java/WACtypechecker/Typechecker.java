@@ -8,13 +8,15 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class Typechecker {
 
 	public static final String BASE_CLASS_NAME = "Object";
 	public final Map<Classname, ClassDefinition> classes;
 	// includes inherited methods
-	public final Map<Classname, Map<Methodname, MethodDefinition>> methods;
+	public final Map<Classname, DuplicateMap<Methodname, MethodDefinition>> methods;
 	public final Program program;
 
 	// throws an exception if the class doesn't exist
@@ -71,13 +73,12 @@ public class Typechecker {
 	// includes inherited methods
 	// allows method overloading with diff # of params
 	// but currently not same # of params with diff types
-	public static Map<Methodname, MethodDefinition> methodsForClass(final Classname className, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
+		public static DuplicateMap<Methodname, MethodDefinition> methodsForClass(final Classname className, final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
 		final ClassDefinition classDef = getClass(className, classes);
 		if (classDef == null) {
-			return new HashMap<Methodname, MethodDefinition>();
+			return new DuplicateMap<Methodname, MethodDefinition>();
 		} else {
-			final Map<Methodname, MethodDefinition> retval = methodsForClass(classDef.extendsClassname, classes);
-			//final Set<Methodname> methodsOnThisClass = new HashSet<Methodname>();
+			final DuplicateMap<Methodname, MethodDefinition> retval = methodsForClass(classDef.extendsClassname, classes);
 			final Map<Methodname, Integer> methodsOnThisClass = new HashMap<Methodname, Integer>();
 			for (final MethodDefinition methodDef : classDef.methoddefs) {
 				final Methodname methodName = methodDef.methodname;
@@ -91,8 +92,8 @@ public class Typechecker {
 		}
 	}
 
-	public static Map<Classname, Map<Methodname, MethodDefinition>> makeMethodMap(final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
-		final Map<Classname, Map<Methodname, MethodDefinition>> retval = new HashMap<Classname, Map<Methodname, MethodDefinition>>();
+	public static Map<Classname, DuplicateMap<Methodname, MethodDefinition>> makeMethodMap(final Map<Classname, ClassDefinition> classes) throws TypeErrorException {
+		final Map<Classname, DuplicateMap<Methodname, MethodDefinition>> retval = new HashMap<Classname, DuplicateMap<Methodname, MethodDefinition>>();
 		for (final Classname className : classes.keySet()) {
 			retval.put(className, methodsForClass(className, classes));
 		}
@@ -116,7 +117,6 @@ public class Typechecker {
 
 	public Typechecker(final Program program) throws TypeErrorException {
 		this.program = program;
-		// this.classes = program.classes;
 		classes = makeClassMap(program.classes);
 		methods = makeMethodMap(classes);
 	}
@@ -124,7 +124,7 @@ public class Typechecker {
 	public static Type typeOfVariable(final VariableExp exp, final Map<Variable, Type> typeEnvironment) throws TypeErrorException {
 		final Type mapType = typeEnvironment.get(exp.variable);
 		if (mapType == null) {
-			throw new TypeErrorException("Used variable note in scope: " + exp.variable.name);
+			throw new TypeErrorException("Used variable not in scope: " + exp.variable.name);
 		} else {
 			return mapType;
 		}
@@ -153,29 +153,33 @@ public class Typechecker {
 		}
 	}
 
-	public MethodDefinition getMethodDef(final Classname className, final Methodname methodName) throws TypeErrorException {
-		final Map<Methodname, MethodDefinition> methodMap = methods.get(className);
+	public MethodDefinition getMethodDef(final Classname className, final Methodname methodName, final int numOfParams) throws TypeErrorException {
+		final DuplicateMap<Methodname, MethodDefinition> methodMap = methods.get(className);
 		if (methodMap == null) {
 			throw new TypeErrorException("Unknown class name: " + className);
 		} else {
-			final MethodDefinition methodDef = methodMap.get(methodName);
-			if (methodDef == null) {
-				throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className);
-			} else {
-				return methodDef;
+			List<MethodDefinition> defs = methodMap.get(methodName);
+			if (defs == null) {
+				throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className + " with " + numOfParams + " params");
 			}
+			for (final MethodDefinition def : defs) {
+				if (def.params.size() == numOfParams) {
+					return def;
+				}
+			}
+			throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className + " with " + numOfParams + " params");
 		}
 	}
 
 	// helper method for typeOfMethodCall
-	public Type expectedReturnTypeForClassAndMethod(final Classname className, final Methodname methodName)
+	public Type expectedReturnTypeForClassAndMethod(final Classname className, final Methodname methodName, final int numOfParams)
 			throws TypeErrorException {
-		return getMethodDef(className, methodName).type;
+		return getMethodDef(className, methodName, numOfParams).type;
 	}
 
 	// helper method for typeOfMethodCall
-	public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName) throws TypeErrorException {
-		final MethodDefinition methodDef = getMethodDef(className, methodName);
+	public List<Type> expectedParameterTypesForClassAndMethod(final Classname className, final Methodname methodName, final int numOfParams) throws TypeErrorException {
+		final MethodDefinition methodDef = getMethodDef(className, methodName, numOfParams);
 		final List<Type> retval = new ArrayList<Type>();
 		for (final Parameter param : methodDef.params) {
 			retval.add(param.parameterType);
@@ -203,9 +207,10 @@ public class Typechecker {
 		final Type varNameType = typeOf(exp.varName, typeEnvironment, classWeAreIn);
 		if (varNameType instanceof ClassnameType) {
 			final Classname className = ((ClassnameType) varNameType).classname;
-			final List<Type> expectedTypes = expectedParameterTypesForClassAndMethod(className, exp.methodName.name);
+			//final List<Type> expectedTypes = expectedParameterTypesForClassAndMethod(className, exp.methodName.name);
+			final List<Type> expectedTypes = expectedParameterTypesForClassAndMethod(className, exp.methodName.name, exp.inParens.size());
 			expressionsOk(expectedTypes, exp.inParens, typeEnvironment, classWeAreIn);
-			return expectedReturnTypeForClassAndMethod(className, exp.methodName.name);
+			return expectedReturnTypeForClassAndMethod(className, exp.methodName.name, exp.inParens.size());
 		} else {
 			throw new TypeErrorException("Called method on non-class type: " + varNameType);
 		}
@@ -238,8 +243,7 @@ public class Typechecker {
 
 	// new classname(exp*) in grammar
 	// new className(inParens) in NewClassExp.java
-	public Type typeOfNew(final NewClassExp exp, final Map<Variable, Type> typeEnvironment,
-			final Classname classWeAreIn) throws TypeErrorException {
+	public Type typeOfNew(final NewClassExp exp, final Map<Variable, Type> typeEnvironment, final Classname classWeAreIn) throws TypeErrorException {
 		// need to know what the constructor arguments for this class are
 		final List<Type> expectedTypes = expectedConstructorTypesForClass(exp.className.classname);
 		expressionsOk(expectedTypes, exp.inParens, typeEnvironment, classWeAreIn);
@@ -288,10 +292,9 @@ public class Typechecker {
 			final Classname classWeAreIn) throws TypeErrorException {
 		final Type expType = typeOf(stmt.value, typeEnvironment, classWeAreIn);
 		assertEqualOrSubtypeOf(expType, stmt.type);
-		return addToMap(typeEnvironment, (Variable) stmt.variable, stmt.type);
+//		return addToMap(typeEnvironment, (Variable) stmt.variable, stmt.type);
 		// if above doesn't work I think this might work:
-		// return addToMap(typeEnvironment, (((VariableExp)stmt.variable).variable,
-		// stmt.type);
+		return addToMap(typeEnvironment, ((VariableExp)stmt.variable).variable, stmt.type);
 	} // isWellTypedVar
 
 	// var = exp;
@@ -371,7 +374,7 @@ public class Typechecker {
 
 	// helper method for super(var): For super's parameter types and var type
 	// comparison match result.
-	public boolean isWellTypedSuperParameterstoVarType(ClassDefinition superclass, Exp variable,
+	public boolean isWellTypedSuperParametersToVarType(ClassDefinition superclass, Exp variable,
 			Map<Variable, Type> typeEnviornment, Classname classWeAreIn) throws TypeErrorException {
 		Type varType = typeOf(variable, typeEnviornment, classWeAreIn);
 		boolean typeIsAMatch = false;
@@ -398,7 +401,7 @@ public class Typechecker {
 			hasSuper = true;
 		}
 		if ((hasSuper)
-				&& (isWellTypedSuperParameterstoVarType(superClass, stmt.variable, typeEnviornment, classWeAreIn))) {
+				&& (isWellTypedSuperParametersToVarType(superClass, stmt.variable, typeEnviornment, classWeAreIn))) {
 			return typeEnviornment;
 		} else {
 			throw new TypeErrorException("Class " + classWeAreIn.name
@@ -408,6 +411,7 @@ public class Typechecker {
 
 
 	// cesar's method for this.var=var;
+	//helper method for isWellTypedStmt
 	public Map<Variable, Type> isWellTypedThis(final ThisStmt var, final Map<Variable, Type> typeEnvironment,
 			final Classname classWeAreIn, final Type ReturnType) throws TypeErrorException {
 		if ((typeEnvironment.containsKey(var.ThisVar.variable)) && (typeEnvironment.containsKey(var.Var.variable))) {
