@@ -987,6 +987,27 @@ public class TypecheckerTest {
 		typechecker.isWellTypedIf(new IfStmt(new StrExp("boo"), new ExpStmt(new IntegerExp(0)), new ExpStmt(new IntegerExp(0))), null, null, null);
 	}
 	
+	//test isWellTypedReturn  should pass test  and reach else branch
+	@Test
+	public void testStatementReturn() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final Classname classname = new Classname("doesn't matter");
+		final Map<Variable, Type> expected = typeEnvironment;
+		final Map<Variable, Type> received = typechecker.isWellTypedReturn(new ReturnStmt(new TrueExp()), typeEnvironment, classname, new BooleanType());
+		assertEquals(expected, received);	
+	}	
+	
+	//test isWellTypedReturn  should fail test  and reach if branch
+	@Test(expected = TypeErrorException.class)
+	public void testStatementReturnFailure() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final Classname classname = new Classname("doesn't matter");
+		final Map<Variable, Type> expected = typeEnvironment;
+		final Map<Variable, Type> received = typechecker.isWellTypedReturn(new ReturnStmt(new TrueExp()), typeEnvironment, classname, null);
+	}	
+	
 	//tests isWellTypedBlock
 	@Test
 	public void testIsWellTypedBlock() throws TypeErrorException {
@@ -1131,28 +1152,7 @@ public class TypecheckerTest {
 		final Classname classname = new Classname("doesn't matter");
 		final Map<Variable, Type> expected = typeEnvironment;
 		final Map<Variable, Type> received = typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))) , typeEnvironment, classname, null);			
-	}
-	
-	//test isWellTypedReturn  should pass test  and reach else branch
-	@Test
-	public void testStatementReturn() throws TypeErrorException {
-		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
-		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
-		final Classname classname = new Classname("doesn't matter");
-		final Map<Variable, Type> expected = typeEnvironment;
-		final Map<Variable, Type> received = typechecker.isWellTypedReturn(new ReturnStmt(new TrueExp()), typeEnvironment, classname, new BooleanType());
-		assertEquals(expected, received);	
 	}	
-	
-	//test isWellTypedReturn  should fail test  and reach if branch
-	@Test(expected = TypeErrorException.class)
-	public void testStatementReturnFailure() throws TypeErrorException {
-		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
-		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
-		final Classname classname = new Classname("doesn't matter");
-		final Map<Variable, Type> expected = typeEnvironment;
-		final Map<Variable, Type> received = typechecker.isWellTypedReturn(new ReturnStmt(new TrueExp()), typeEnvironment, classname, null);
-	}		
 			
 	//tests isWellTypedMethodDef normal circumstance
 	//void method so we aren't using assert, just checking to make sure it doesn't throw an exception
