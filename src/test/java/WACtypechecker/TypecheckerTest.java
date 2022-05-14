@@ -938,6 +938,23 @@ public class TypecheckerTest {
 		typechecker.isWellTypedIf(new IfStmt(new StrExp("boo"), new ExpStmt(new IntegerExp(0)), new ExpStmt(new IntegerExp(0))), null, null, null);
 	}
 	
+	//tests isWellTypedBlock
+	@Test
+	public void testIsWellTypedBlock() throws TypeErrorException {
+		//takes in: BlockStmt, Map<Variable, Type>, Classname, Type
+		//returns: Map<Variable, Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		final Classname classname = new Classname("doesn't matter");
+		final Type funcReturnType = new BooleanType();
+		final Map<Variable, Type> expected = typeEnvironment;
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		stmts.add(new ExpStmt(new IntegerExp(0)));
+		final Map<Variable, Type> received = typechecker.isWellTypedBlock(new BlockStmt(stmts), typeEnvironment, classname, funcReturnType);
+		assertEquals(expected, received);
+	}
+	
 	//test isWellTypedThis method for statement this.var = var
 	@Test
 	public void testStatementThis() throws TypeErrorException {
