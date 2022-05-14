@@ -14,9 +14,7 @@ public class PrintlnStmt implements Stmt {
 	public boolean equals (final Object other) {
 		if (other instanceof PrintlnStmt) {
 			final PrintlnStmt otherPrintlnStmt = (PrintlnStmt)other;
-
 			return (exps.equals(otherPrintlnStmt.exps));
-
 		} else {
 			return false;
 		}
@@ -24,8 +22,6 @@ public class PrintlnStmt implements Stmt {
 	
 	
 	public String toString() {
-
 		return ("PrintlnStmt(" + exps.toString());
-
 	}
 }
