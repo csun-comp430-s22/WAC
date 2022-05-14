@@ -955,6 +955,21 @@ public class TypecheckerTest {
 		assertEquals(expected, received);
 	}
 	
+	//tests isWellTypedPrint
+	@Test
+	public void testIsWellTypedPrint() throws TypeErrorException {
+		//takes in: PrintlnStmt, Map<Variable, Type>, Classname
+		//returns: Map<Variable, Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final Classname classname = new Classname("doesn't matter");
+		final Map<Variable, Type> expected = typeEnvironment;
+		final List<Exp> printExps = new ArrayList<Exp>();
+		printExps.add(new IntegerExp(1));
+		final Map<Variable, Type> received = typechecker.isWellTypedPrint(new PrintlnStmt(printExps), typeEnvironment, classname);
+		assertEquals(expected, received);
+	}
+	
 	//test isWellTypedThis method for statement this.var = var
 	@Test
 	public void testStatementThis() throws TypeErrorException {
