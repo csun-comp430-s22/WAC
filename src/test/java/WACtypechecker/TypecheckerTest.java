@@ -1008,10 +1008,18 @@ public class TypecheckerTest {
 		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
 		typeEnvironment.put(new Variable("x"), new IntType());
-		final Classname classname = new Classname("doesn't matter");
+		final Classname classname = new Classname("Dog");
+		final Classname parentClassname = new Classname("Animal");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final ClassDefinition classDef = new ClassDefinition(classname, new Classname("Animal"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		final ClassDefinition parentClassDef = new ClassDefinition(parentClassname, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(classname, classDef);
+		typechecker.classes.put(parentClassname, parentClassDef);
 		final Type funcReturnType = new BooleanType();
 		final Map<Variable, Type> expected = typeEnvironment;
-		
+		final Map<Variable, Type> received = typechecker.isWellTypedSuper(new SuperStmt(new VariableExp(new Variable("x"))), typeEnvironment, classname, funcReturnType);
+		assertEquals(expected, received);
 	}
 	
 	//test isWellTypedThis method for statement this.var = var
