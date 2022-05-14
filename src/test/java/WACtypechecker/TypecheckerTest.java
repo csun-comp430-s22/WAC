@@ -942,4 +942,15 @@ public class TypecheckerTest {
 		final Map<Variable, Type> received = typechecker.isWellTypedVar(vardec, typeEnvironment, new Classname("DeweyIsCool"));
 		assertEquals(received, expected);
 	}
+
+	// test for isWellTypedValueChange
+	@Test
+	public void testIsWellTypedValueChange() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		final VariableValueChange valChange = new VariableValueChange(new VariableExp(new Variable("X")), new IntegerExp(0));
+		typeEnvironment.put(new Variable("X"), new IntType());
+		final Map<Variable, Type> received = typechecker.isWellTypedValueChange(valChange, typeEnvironment, new Classname("DogClass")); //(valChange, typeEnvironment, new Classname("DeweyIsCool"));
+		assertEquals(received, typeEnvironment);
+	}
 }
