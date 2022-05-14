@@ -1000,6 +1000,20 @@ public class TypecheckerTest {
 		assertEquals(false, received);
 	}
 	
+	//tests isWellTypedSuper
+	@Test
+	public void testIsWellTypedSuper() throws TypeErrorException {
+		//takes in: SuperStmt, Map<Variable, Type>, Classname, Type
+		//returns: Map<Variable, Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		final Classname classname = new Classname("doesn't matter");
+		final Type funcReturnType = new BooleanType();
+		final Map<Variable, Type> expected = typeEnvironment;
+		
+	}
+	
 	//test isWellTypedThis method for statement this.var = var
 	@Test
 	public void testStatementThis() throws TypeErrorException {
