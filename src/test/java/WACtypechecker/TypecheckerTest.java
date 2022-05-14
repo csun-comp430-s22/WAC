@@ -916,4 +916,29 @@ public class TypecheckerTest {
 		final Map<Variable, Type> received = typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))) , typeEnvironment, classname, null);
 		assertEquals(expected, received);
 	}
+	
+	//tests isWellTypedMethodDef normal circumstance
+	//void method so we aren't using assert, just checking to make sure it doesn't throw an exception
+	@Test
+	public void testIsWellTypedMethodDefNormal() throws TypeErrorException {
+		//takes in: MethodDefinition, Map<Variable, Type>, Classname
+		//returns: nothing
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new StringType(), new Methodname("find"), params, new ExpStmt(new IntegerExp(0)));
+		typechecker.isWellTypedMethodDef(methodDef, new HashMap<Variable, Type>(), new Classname("idk"));
+	}
+	
+	//tests isWellTypedMethodDef duplicate variable instance
+	//expecting an exception
+	@Test(expected = TypeErrorException.class)
+	public void testIsWellTypedMethodDefUnhappyPathDuplicateVariable() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new StringType(), new Methodname("find"), params, new ExpStmt(new IntegerExp(0)));
+		typechecker.isWellTypedMethodDef(methodDef, new HashMap<Variable, Type>(), new Classname("idk"));
+	}
 }
