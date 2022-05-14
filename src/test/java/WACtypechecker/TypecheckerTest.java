@@ -878,6 +878,20 @@ public class TypecheckerTest {
 		typechecker.typeOf(new MethodNameExp(new Methodname("iDontMatter")), null, null);
 	}
 	
+	//tests addToMap method
+	@Test
+	public void testAddToMap() throws TypeErrorException {
+		//takes in: Map<Variable, Type>, Variable, Type
+		//returns: Map<Variable, Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> originalTypeEnvironment = new HashMap<Variable, Type>();
+		originalTypeEnvironment.put(new Variable("x"), new IntType());
+		final Map<Variable, Type> received = typechecker.addToMap(originalTypeEnvironment, new Variable("y"), new StringType());
+		originalTypeEnvironment.put(new Variable("y"), new StringType());
+		final Map<Variable, Type> expected = originalTypeEnvironment;
+		assertEquals(expected, received);
+	}
+	
 	//test isWellTypedThis method for statement this.var = var
 	@Test
 	public void testStatementThis() throws TypeErrorException {

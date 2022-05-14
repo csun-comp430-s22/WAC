@@ -163,7 +163,6 @@ public class Typechecker {
 				throw new TypeErrorException("Unknown method name: " + methodName + " for class " + className + " with " + numOfParams + " params");
 			}
 			for (final MethodDefinition def : defs) {
-				//if (def.methodname.equals(methodName) && def.params.size() == numOfParams) {
 				if (def.params.size() == numOfParams) {
 					return def;
 				}
@@ -175,7 +174,6 @@ public class Typechecker {
 	// helper method for typeOfMethodCall
 	public Type expectedReturnTypeForClassAndMethod(final Classname className, final Methodname methodName, final int numOfParams)
 			throws TypeErrorException {
-		//return getMethodDef(className, methodName).type;
 		return getMethodDef(className, methodName, numOfParams).type;
 	}
 
