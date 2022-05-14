@@ -596,9 +596,6 @@ public class TypecheckerTest {
 
 	@Test
 	public void testIsWellTypedStmtVarDec() throws TypeErrorException {
-		// Takes in Stmt, Map<Variable, Type> typeEnviroment, className weAreIn, Type
-		// returnType
-		// returns Map<Variable, Type>
 		final Typechecker typechecker = new Typechecker(
 				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final ParseResult<VariableDeclaration> parseVarDec = new ParseResult<VariableDeclaration>(
@@ -631,8 +628,6 @@ public class TypecheckerTest {
 
 	@Test
 	public void testIsWellTypedStmtWhile() throws TypeErrorException {
-		// takes in: WhileStmt, Map<Variable, Type>, Classname, Type
-		// returns: Map<Variable, Type>
 		final Typechecker typechecker = new Typechecker(
 				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
@@ -648,8 +643,6 @@ public class TypecheckerTest {
 
 	@Test
 	public void isWellTypedStmtIf() throws TypeErrorException {
-		// takes in: IfStmt, Map<Variable, Type>, Classname, Type
-		// returns: Map<Variable, Type>
 		final Typechecker typechecker = new Typechecker(
 				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
@@ -677,8 +670,6 @@ public class TypecheckerTest {
 
 	@Test
 	public void isWellTypedStmtBlock() throws TypeErrorException {
-		// takes in: BlockStmt, Map<Variable, Type>, Classname, Type
-		// returns: Map<Variable, Type>
 		final Typechecker typechecker = new Typechecker(
 				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
@@ -695,8 +686,6 @@ public class TypecheckerTest {
 
 	@Test
 	public void isWellTypedStmtPrint() throws TypeErrorException {
-		// takes in: PrintlnStmt, Map<Variable, Type>, Classname
-		// returns: Map<Variable, Type>
 		final Typechecker typechecker = new Typechecker(
 				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
@@ -712,8 +701,6 @@ public class TypecheckerTest {
 
 	@Test
 	public void isWellTypedStmtSuper() throws TypeErrorException {
-		// takes in: SuperStmt, Map<Variable, Type>, Classname, Type
-		// returns: Map<Variable, Type>
 		final Typechecker typechecker = new Typechecker(
 				new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
 		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
