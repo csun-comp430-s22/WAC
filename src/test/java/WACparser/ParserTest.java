@@ -884,7 +884,7 @@ public class ParserTest {
 	@Test
 	public void testSuperStatement() throws ParseException {
 		final Parser parser = new Parser(Arrays.asList(new SuperToken(), new OpenparToken(),new VariableToken("x"),new CloseparToken(),new SemicolToken()));
-		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new SuperStmt("super",new VariableExp(new Variable("x"))),5);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new SuperStmt(new VariableExp(new Variable("x"))),5);
 		assertEquals(expected, parser.parseSuperStmt(0));
 	}
 	
@@ -893,7 +893,7 @@ public class ParserTest {
 	@Test
 	public void testSuperStatmentThruStmt() throws ParseException{
 		final Parser parser = new Parser(Arrays.asList(new SuperToken(), new OpenparToken(),new VariableToken("x"),new CloseparToken(),new SemicolToken()));
-		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new SuperStmt("super",new VariableExp(new Variable("x"))),5);
+		final ParseResult<Stmt> expected = new ParseResult<Stmt>(new SuperStmt(new VariableExp(new Variable("x"))),5);
 		assertEquals(expected, parser.parseStmt(0));
 	}
 	

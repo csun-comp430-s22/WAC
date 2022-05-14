@@ -1,18 +1,18 @@
 package WACparser;
 
 public class SuperStmt implements Stmt {
- public final String Super;
+ //public final String Super;
  public final Exp variable;
  
-	public SuperStmt(final String Super, final Exp Variable) {
-	 this.Super = Super;
+	public SuperStmt(final Exp Variable) {
+	 //this.Super = Super;
 	 this.variable = Variable;
 	}
 	public boolean equals(final Object other) {
 		if( other instanceof SuperStmt) 
 		{
 		    final SuperStmt otherSuperStmt = (SuperStmt)other;
-		    return(Super.equals(otherSuperStmt.Super) && variable.equals(otherSuperStmt.variable));
+		    return(variable.equals(otherSuperStmt.variable));
 		}
 		else 
 		{
@@ -21,9 +21,9 @@ public class SuperStmt implements Stmt {
 		
 	}
 	public int hashCode() {
-        return (Super.hashCode() + variable.hashCode());
+        return (variable.hashCode());
     }
 	public String toString() {
-        return ( Super.toString()  +"("+ variable.toString()+")"+ ";" );
+        return ("Super: ("+ variable.toString()+")"+ ";" );
     }
 }
