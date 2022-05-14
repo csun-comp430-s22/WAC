@@ -1092,6 +1092,23 @@ public class TypecheckerTest {
 		assertEquals(expected, received);
 	}
 	
+	//tests isWellTypedSuper for base class Object
+	//expecting an exception
+	@Test(expected = TypeErrorException.class)
+	public void testIsWellTypedSuperForBaseClassObject() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		final Classname classname = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final ClassDefinition classDef = new ClassDefinition(classname, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(classname, classDef);
+		final Type funcReturnType = new BooleanType();
+		final Map<Variable, Type> expected = typeEnvironment;
+		typechecker.isWellTypedSuper(new SuperStmt(new VariableExp(new Variable("x"))), typeEnvironment, classname, funcReturnType);
+	}
+	
 	//test isWellTypedThis method for statement this.var = var
 	@Test
 	public void testStatementThis() throws TypeErrorException {
