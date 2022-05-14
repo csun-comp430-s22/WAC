@@ -892,6 +892,69 @@ public class TypecheckerTest {
 		assertEquals(expected, received);
 	}
 	
+	//tests isWellTypedWhile for normal circumstance
+	@Test
+	public void testIsWellTypedWhileNormal() throws TypeErrorException {
+		//takes in: WhileStmt, Map<Variable, Type>, Classname, Type
+		//returns: Map<Variable, Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		final Classname classname = new Classname("doesn't matter");
+		final Type funcReturnType = new BooleanType();
+		final Map<Variable, Type> expected = typeEnvironment;
+		final Map<Variable, Type> received = typechecker.isWellTypedWhile(new WhileStmt(new TrueExp(), new ExpStmt(new IntegerExp(0))), typeEnvironment, classname, funcReturnType);
+		assertEquals(expected, received);
+	}
+	
+	//tests isWellTypedWhile for unhappy path: not a boolean guard
+	//expecting an exception
+	@Test(expected = TypeErrorException.class)
+	public void testIsWellTypedWhileUnhappyPathNotBooleanGuard() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		typechecker.isWellTypedWhile(new WhileStmt(new IntegerExp(0), new ExpStmt(new IntegerExp(0))), null, null, null);
+	}
+	
+	//tests isWellTypedIf for normal circumstance
+	@Test
+	public void testIsWellTypedIfNormal() throws TypeErrorException {
+		//takes in: IfStmt, Map<Variable, Type>, Classname, Type
+		//returns: Map<Variable, Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		final Classname classname = new Classname("doesn't matter");
+		final Type funcReturnType = new BooleanType();
+		final Map<Variable, Type> expected = typeEnvironment;
+		final Map<Variable, Type> received = typechecker.isWellTypedIf(new IfStmt(new FalseExp(), new ExpStmt(new IntegerExp(0)), new ExpStmt(new IntegerExp(0))), typeEnvironment, classname, funcReturnType);
+		assertEquals(expected, received);
+	}
+	
+	//tests isWellTypedIf for unhappy path: not a boolean guard
+	//expecting an exception
+	@Test(expected = TypeErrorException.class)
+	public void testIsWellTypedIfUnhappyPathNotBooleanGuard() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		typechecker.isWellTypedIf(new IfStmt(new StrExp("boo"), new ExpStmt(new IntegerExp(0)), new ExpStmt(new IntegerExp(0))), null, null, null);
+	}
+	
+	//tests isWellTypedBlock
+	@Test
+	public void testIsWellTypedBlock() throws TypeErrorException {
+		//takes in: BlockStmt, Map<Variable, Type>, Classname, Type
+		//returns: Map<Variable, Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final Map<Variable, Type> typeEnvironment = new HashMap<Variable, Type>();
+		typeEnvironment.put(new Variable("x"), new IntType());
+		final Classname classname = new Classname("doesn't matter");
+		final Type funcReturnType = new BooleanType();
+		final Map<Variable, Type> expected = typeEnvironment;
+		final List<Stmt> stmts = new ArrayList<Stmt>();
+		stmts.add(new ExpStmt(new IntegerExp(0)));
+		final Map<Variable, Type> received = typechecker.isWellTypedBlock(new BlockStmt(stmts), typeEnvironment, classname, funcReturnType);
+		assertEquals(expected, received);
+	}
+	
 	//test isWellTypedThis method for statement this.var = var
 	@Test
 	public void testStatementThis() throws TypeErrorException {
@@ -915,5 +978,103 @@ public class TypecheckerTest {
 		final Map<Variable, Type> expected = typeEnvironment;
 		final Map<Variable, Type> received = typechecker.isWellTypedThis(new ThisStmt(new VariableExp(new Variable("x")), new VariableExp(new Variable("y"))) , typeEnvironment, classname, null);
 		assertEquals(expected, received);
+	}
+	
+	//tests isWellTypedMethodDef normal circumstance
+	//void method so we aren't using assert, just checking to make sure it doesn't throw an exception
+	@Test
+	public void testIsWellTypedMethodDefNormal() throws TypeErrorException {
+		//takes in: MethodDefinition, Map<Variable, Type>, Classname
+		//returns: nothing
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new StringType(), new Methodname("find"), params, new ExpStmt(new IntegerExp(0)));
+		typechecker.isWellTypedMethodDef(methodDef, new HashMap<Variable, Type>(), new Classname("idk"));
+	}
+	
+	//tests isWellTypedMethodDef duplicate variable instance
+	//expecting an exception
+	@Test(expected = TypeErrorException.class)
+	public void testIsWellTypedMethodDefUnhappyPathDuplicateVariable() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final MethodDefinition methodDef = new MethodDefinition(new StringType(), new Methodname("find"), params, new ExpStmt(new IntegerExp(0)));
+		typechecker.isWellTypedMethodDef(methodDef, new HashMap<Variable, Type>(), new Classname("idk"));
+	}
+	
+	//tests baseTypeEnvironmentForClass for base class ("Object")
+	//void method so we aren't using assert, just making sure it doesn't throw any exceptions
+	@Test
+	public void testBaseTypeEnvironmentForClassBaseClassObject() throws TypeErrorException {
+		//takes in: Classname
+		//returns: Map<Variable, Type>
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		typechecker.baseTypeEnvironmentForClass(new Classname("Object"));
+	}
+	
+	//tests baseTypeEnvironmentForClass for some arbitrary class
+	//void method so we aren't using assert, just making sure it doesn't throw any exceptions
+	@Test
+	public void testBaseTypeEnvironmentForClassArbitraryClass() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		vardecs.add(new VariableDeclaration(new IntType(), new VariableExp(new Variable("x")), new IntegerExp(0)));
+		final Classname classname = new Classname("Dog");
+		final ClassDefinition classDef = new ClassDefinition(classname, new Classname("Object"), vardecs, new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(classname, classDef);
+		typechecker.baseTypeEnvironmentForClass(classname);
+	}
+	
+	//tests baseTypeEnvironmentForClass for a class with a duplicate instance variable
+	//void method so we aren't using assert, just making sure it doesn't throw any exceptions
+	//expecting and exception
+	@Test(expected = TypeErrorException.class)
+	public void testBaseTypeEnvironmentForClassUnhappyPathDuplicateInstanceVariable() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		vardecs.add(new VariableDeclaration(new IntType(), new VariableExp(new Variable("x")), new IntegerExp(0)));
+		vardecs.add(new VariableDeclaration(new IntType(), new VariableExp(new Variable("x")), new IntegerExp(0)));
+		final Classname classname = new Classname("Dog");
+		final ClassDefinition classDef = new ClassDefinition(classname, new Classname("Object"), vardecs, new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)), new ArrayList<MethodDefinition>());
+		typechecker.classes.put(classname, classDef);
+		typechecker.baseTypeEnvironmentForClass(classname);
+	}
+	
+	//tests isWellTypedClassDef for normal class definition
+	//void method so we aren't using assert, just making sure it doesn't throw any exceptions
+	@Test
+	public void testIsWellTypedClassDefNormal() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final Classname classname = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final List<MethodDefinition> methodDefs = new ArrayList<MethodDefinition>();
+		final MethodDefinition methodDef = new MethodDefinition(new StringType(), new Methodname("find"), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)));
+		methodDefs.add(methodDef);
+		final ClassDefinition classDef = new ClassDefinition(classname, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), methodDefs);
+		typechecker.classes.put(classname, classDef);
+		typechecker.isWellTypedClassDef(classDef);
+	}
+	
+	//tests isWellTypedClassDef for unhappy path where there are duplicate variables in the constructor
+	//expecting an exception
+	@Test(expected = TypeErrorException.class)
+	public void testIsWellTypedClassDefUnhappyPathDuplicateVariableInConstructor() throws TypeErrorException {
+		final Typechecker typechecker = new Typechecker(new Program(new ArrayList<ClassDefinition>(), new ArrayList<Stmt>()));
+		final List<VariableDeclaration> vardecs = new ArrayList<VariableDeclaration>();
+		final Classname classname = new Classname("Dog");
+		final List<Parameter> params = new ArrayList<Parameter>();
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		params.add(new Parameter(new IntType(), new VariableExp(new Variable("x"))));
+		final List<MethodDefinition> methodDefs = new ArrayList<MethodDefinition>();
+		final MethodDefinition methodDef = new MethodDefinition(new StringType(), new Methodname("find"), new ArrayList<Parameter>(), new ExpStmt(new IntegerExp(0)));
+		methodDefs.add(methodDef);
+		final ClassDefinition classDef = new ClassDefinition(classname, new Classname("Object"), new ArrayList<VariableDeclaration>(), params, new ExpStmt(new IntegerExp(0)), methodDefs);
+		typechecker.classes.put(classname, classDef);
+		typechecker.isWellTypedClassDef(classDef);
 	}
 }
