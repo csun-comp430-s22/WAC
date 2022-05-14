@@ -6,4 +6,7 @@ public class TypeErrorException extends Exception {
 		super(message);
 	}
 
+=======	
+	
+	
 }
