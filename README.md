@@ -4,7 +4,7 @@ A compiler from a high-level Java like language to C, written in Java.
 Our language supports class based inheritance, subtyping, and method overloading.
 </pre>
 
-Full Documentation available here: [Documentation](https://docs.google.com/document/d/1D54NprSTMD1AnkS6pM9GCNO9lue8hvOgruq8MsPTTIs/edit?usp=sharing)
+Full Documentation available here: [Documentation](https://drive.google.com/file/d/1xkoN0klKQ2t0weHuwHwgvWlnQamt27ry/view?usp=sharing)
 
 # Abstract Syntax:
 <pre>
